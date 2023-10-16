@@ -5,11 +5,13 @@ import { Box } from "@chakra-ui/react";
 
 
 const Root = () => {
-    <Box w="full">
-        <NavBar/>
-        <Outlet/>
-        <Footer/>
-    </Box>
+    return(
+        <Box w="full">
+            <NavBar/>
+            <Outlet/>
+            <Footer/>
+        </Box>
+    )
 }
 
 export default Root;
