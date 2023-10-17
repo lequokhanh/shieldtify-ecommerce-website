@@ -4,8 +4,8 @@ import { Box } from "@chakra-ui/react";
 
 
 const Root = () => {
-    return(
-        <Box w="full">
+    return (
+        <Box>
             <NavBar/>
             <Outlet/>
         </Box>
