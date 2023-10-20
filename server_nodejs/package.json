@@ -1,25 +1,36 @@
 {
-	"name": "server_nodejs",
-	"version": "1.0.0",
-	"description": "",
-	"main": "index.js",
-	"scripts": {
-		"start": "node app.js",
-		"dev": "nodemon app.js",
-		"migrate:up": "npx sequelize-cli db:migrate",
-		"migrate:down": "npx sequelize-cli db:migrate:undo",
-		"seed:up": "npx sequelize-cli db:seed:all",
-		"seed:down": "npx sequelize-cli db:seed:undo:all"
-	},
-	"author": "",
-	"license": "ISC",
-	"dependencies": {
-		"dotenv": "^16.3.1",
-		"express": "^4.18.2",
-		"sequelize": "^6.33.0"
-	},
-	"devDependencies": {
-		"nodemon": "^3.0.1",
-		"sequelize-cli": "^6.6.1"
-	}
+    "name": "server_nodejs",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "start": "node app.js",
+        "dev": "nodemon app.js",
+        "migrate:up": "npx sequelize-cli db:migrate",
+        "migrate:down": "npx sequelize-cli db:migrate:undo",
+        "seed:up": "npx sequelize-cli db:seed:all",
+        "seed:down": "npx sequelize-cli db:seed:undo:all"
+    },
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "cookie": "^0.5.0",
+        "cookie-parser": "^1.4.6",
+        "cors": "^2.8.5",
+        "crypto": "^1.0.1",
+        "dotenv": "^16.3.1",
+        "express": "^4.18.2",
+        "joi": "^17.11.0",
+        "jsonwebtoken": "^9.0.2",
+        "multer": "^1.4.5-lts.1",
+        "mysql2": "^3.6.1",
+        "nodemailer": "^6.9.6",
+        "sequelize": "^6.21.1",
+        "sequelize-cli": "^6.4.1",
+        "socket.io": "^4.7.2",
+        "uuid": "^9.0.1"
+    },
+    "devDependencies": {
+        "nodemon": "^3.0.1"
+    }
 }
