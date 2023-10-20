@@ -7,6 +7,7 @@ const api = require('./src/api');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const uuid = require('uuid');
+const bcrypt = require('bcrypt');
 require('./src/common/socket')(server);
 const corsOptions = {
     credentials: true,
@@ -43,15 +44,7 @@ app.use((error, _req, res, _next) => {
         message,
     });
 });
-//create new client account for testing
 
-db.client_account.create({
-    uid: uuid.v4(),
-    email: 'lequockhanhkt03@gmail.com',
-    username: 'lequockhanh',
-    password: '123456',
-    display_name: 'Khanh',
-});
 server.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
 });

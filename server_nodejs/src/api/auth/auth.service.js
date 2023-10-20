@@ -2,6 +2,7 @@ const db = require('../../models');
 const { AppError } = require('../../common/errors/AppError');
 const { sendMailForCreatePassword } = require('../../common/email');
 const uuid = require('uuid');
+const bcrypt = require('bcrypt');
 module.exports = {
     existedEmail: async ({ email }) => {
         try {
@@ -77,9 +78,11 @@ module.exports = {
             if (existedUser) {
                 throw new AppError(400, 'Email existed');
             }
+            const salt = await bcrypt.genSalt(10);
+            const hashPassword = await bcrypt.hash(password, salt);
             const user = await db.client_account.create({
                 username,
-                password,
+                password: hashPassword,
                 display,
                 email,
             });

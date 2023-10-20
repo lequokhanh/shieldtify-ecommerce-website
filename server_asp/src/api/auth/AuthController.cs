@@ -7,7 +7,7 @@ namespace shieldtify.api.auth
     public static class AuthController
     {
         [Tags("Auth")]
-        public static object existedEmail([FromQuery] string email)
+        public static APIRes existedEmail([FromQuery] string email)
         {
             try
             {
@@ -19,11 +19,12 @@ namespace shieldtify.api.auth
                 throw;
             }
         }
-        public static object sendEmailRegister([FromBody] string email)
+        [Tags("Auth")]
+        public static APIRes sendEmailRegister([FromBody] SendEmailBody body)
         {
             try
             {
-                var DTO = AuthService.sendEmailRegister(email);
+                var DTO = AuthService.sendEmailRegister(body.email);
                 return DTO;
             }
             catch (Exception)
@@ -31,11 +32,12 @@ namespace shieldtify.api.auth
                 throw;
             }
         }
-        public static object register([FromBody] string token, [FromBody] string password, [FromBody] string username, [FromBody] string displayname, HttpContext context)
+        [Tags("Auth")]
+        public static APIRes register([FromBody] RegisterBody body, HttpContext context)
         {
             try
             {
-                var DTO = AuthService.register(token, username, password, displayname);
+                var DTO = AuthService.register(body.token, body.username, body.password, body.displayname);
                 context.Response.StatusCode = DTO.statusCode;
                 return DTO;
             }
@@ -45,6 +47,17 @@ namespace shieldtify.api.auth
             }
         }
 
+    }
+    public class SendEmailBody
+    {
+        public required string email { get; set; }
+    }
+    public class RegisterBody
+    {
+        public required string token { get; set; }
+        public required string username { get; set; }
+        public required string password { get; set; }
+        public required string displayname { get; set; }
     }
 
 }

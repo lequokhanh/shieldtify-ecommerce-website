@@ -1,16 +1,15 @@
 using System.IdentityModel.Tokens.Jwt;
-using System.Net;
 using System.Security.Claims;
 using System.Text;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using shieldtify.common;
 using shieldtify.models;
+using BC = BCrypt.Net.BCrypt;
 namespace shieldtify.api.auth
 {
     public class AuthService
     {
-        public static object existedEmail(string email)
+        public static APIRes existedEmail(string email)
         {
             try
             {
@@ -23,7 +22,7 @@ namespace shieldtify.api.auth
                 throw;
             }
         }
-        public static object sendEmailRegister(string email)
+        public static APIRes sendEmailRegister(string email)
         {
             try
             {
@@ -36,20 +35,23 @@ namespace shieldtify.api.auth
                 };
                 dbContext.Authenticates.Add(authToken);
                 dbContext.SaveChanges();
-                // generate jwt
-                var token = new JwtSecurityToken(
-                    claims: new Claim[] {
-                        new("email", email),
-                        new("token", authToken.Token),
-                    },
-                    expires: DateTime.Now.AddMinutes(30),
-                    signingCredentials: new SigningCredentials(
-                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes("default_secret_key")),
-                        SecurityAlgorithms.HmacSha256
-                    )
-                );
+                // generate jwt token
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var key = Encoding.ASCII.GetBytes("This is a sample secret key - please don't use in production environment.");
+                var tokenDescriptor = new SecurityTokenDescriptor
+                {
+                    Subject = new ClaimsIdentity(new Claim[]
+                    {
+                        new Claim("email", email),
+                        new Claim("token", authToken.Token),
+                    }),
+                    Expires = DateTime.UtcNow.AddMinutes(30),
+                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
+                        SecurityAlgorithms.HmacSha512Signature),
+                };
+                var token = tokenHandler.CreateToken(tokenDescriptor);
                 var emailService = new EmailService();
-                emailService.SendMailForCreatePassword(email, token.ToString()).Wait();
+                emailService.SendMailForCreatePassword(email, tokenHandler.WriteToken(token)).Wait();
                 return new APIRes(200, "Send email successfully");
             }
             catch (Exception)
@@ -62,7 +64,7 @@ namespace shieldtify.api.auth
             try
             {
                 var tokenHandler = new JwtSecurityTokenHandler();
-                var key = Encoding.ASCII.GetBytes("default_secret_key");
+                var key = Encoding.ASCII.GetBytes("This is a sample secret key - please don't use in production environment.");
                 tokenHandler.ValidateToken(token, new TokenValidationParameters
                 {
                     ValidateIssuerSigningKey = true,
@@ -83,11 +85,14 @@ namespace shieldtify.api.auth
                 var existed = dbContext.ClientAccounts.Where(i => i.Email == email).FirstOrDefault() != null;
                 if (existed)
                     return new APIRes(400, "Email existed");
+                // hash password
+                var salt = BC.GenerateSalt();
+                var hashed = BC.HashPassword(password, salt);
                 var client = new ClientAccount
                 {
                     Uid = Guid.NewGuid(),
                     Username = username,
-                    Password = password,
+                    Password = hashed,
                     DisplayName = displayname,
                     Email = email
                 };

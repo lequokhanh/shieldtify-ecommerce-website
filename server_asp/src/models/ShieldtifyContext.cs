@@ -50,7 +50,7 @@ public partial class ShieldtifyContext : DbContext
     public virtual DbSet<Vote> Votes { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        => optionsBuilder.UseMySQL("Name=ConectionStrings:Default");
+        => optionsBuilder.UseMySQL("Server=localhost;User ID=shieldtify_user;Password=shieldtify_password;Database=shieldtify");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
