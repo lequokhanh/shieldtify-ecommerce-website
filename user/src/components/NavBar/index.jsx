@@ -5,9 +5,20 @@ import * as router from "react-router-dom";
 
 const NavBar = () => {
     return (
-          <Flex alignItems="center" h="80px" w="Full" gap="12.5em" justifyContent="center" borderBottom="0.5px solid #444">
-            <Box w="110px" h="49px">
-              <Image src="shieldtify-logo.svg" alt="Logo" objectFit="fit"/>
+          <Flex alignItems="center" 
+          h="80px" 
+          w="full"  
+          justifyContent="space-around" 
+          borderBottom="0.5px solid #444444" 
+          fontFamily="Inter, sans-serif" 
+          position="fixed"
+          top="0" 
+          left="0"
+          zIndex={99}
+          bgColor='white'
+          >
+            <Box>
+              <Image src="shieldtify-logo.svg" alt="Logo" objectFit="fi"/>
             </Box>
             <Flex gap="1.875em"> 
               <Button paddingX="5px" gap="8px" variant="none" as={router.Link} to="#" _hover={{cursor: "pointer"}}>
@@ -29,7 +40,7 @@ const NavBar = () => {
               </Button>
             </Flex>
             <Flex alignItems="center" gap="40px" >
-              <Box w="20px" h="30px" as={router.link} _hover={{cursor: "pointer"}} >
+              <Box w="20px" h="30px" as={router.Link} _hover={{cursor: "pointer"}} >
                 <Image  src="Group.svg" alt="Group"/>
               </Box>
               <Box w="20px" h="30px" _hover={{cursor: "pointer"}}>

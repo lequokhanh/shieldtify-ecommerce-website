@@ -8,7 +8,7 @@ import theme from './theme.jsx'
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <ChakraProvider theme={extendTheme(theme)}>
-      <App />
+        <App />
     </ChakraProvider>
   </React.StrictMode>
 )
