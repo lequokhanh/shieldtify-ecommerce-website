@@ -11,7 +11,7 @@ module.exports = {
     },
     sendEmailRegister: async (req, res, next) => {
         try {
-            const DTO = await service.sendEmailRegister(req.body);
+            const DTO = await service.sendEmailRegister(req.query);
             res.status(DTO.statusCode).json(DTO);
         } catch (error) {
             next(error);
@@ -19,7 +19,7 @@ module.exports = {
     },
     register: async (req, res, next) => {
         try {
-            const DTO = await service.register(req.body);
+            const DTO = await service.register(req.query.token, req.body);
             res.status(DTO.statusCode).json(DTO);
         } catch (error) {
             next(error);

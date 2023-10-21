@@ -47,7 +47,7 @@ module.exports = {
             throw new AppError(500, error.message);
         }
     },
-    register: async ({ username, password, display, token }) => {
+    register: async (token, { username, password, display }) => {
         try {
             var decodeToken = JWT.verify(
                 token,
@@ -58,16 +58,24 @@ module.exports = {
             if (!decodeToken) {
                 throw new AppError(400, 'Token is invalid');
             }
-            const token = await db.authenticate.findOne({
+            const authToken = await db.authenticate.findOne({
                 where: {
                     token: decodeToken.token,
                 },
             });
+            const existedUsername = await db.client_account.findOne({
+                where: {
+                    username,
+                },
+            });
+            if (existedUsername) {
+                throw new AppError(400, 'Username existed');
+            }
             const email = decodeToken.email;
-            if (!token) {
+            if (!authToken) {
                 throw new AppError(400, 'Token is invalid');
             }
-            if (token.usedTo !== 'create-account') {
+            if (authToken.usedTo !== 'create-account') {
                 throw new AppError(400, 'Token is invalid');
             }
             const existedUser = await db.client_account.findOne({
@@ -80,7 +88,7 @@ module.exports = {
             }
             const salt = await bcrypt.genSalt(10);
             const hashPassword = await bcrypt.hash(password, salt);
-            const user = await db.client_account.create({
+            await db.client_account.create({
                 username,
                 password: hashPassword,
                 display,
