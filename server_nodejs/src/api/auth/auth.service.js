@@ -3,7 +3,7 @@ const { AppError } = require('../../common/errors/AppError');
 const { sendMailForCreatePassword } = require('../../common/email');
 const uuid = require('uuid');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+const JWT = require('jsonwebtoken');
 module.exports = {
     existedEmail: async ({ email }) => {
         try {
@@ -48,7 +48,7 @@ module.exports = {
             throw new AppError(500, error.message);
         }
     },
-    register: async (token, { username, password, display }) => {
+    register: async (token, { username, password, displayname }) => {
         try {
             var decodeToken = JWT.verify(
                 token,
@@ -66,7 +66,7 @@ module.exports = {
             });
             const existedUsername = await db.client_account.findOne({
                 where: {
-                    username,
+                    username: username,
                 },
             });
             if (existedUsername) {
@@ -90,13 +90,14 @@ module.exports = {
             const salt = await bcrypt.genSalt(10);
             const hashPassword = await bcrypt.hash(password, salt);
             await db.client_account.create({
+                uid: uuid.v4(),
                 username,
                 password: hashPassword,
-                display,
+                display_name: displayname,
                 email,
             });
-            token.is_used = true;
-            await token.save();
+            authToken.is_used = true;
+            await authToken.save();
             return {
                 statusCode: 200,
                 message: 'Register successfully',
