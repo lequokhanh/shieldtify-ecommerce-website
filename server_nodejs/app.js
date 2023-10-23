@@ -8,6 +8,8 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const uuid = require('uuid');
 const bcrypt = require('bcrypt');
+const dotenv = require('dotenv');
+dotenv.config();
 require('./src/common/socket')(server);
 const corsOptions = {
     credentials: true,
@@ -45,6 +47,6 @@ app.use((error, _req, res, _next) => {
     });
 });
 
-server.listen(PORT, () => {
+server.listen(process.env.PORT || 3000, () => {
     console.log(`Server listening on port ${PORT}`);
 });

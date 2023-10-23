@@ -3,6 +3,7 @@ const { AppError } = require('../../common/errors/AppError');
 const { sendMailForCreatePassword } = require('../../common/email');
 const uuid = require('uuid');
 const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 module.exports = {
     existedEmail: async ({ email }) => {
         try {
