@@ -12,9 +12,10 @@ module.exports = {
                     email,
                 },
             });
+            if (user) throw new AppError(400, 'Email existed');
             return {
                 statusCode: 200,
-                message: user ? 'Email existed' : 'Email not existed',
+                message: 'Email not existed',
             };
         } catch (error) {
             throw new AppError(error.statusCode, error.message);
