@@ -17,6 +17,10 @@ module.exports = (sequelize, Sequelize) => {
                 type: Sequelize.STRING,
                 allowNull: false,
             },
+            condition: {
+                type: Sequelize.STRING,
+                allowNull: false,
+            },
             discount_rate: {
                 type: Sequelize.FLOAT,
                 allowNull: false,
@@ -38,12 +42,5 @@ module.exports = (sequelize, Sequelize) => {
             underscored: true,
         },
     );
-
-    Promotion.associate = (models) => {
-        Promotion.hasMany(models.promotion_item, {
-            foreignKey: 'promotionid',
-            as: 'promotion_item',
-        });
-    };
     return Promotion;
 };
