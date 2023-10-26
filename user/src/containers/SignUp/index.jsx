@@ -16,6 +16,8 @@ import { ArrowForwardIcon } from '@chakra-ui/icons';
 import * as router from "react-router-dom";
 import { useState } from 'react';
 import validator from 'validator';
+import { sendEmail } from '../../utils/api';
+import { checkExistedEmail } from '../../utils/api';
 
 
 const SignUp = () => {
@@ -38,7 +40,7 @@ const SignUp = () => {
     return error;
   }
 
-  function validateToShowModal(value) {
+  function validateToSendEmail(value) {
     let valid = true;
       if( !value || validator.isEmpty(value.trim())){
         valid = false;
@@ -61,9 +63,19 @@ const SignUp = () => {
         <Box>
           <Formik
             initialValues={{ Email: '' }}
-            onSubmit={(values, actions) => {
-              if(validateToShowModal(values.Email)){
-                openModal();
+            onSubmit={async (values, actions) => {
+              const response = await checkExistedEmail({
+                email: values.Email
+              });
+              if(response.message === 'Email existed') {
+                actions.setFieldError('Email', 'A user with this email address already exists');
+                return;
+              }
+              openModal();
+              if(validateToSendEmail(values.Email)){
+                sendEmail({
+                  email: values.Email
+                });
               }
               actions.setSubmitting(false);
             }}
@@ -78,7 +90,9 @@ const SignUp = () => {
                       </FormLabel>
                       <Input border="1px solid rgba(68,68,68,0.8)" borderRadius="8px" {...field} placeholder='Email address *' />
                       <FormErrorMessage>{form.errors.Email}</FormErrorMessage>
+                      <ConfirmModal email={form.values.Email} isOpen={isModalOpen} onClose={closeModal}/>
                     </FormControl>
+                    
                   )}
                 </Field>
                 <Button
@@ -92,7 +106,7 @@ const SignUp = () => {
                   borderRadius="20px"
                   fontWeight="600px"
                   fontSize="0.875rem"
-                  
+                
                 >
                   Continue
                   <ArrowForwardIcon/>
@@ -104,9 +118,6 @@ const SignUp = () => {
         <Box textAlign="center" bgColor="#E8E8E8" mt="15px" borderRadius="10px" padding="18px 57px">
           <Text fontSize="0.875rem" fontWeight="300">already join shieldtify?</Text>
           <Text lineHeight="30px" fontWeight="bold" color='#000' as={router.Link} to="#" _hover={{cursor: "pointer"}}>Log in now</Text>
-        </Box>
-        <Box>
-          <ConfirmModal email="cawfee4@gmail.com" isOpen={isModalOpen} onClose={closeModal}/>
         </Box>
       </Flex> 
     </Flex> 

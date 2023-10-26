@@ -14,28 +14,35 @@ import { ArrowForwardIcon} from '@chakra-ui/icons';
 import {Form, Field, Formik} from 'formik';
 import { useEffect, useState } from 'react';
 import PasswordValidBox from '../../components/PasswordValidBox';
+import lockedIMG from '../../assets/locked.svg'
+import unlockedIMG from '../../assets/unlocked.svg'
+import { useLocation } from 'react-router-dom';
+import { register } from '../../utils/api';
+import CompletedModal from '../../components/CompletedModal';
+
+
 const RegisterComplete = () => {
-  const [username, setUsername] = useState('');
+  const location = useLocation();
+  const queryParams = new URLSearchParams(location.search);
+  const token = queryParams.get('token');
   const [pwd,setPwd] = useState('');
-  const [confirmPwd, setConfirmPwd] = useState('');
   const [isPwdCheckOpen, setIsPwdCheckOpen] = useState(false);
   const [isPwdSN, setIsPwdSN] = useState(false);
   const [isPwdEC, setIsPwdEC] = useState(false);
-  const lockedIMG = "locked.svg";
-  const unlockedIMG = "unlocked.svg";
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const openModal = () => {
+    setIsModalOpen(true);
+  };
 
+  const closeModal = () => {
+    setIsModalOpen(false);
+  };
   function togglePwdCheck(){
     setIsPwdCheckOpen(!isPwdCheckOpen);
   }
-  const handleUsernameChange = (event) => {
-    setUsername(event.target.value);
-  } 
   const handlePwdChange = (event) => {
     setPwd(event.target.value);
   }
-  const handleConfirmPwdChange = (event) => {
-    setConfirmPwd(event.target.value);
-  } 
   useEffect(() => {
     const regexSN = /^(?=.*[!@#$%^&*0-9])/;
     const regexEC= /^.{8,}$/;
@@ -52,11 +59,18 @@ const RegisterComplete = () => {
   },[pwd])
   function checkUsernameValidity(username) {
     let error;
-    const regex = /^[a-zA-Z0-9]([._-](?![._-])|[a-zA-Z0-9]){4,15}[a-zA-Z0-9]$/;
-    if(!regex.test(username)){
+    const regex = /(^[a-z][a-z]+$)|(^[a-z][a-z]+\d$)|(^[a-z][a-z]*\d\d+$)/i;
+    if(!(regex.test(username))){
       error='This username is invalid';
     }
     return error;
+  }
+  function checkPwdMatching(value){
+    let error;
+    if(pwd!==value){
+      error = 'Password does not match';
+    }
+    return error; 
   }
   return (
     <Flex justifyContent="center">
@@ -69,50 +83,78 @@ const RegisterComplete = () => {
         </Box>
         <Box>
           <Formik
-            initialValues={{Username: "", Password: "", ConfirmPassword: ""}}
-            // onSubmit={(values, action) => {
-            //   }}
+            initialValues={{Username: "", Displayname: "", Password: "", ConfirmPassword: ""}}
+            onSubmit={async (values, actions) => {
+              const registerComplete = await register({
+                Username: values.Username,
+                Password: pwd,
+                Displayname: values.Displayname,
+                token: token
+              })
+              console.log(registerComplete);
+              if(registerComplete.statusCode===400){
+                alert(registerComplete.message)
+                return;
+              }
+              openModal();
+              actions.setSubmitting(false);
+            }}
           > 
 					{(props) => (
 							<Form>
 								<Flex flexDir="column" gap="25px" fontSize='0.875rem'>
 									<Field name='Username' validate={checkUsernameValidity}>
 										{({field,form}) => (
-											<FormControl isInvalid={form.errors.Username && form.touched.Username}>
-													<FormLabel>
+											<FormControl isInvalid={form.errors.Username && form.touched.Username} isRequired>
+													<FormLabel display="flex">
 														<Text fontWeight="500" fontSize='0.875rem'>Username</Text>
 													</FormLabel>
 													<Input 
                           w="330.453px" 
                           border="1px solid rgba(68,68,68,0.8)" 
                           borderRadius="8px" {...field} 
-                          placeholder='username *' 
-                          onChange={handleUsernameChange}
-                          value={username}
+                          placeholder='username' 
                           />
                           <FormErrorMessage>{form.errors.Username}</FormErrorMessage>
 											</FormControl>
 										)}
 									</Field>
-									<Field name='Password'>
+                  <Field name='Displayname' >
 										{({field,form}) => (
-												<FormControl isInvalid={form.errors.Password && form.touched.Password}>
-													<FormLabel>
-														<Text fontWeight="500" fontSize='0.875rem'>Password</Text>
+											<FormControl isInvalid={form.errors.Displayname && form.touched.Displayname} isRequired>
+													<FormLabel display="flex">
+														<Text fontWeight="500" fontSize='0.875rem'>Displayname</Text>
 													</FormLabel>
-                            <Input 
-                            w="330.453px"
-                            border="1px solid rgba(68,68,68,0.8)" 
-                            borderRadius="8px" {...field} type='password'
-                            placeholder='password *'
-                            onFocus={togglePwdCheck}
-                            onBlur={togglePwdCheck}
-                            onChange={handlePwdChange}
-                            value={pwd}
+													<Input 
+                          w="330.453px" 
+                          border="1px solid rgba(68,68,68,0.8)" 
+                          borderRadius="8px" {...field} 
+                          placeholder='Display name' 
                           />
-												</FormControl>
+                          <FormErrorMessage>{form.errors.Displayname}</FormErrorMessage>
+											</FormControl>
 										)}
 									</Field>
+                  <Field name='Password' >
+                    {({field,form}) => (
+                      <FormControl isInvalid={form.errors.Password && form.touched.Password} isRequired>
+                        <FormLabel htmlFor="password" display="flex" alignItems="center">
+                          <Text fontWeight="500" fontSize='0.875rem'>Password</Text>
+                        </FormLabel>
+                        <Input 
+                          id="password"
+                          w="330.453px"
+                          border="1px solid rgba(68,68,68,0.8)" 
+                          borderRadius="8px" {...field} type='password'
+                          placeholder='password'
+                          onFocus={togglePwdCheck}
+                          onBlur={togglePwdCheck}
+                          onChange={handlePwdChange}
+                          value={pwd}
+                        />
+                      </FormControl>
+                    )}
+                  </Field>
                   {
                     (isPwdCheckOpen && !isPwdSN && !isPwdEC)  ? (
                       <PasswordValidBox image={lockedIMG} snBoxcolor="black" ecBoxColor="black" bgColor="valid.pink"/>
@@ -133,20 +175,19 @@ const RegisterComplete = () => {
                       <PasswordValidBox image={unlockedIMG} snBoxcolor="valid.green.bright" ecBoxColor="valid.green.bright" bgColor="valid.green.lowOpac"/>
                     ) : null                    
                   }                                       
-									<Field name='ConfirmPassword'>
+									<Field name='ConfirmPassword' validate={checkPwdMatching}>
 										{({field,form}) => (
-												<FormControl isInvalid={form.errors.ConfirmPassword && form.touched.ConfirmPassword}>
-													<FormLabel>
+												<FormControl isInvalid={form.errors.ConfirmPassword} isRequired>
+													<FormLabel display="Flex">
 														<Text fontWeight="500" fontSize='0.875rem'>Confirm Password</Text>
 													</FormLabel>
 													<Input 
                           border="1px solid rgba(68,68,68,0.8)" 
                           borderRadius="8px" {...field} 
                           type='password' 
-                          placeholder='password *'
-                          onChange={handleConfirmPwdChange}
-                          value={confirmPwd}
+                          placeholder='password'
                           />
+                          <FormErrorMessage>{form.errors.ConfirmPassword}</FormErrorMessage>
 												</FormControl>
 										)}
 									</Field>
@@ -170,6 +211,7 @@ const RegisterComplete = () => {
 						)
 					}
 					</Formik>
+          <CompletedModal isOpen={isModalOpen} onClose={closeModal}/>
         </Box>
       </Flex>
     </Flex>
