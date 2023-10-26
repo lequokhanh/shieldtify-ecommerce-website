@@ -1,18 +1,30 @@
 using System.Text.Json;
+using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.OpenApi.Models;
-using test.api;
+using shieldtify.api;
+using shieldtify.middleware;
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
+builder.Configuration.AddJsonFile("appsettings.json", optional: false, reloadOnChange: true);
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Your API", Version = "v1" });
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Shieldtify API", Version = "v1" });
 });
-
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", builder =>
+    {
+        builder.AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader();
+    });
+});
+builder.Services.AddHttpContextAccessor();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -23,11 +35,12 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+app.UseAuthentication();
 app.UseAuthorization();
 app.UseStaticFiles();
-app.MapGroup("/api/v1")
+app.UseMiddleware<AuthMiddleware>();
+app.MapGroup("/api")
     .ApiV1();
-
 // Add custom error handling middleware
 app.UseExceptionHandler(errorApp =>
 {
@@ -53,7 +66,11 @@ app.UseStatusCodePages(async context =>
 {
     if (context.HttpContext.Response.StatusCode == StatusCodes.Status404NotFound)
     {
-        await context.HttpContext.Response.SendFileAsync(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "404.html"));
+        await context.HttpContext.Response.WriteAsync(JsonSerializer.Serialize(new
+        {
+            code = context.HttpContext.Response.StatusCode,
+            message = "Not found"
+        }));
     }
 });
 
