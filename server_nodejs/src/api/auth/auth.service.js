@@ -17,7 +17,7 @@ module.exports = {
                 message: user ? 'Email existed' : 'Email not existed',
             };
         } catch (error) {
-            throw new AppError(500, error.message);
+            throw new AppError(error.statusCode, error.message);
         }
     },
     sendEmailRegister: async ({ email }) => {
@@ -45,7 +45,7 @@ module.exports = {
                 message: 'Send email successfully',
             };
         } catch (error) {
-            throw new AppError(500, error.message);
+            throw new AppError(error.statusCode, error.message);
         }
     },
     register: async (token, { username, password, displayname }) => {
@@ -66,7 +66,7 @@ module.exports = {
             });
             const existedUsername = await db.client_account.findOne({
                 where: {
-                    username: username,
+                    username,
                 },
             });
             if (existedUsername) {
@@ -103,7 +103,7 @@ module.exports = {
                 message: 'Register successfully',
             };
         } catch (error) {
-            throw new AppError(500, error.message);
+            throw new AppError(error.statusCode, error.message);
         }
     },
 };

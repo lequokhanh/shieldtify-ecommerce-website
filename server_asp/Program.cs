@@ -66,7 +66,11 @@ app.UseStatusCodePages(async context =>
 {
     if (context.HttpContext.Response.StatusCode == StatusCodes.Status404NotFound)
     {
-        await context.HttpContext.Response.SendFileAsync(Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "404.html"));
+        await context.HttpContext.Response.WriteAsync(JsonSerializer.Serialize(new
+        {
+            code = context.HttpContext.Response.StatusCode,
+            message = "Not found"
+        }));
     }
 });
 
