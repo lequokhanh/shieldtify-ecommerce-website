@@ -1,23 +1,23 @@
-// create api response with statusstatusCode, message, data object
+// create api response with statuscode, message, data object
 using System.Text.Json.Serialization;
 
-namespace shieldtify.common
+namespace test.common
 {
     public class APIRes
     {
-        public int statusCode { get; set; }
+        public int code { get; set; }
         public string message { get; set; }
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public object? data { get; set; }
-        public APIRes(int statusCode, string message)
+        public APIRes(int code, string message)
         {
-            this.statusCode = statusCode;
+            this.code = code;
             this.message = message;
         }
 
-        public APIRes(int statusCode, string message, object data)
+        public APIRes(int code, string message, object data)
         {
-            this.statusCode = statusCode;
+            this.code = code;
             this.message = message;
             this.data = data;
         }

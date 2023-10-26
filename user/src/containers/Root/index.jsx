@@ -1,14 +1,14 @@
 import NavBar from "../../components/NavBar";
 import { Outlet } from "react-router-dom";
-import { VStack } from "@chakra-ui/react";
+import { Box } from "@chakra-ui/react";
 
 
 const Root = () => {
-    return (
-        <VStack >
+    return(
+        <Box w="full">
             <NavBar/>
             <Outlet/>
-        </VStack>
+        </Box>
     )
 }
 
