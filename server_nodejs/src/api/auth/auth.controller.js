@@ -25,4 +25,15 @@ module.exports = {
             next(error);
         }
     },
+    checkToken: async (req, res, next) => {
+        try {
+            const DTO = await service.checkToken(
+                req.query.token,
+                req.query.used_to,
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
 };
