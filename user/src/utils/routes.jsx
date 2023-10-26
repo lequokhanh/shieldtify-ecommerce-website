@@ -14,8 +14,8 @@ const routes = [
             },
             {
                 path: '/register-complete',
-                element: <RegisterComplete/>,
-                name: "register-complete"
+                element: <RegisterComplete />,
+                name: "register-complete",
             }
         ]
     }

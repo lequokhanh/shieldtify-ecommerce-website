@@ -2,15 +2,13 @@ import {
     Modal,
     ModalOverlay,
     ModalContent,
-    ModalHeader,
     ModalCloseButton,
-    ModalBody,
-    ModalFooter,
     Image,
     Box,
     Flex,
     Text
 } from '@chakra-ui/react';
+import confirm from '../../assets/Confirm.png';
 
 const ConfirmModal = ({email,isOpen, onClose}) => {
     return (
@@ -27,7 +25,7 @@ const ConfirmModal = ({email,isOpen, onClose}) => {
             <ModalCloseButton />
                 <Flex gap="70px" padding="51px 53px" alignItems="flex-end" >
                     <Flex maxW="250px" flexDir="column" alignItems="center" justifyContent="center" gap="20px">
-                        <Image src="Confirm.png"/>
+                        <Image src={confirm}/>
                         <Text whiteSpace="nowrap" fontSize="1.75rem" fontWeight="800" >Email Confirmation</Text>
                     </Flex>
                     <Flex flexDir="column" gap="70px" alignItems="flex-end">
