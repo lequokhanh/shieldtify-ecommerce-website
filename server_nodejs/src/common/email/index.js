@@ -21,11 +21,11 @@ sendMailForCreatePassword = async (recipient, token) => {
             to: recipient,
             subject: 'Shieldtify - Create Password',
             text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.
-Please click on the following link, or paste this into your browser to complete the process:${
+Please click on the following link, or paste this into your browser to complete the process: ${
                 process.env.REDIRECT_CREATE_PASSWORD_URL
                     ? process.env.REDIRECT_CREATE_PASSWORD_URL
-                    : 'localhost:3000'
-            }/${token}
+                    : 'localhost:3000/'
+            }${token}
 If you did not request this, please ignore this email and your password will remain unchanged.
             `,
         };
