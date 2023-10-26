@@ -94,10 +94,10 @@ const RegisterComplete = () => {
     let isMounted = true; // A flag to check if the component is still mounted
     const checkValid = async () => {
       try {
-        const response = await checkValidToken();
+        await checkValidToken();
+      } catch (error) {
         if (isMounted) {
-          // Check if the component is still mounted before showing the toast
-          if (response.response.data.statusCode === 400 || response.response.data.statusCode === 500) {
+          if (error.response && error.response.data && (error.response.data.statusCode === 400 || error.response.data.statusCode  === 500)) {
             const popupTime = new Promise((resolve, reject) => {
               setTimeout(() => resolve(200), 3000)
             })
@@ -112,8 +112,6 @@ const RegisterComplete = () => {
             5000)
           }
         }
-      } catch (error) {
-        console.error('API request error', error);
       }
     };
     checkValid();
@@ -135,24 +133,29 @@ const RegisterComplete = () => {
             <Formik
               initialValues={{Username: "", Displayname: "", Password: "", ConfirmPassword: ""}}
               onSubmit={async (values, actions) => {
-                const registerComplete = await register({
-                  Username: values.Username,
-                  Password: pwd,
-                  Displayname: values.Displayname,
-                  token: token
-                });
-                const res = registerComplete.response.data;
-                if(res.statusCode === 400){
-                  switch(res.message){
-                    case 'Username existed':
-                      actions.setFieldError("Username", res.message)
-                      break;
-                    case 'Email existed':
-                      actions.setFieldError("Email", res.message)
-                      break;
-                    default:
-                  }
-                  return;
+                try {
+                  await register({
+                    Username: values.Username,
+                    Password: pwd,
+                    Displayname: values.Displayname,
+                    token: token
+                  })
+                } catch(error) {
+                  if (error.response && error.response.data && error.response.data.message) {
+                    const errorMessage = error.response.data.message;
+                    switch (errorMessage) {
+                      case 'Username existed':
+                        actions.setFieldError('Username', errorMessage);
+                        break;
+                      case 'Email existed':
+                        actions.setFieldError('Email', errorMessage);
+                        break;
+                      default:
+                        actions.setFieldError('general', errorMessage);
+                        break;
+                    }
+                    return;
+                  } 
                 }
                 openModal();
                 actions.setSubmitting(false);

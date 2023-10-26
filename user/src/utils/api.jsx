@@ -2,17 +2,17 @@ import axios from "axios";
 
 axios.defaults.baseURL = 'http://localhost:3000/api';
 
-axios.interceptors.response.use(
-    (res) => {
-    if (res.status === 200) {
-        return res.data;
-    }
-    return res;
-    },
-    (error) => {
-        return error;
-    }
-);
+// axios.interceptors.response.use(
+//     (res) => {
+//     if (res.status === 200) {
+//         return res.data;
+//     }
+//     return res;
+//     },
+//     (error) => {
+//         return error;
+//     }
+// );
 
 export function sendEmail({email}) {
     const params = new URLSearchParams();

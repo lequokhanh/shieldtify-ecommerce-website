@@ -62,12 +62,15 @@ const SignUp = () => {
           <Formik
             initialValues={{ Email: '' }}
             onSubmit={async (values, actions) => {
-              const response = await checkExistedEmail({
-                email: values.Email
-              });
-              if(response.message === 'Email existed') {
-                actions.setFieldError('Email', 'A user with this email address already exists');
-                return;
+              try{
+                await checkExistedEmail({
+                  email: values.Email
+                });
+              }catch(error){
+                if(error.response && error.response.data && error.response.data.message==='Email existed'){
+                  actions.setFieldError('Email', 'A user with this email address already exists');
+                  return;                  
+                }
               }
               openModal();
               if(validateToSendEmail(values.Email)){
