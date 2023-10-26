@@ -19,7 +19,6 @@ import validator from 'validator';
 import { sendEmail } from '../../utils/api';
 import { checkExistedEmail } from '../../utils/api';
 
-
 const SignUp = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const openModal = () => {
@@ -50,10 +49,9 @@ const SignUp = () => {
       } 
     return valid;
   }
-
   return (
     <Flex justifyContent="center">
-      <Flex flexDir="column" justifyContent="center" mt="232px" mb="312px" borderRadius="15px" border="0.5px solid #444" padding="49px 65px">
+      <Flex flexDir="column" justifyContent="center" mt="232px"  borderRadius="15px" border="0.5px solid #444" padding="49px 65px">
         <Box>
           <Heading fontSize="28px" fontWeight="800" >Join Shieldtify now</Heading>
         </Box>

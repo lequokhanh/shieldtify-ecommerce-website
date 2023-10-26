@@ -10,18 +10,7 @@ axios.interceptors.response.use(
     return res;
     },
     (error) => {
-    const status = error.response ?? 401;
-    switch (status) {
-        case 401:
-        case 403:
-    break;
-        default:
-        break;
-    }
-    console.log(
-        `${error?.response?.status ?? 0} ${error?.response?.statusText ?? ""}`
-    );
-    return Promise.reject(error);
+        return error;
     }
 );
 
@@ -50,4 +39,8 @@ export function register({Username,Password,Displayname,token}){
         }
     }
     );
+}
+
+export function checkToken(token){
+    return axios.get(`/auth/check-token?token=${token}&used_to=create-account`);  
 }
