@@ -24,7 +24,8 @@ const findAllSubPosts = async (uid) => {
 
 module.exports = (server) => {
     const io = require('socket.io')(server);
-    io.of('/post').on('connection', async (socket) => {
+    io.of('/post').on('connection', (socket) => {
+        // get data of post 5 seconds each time
         let interval;
         socket.on('get-data', (data) => {
             if (interval) {
@@ -42,7 +43,7 @@ module.exports = (server) => {
                     `,
                     { type: db.Sequelize.QueryTypes.SELECT },
                 );
-
+                console.log(post);
                 post[0].children_posts = await findAllSubPosts(post[0].uid);
                 socket.emit('data', post);
             }, 5000);
