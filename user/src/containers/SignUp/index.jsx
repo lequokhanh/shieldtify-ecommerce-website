@@ -72,11 +72,11 @@ const SignUp = () => {
                   return;                  
                 }
               }
-              openModal();
               if(validateToSendEmail(values.Email)){
-                sendEmail({
+                await sendEmail({
                   email: values.Email
                 });
+                openModal();
               }
               actions.setSubmitting(false);
             }}

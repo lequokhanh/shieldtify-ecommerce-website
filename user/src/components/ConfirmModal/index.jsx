@@ -9,8 +9,44 @@ import {
     Text
 } from '@chakra-ui/react';
 import confirm from '../../assets/Confirm.png';
+import { sendEmail } from '../../utils/api';
+import { useState, useEffect } from 'react';
 
 const ConfirmModal = ({email,isOpen, onClose}) => {
+    const [lastClickedTime, setLastClickedTime] = useState(0);
+    const [resendCountdown, setResendCountdown] = useState(0);
+
+    const handleResendClick = async () => {
+        await sendEmail({
+            email
+        })
+        setLastClickedTime(Date.now());
+        setResendCountdown(30);
+    }
+
+    const isResendDisabled = Date.now() - lastClickedTime < 60000 || resendCountdown > 0;
+
+    useEffect(() => {
+        let intervalId;
+        if (resendCountdown > 0) {
+            intervalId = setInterval(() => {
+                setResendCountdown(countdown => countdown - 1);
+            }, 1000);
+        }
+        return () => clearInterval(intervalId);
+    }, [resendCountdown]);
+
+    useEffect(() => {
+        if (isOpen) {
+            setResendCountdown(30);
+        }
+    }, [isOpen]);
+
+    useEffect(() => {
+        if (resendCountdown === 0 && isResendDisabled) {
+            setLastClickedTime(0);
+        }
+    }, [resendCountdown, isResendDisabled]);
     return (
         <Modal
             closeOnOverlayClick="false"
@@ -36,11 +72,19 @@ const ConfirmModal = ({email,isOpen, onClose}) => {
                                 to confirm the validity of your email.<br/> Follow the link provided in your email to complete the registration
                                 </Text>
                         </Box>
-
-                        <Text fontStyle="italic" fontSize="0.9375rem" fontWeight="300">
-                            cant find the email? 
-                            <span style={{ color: '#00A3FF' }}> Resend confirmation email</span>
+                        <Flex fontStyle="italic" fontSize="0.9375rem" fontWeight="300" gap="3px">
+                            <Text>
+                                can{"'"}t find the email? 
                             </Text>
+                            <Text 
+                                style={{ color: resendCountdown > 0 ? "#9ad4f5" : "#00a3ff"}}
+                                onClick={handleResendClick}
+                                _hover={{cursor: resendCountdown > 0 ? "default" : "pointer"}}
+                                disabled={isResendDisabled}
+                                > 
+                                {resendCountdown > 0 ? `Resend confirmation email in ${resendCountdown}s` : ' Resend confirmation email'}
+                                </Text>
+                        </Flex>
                     </Flex>
                 </Flex>
             </ModalContent>

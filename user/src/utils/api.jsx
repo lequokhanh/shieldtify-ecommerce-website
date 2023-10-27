@@ -14,10 +14,10 @@ axios.defaults.baseURL = 'http://localhost:3000/api';
 //     }
 // );
 
-export function sendEmail({email}) {
+export async function sendEmail ({email}) {
     const params = new URLSearchParams();
     params.append('email',email);
-    return axios.get('/auth/send-email-register',{params});
+    return await axios.get('/auth/send-email-register',{params});
 }
 
 export function checkExistedEmail({email}){

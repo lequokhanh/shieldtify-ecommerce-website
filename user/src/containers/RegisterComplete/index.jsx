@@ -98,7 +98,7 @@ const RegisterComplete = () => {
       } catch (error) {
         if (isMounted) {
           if (error.response && error.response.data && (error.response.data.statusCode === 400 || error.response.data.statusCode  === 500)) {
-            const popupTime = new Promise((resolve, reject) => {
+            const popupTime = new Promise((resolve, _reject) => {
               setTimeout(() => resolve(200), 3000)
             })
             toast.promise(popupTime, {
@@ -140,6 +140,7 @@ const RegisterComplete = () => {
                     Displayname: values.Displayname,
                     token: token
                   })
+                  openModal();
                 } catch(error) {
                   if (error.response && error.response.data && error.response.data.message) {
                     const errorMessage = error.response.data.message;
@@ -157,7 +158,6 @@ const RegisterComplete = () => {
                     return;
                   } 
                 }
-                openModal();
                 actions.setSubmitting(false);
               }}
             >

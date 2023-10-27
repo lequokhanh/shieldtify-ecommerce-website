@@ -10,6 +10,10 @@ export default {
             green: {
                 lowOpac: "rgba(78, 203, 113, 0.20)",
                 bright: "#09822B"
+            },
+            blue: {
+                normal: "rgba(0, 163, 255, 1)",
+                lowOpac: "rgba(0, 163, 255, 0.2)"
             }
         }
     },
