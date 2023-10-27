@@ -2,33 +2,22 @@ import axios from "axios";
 
 axios.defaults.baseURL = 'http://localhost:3000/api';
 
-axios.interceptors.response.use(
-    (res) => {
-    if (res.status === 200) {
-        return res.data;
-    }
-    return res;
-    },
-    (error) => {
-    const status = error.response ?? 401;
-    switch (status) {
-        case 401:
-        case 403:
-    break;
-        default:
-        break;
-    }
-    console.log(
-        `${error?.response?.status ?? 0} ${error?.response?.statusText ?? ""}`
-    );
-    return Promise.reject(error);
-    }
-);
+// axios.interceptors.response.use(
+//     (res) => {
+//     if (res.status === 200) {
+//         return res.data;
+//     }
+//     return res;
+//     },
+//     (error) => {
+//         return error;
+//     }
+// );
 
-export function sendEmail({email}) {
+export async function sendEmail ({email}) {
     const params = new URLSearchParams();
     params.append('email',email);
-    return axios.get('/auth/send-email-register',{params});
+    return await axios.get('/auth/send-email-register',{params});
 }
 
 export function checkExistedEmail({email}){
@@ -50,4 +39,8 @@ export function register({Username,Password,Displayname,token}){
         }
     }
     );
+}
+
+export function checkToken(token){
+    return axios.get(`/auth/check-token?token=${token}&used_to=create-account`);  
 }

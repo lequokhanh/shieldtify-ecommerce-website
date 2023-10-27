@@ -107,4 +107,38 @@ module.exports = {
             throw new AppError(error.statusCode, error.message);
         }
     },
+    checkToken: async (token, used_to) => {
+        try {
+            // catch error if token is invalid
+            const decodeToken = JWT.verify(
+                token,
+                process.env.JWT_SECRET_KEY
+                    ? process.env.JWT_SECRET_KEY
+                    : 'default_secret_key',
+            );
+            if (!decodeToken) {
+                throw new AppError(400, 'Token is invalid');
+            }
+            const authToken = await db.authenticate.findOne({
+                where: {
+                    token: decodeToken.token,
+                },
+            });
+            if (!authToken) {
+                throw new AppError(400, 'Token is invalid');
+            }
+            if (authToken.is_used) {
+                throw new AppError(400, 'Token is invalid');
+            }
+            if (authToken.usedTo !== used_to) {
+                throw new AppError(400, 'Token is invalid');
+            }
+            return {
+                statusCode: 200,
+                message: 'Token is valid',
+            };
+        } catch (error) {
+            throw new AppError(error.statusCode, error.message);
+        }
+    },
 };

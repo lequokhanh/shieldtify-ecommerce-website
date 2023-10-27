@@ -62,9 +62,6 @@ module.exports = (sequelize, Sequelize) => {
         Item.hasMany(models.order_item, {
             foreignKey: 'itemid',
         });
-        Item.hasMany(models.promotion_item, {
-            foreignKey: 'itemid',
-        });
     };
     return Item;
 };
