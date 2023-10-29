@@ -6,16 +6,13 @@ const db = require('./src/models');
 const api = require('./src/api');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const uuid = require('uuid');
-const bcrypt = require('bcrypt');
 const dotenv = require('dotenv');
 dotenv.config();
 require('./src/common/socket')(server);
 const corsOptions = {
     credentials: true,
-    origin: '*',
+    origin: process.env.ORIGIN.split(','),
 };
-
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

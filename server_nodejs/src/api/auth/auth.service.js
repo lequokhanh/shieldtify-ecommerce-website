@@ -1,6 +1,9 @@
 const db = require('../../models');
 const { AppError } = require('../../common/errors/AppError');
-const { sendMailForCreatePassword } = require('../../common/email');
+const {
+    sendMailForCreatePassword,
+    sendEmailResetPassword,
+} = require('../../common/email');
 const uuid = require('uuid');
 const bcrypt = require('bcrypt');
 const JWT = require('jsonwebtoken');
@@ -136,6 +139,132 @@ module.exports = {
             return {
                 statusCode: 200,
                 message: 'Token is valid',
+            };
+        } catch (error) {
+            throw new AppError(error.statusCode, error.message);
+        }
+    },
+    login: async ({ username = null, password, email = null }) => {
+        try {
+            let user;
+            if (username) {
+                user = await db.client_account.findOne({
+                    where: {
+                        username,
+                    },
+                });
+            } else if (email) {
+                user = await db.client_account.findOne({
+                    where: {
+                        email,
+                    },
+                });
+            } else {
+                throw new AppError(400, 'Username or password is required');
+            }
+            if (!user) {
+                throw new AppError(400, 'Username or password is incorrect');
+            }
+            const validPassword = await bcrypt.compare(password, user.password);
+            if (!validPassword) {
+                throw new AppError(400, 'Username or password is incorrect');
+            }
+            const token = JWT.sign(
+                {
+                    user_id: user.uid,
+                    role: 'client',
+                },
+                process.env.JWT_SECRET_KEY
+                    ? process.env.JWT_SECRET_KEY
+                    : 'default_secret_key',
+                {
+                    expiresIn: '24h',
+                },
+            );
+            return {
+                statusCode: 200,
+                message: 'Login successfully',
+                token,
+            };
+        } catch (error) {
+            throw new AppError(error.statusCode, error.message);
+        }
+    },
+    sendEmailResetPassword: async ({ email }) => {
+        try {
+            const user = await db.client_account.findOne({
+                where: {
+                    email,
+                },
+            });
+            if (!user) {
+                throw new AppError(400, 'Email not existed');
+            }
+            const authToken = await db.authenticate.create({
+                uid: uuid.v4(),
+                usedTo: 'reset-password',
+                token: uuid.v4(),
+            });
+            const token = JWT.sign(
+                {
+                    user_id: user.uid,
+                    token: authToken.token,
+                },
+                process.env.JWT_SECRET_KEY
+                    ? process.env.JWT_SECRET_KEY
+                    : 'default_secret_key',
+                {
+                    expiresIn: '30m',
+                },
+            );
+            await sendEmailResetPassword(email, token);
+            return {
+                statusCode: 200,
+                message: 'Send email successfully',
+            };
+        } catch (error) {
+            throw new AppError(error.statusCode, error.message);
+        }
+    },
+    resetPassword: async (token, { password }) => {
+        try {
+            const decodeToken = JWT.verify(
+                token,
+                process.env.JWT_SECRET_KEY
+                    ? process.env.JWT_SECRET_KEY
+                    : 'default_secret_key',
+            );
+            if (!decodeToken) {
+                throw new AppError(400, 'Token is invalid');
+            }
+            const authToken = await db.authenticate.findOne({
+                where: {
+                    token: decodeToken.token,
+                },
+            });
+            if (!authToken) {
+                throw new AppError(400, 'Token is invalid');
+            }
+            if (authToken.usedTo !== 'reset-password') {
+                throw new AppError(400, 'Token is invalid');
+            }
+            const user = await db.client_account.findOne({
+                where: {
+                    uid: decodeToken.user_id,
+                },
+            });
+            if (!user) {
+                throw new AppError(400, 'Token is invalid');
+            }
+            const salt = await bcrypt.genSalt(10);
+            const hashPassword = await bcrypt.hash(password, salt);
+            user.password = hashPassword;
+            await user.save();
+            authToken.is_used = true;
+            await authToken.save();
+            return {
+                statusCode: 200,
+                message: 'Reset password successfully',
             };
         } catch (error) {
             throw new AppError(error.statusCode, error.message);
