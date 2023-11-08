@@ -9,7 +9,8 @@
         "migrate:up": "npx sequelize-cli db:migrate",
         "migrate:down": "npx sequelize-cli db:migrate:undo",
         "seed:up": "npx sequelize-cli db:seed:all",
-        "seed:down": "npx sequelize-cli db:seed:undo:all"
+        "seed:down": "npx sequelize-cli db:seed:undo:all",
+        "swagger-autogen": "node ./docs/swagger.js"
     },
     "author": "",
     "license": "ISC",
@@ -29,9 +30,12 @@
         "sequelize": "^6.21.1",
         "sequelize-cli": "^6.4.1",
         "socket.io": "^4.7.2",
+        "swagger-jsdoc": "^6.2.1",
+        "swagger-ui-express": "^4.4.0",
         "uuid": "^9.0.1"
     },
     "devDependencies": {
-        "nodemon": "^3.0.1"
+        "nodemon": "^3.0.1",
+        "swagger-autogen": "^2.23.7"
     }
 }

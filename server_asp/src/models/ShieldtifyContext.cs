@@ -45,8 +45,6 @@ public partial class ShieldtifyContext : DbContext
 
     public virtual DbSet<Promotion> Promotions { get; set; }
 
-    public virtual DbSet<PromotionItem> PromotionItems { get; set; }
-
     public virtual DbSet<Vote> Votes { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -530,6 +528,9 @@ public partial class ShieldtifyContext : DbContext
             entity.ToTable("promotions");
 
             entity.Property(e => e.Uid).HasColumnName("uid");
+            entity.Property(e => e.Condition)
+                .HasMaxLength(255)
+                .HasColumnName("condition");
             entity.Property(e => e.CreatedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
@@ -552,35 +553,6 @@ public partial class ShieldtifyContext : DbContext
             entity.Property(e => e.UpdatedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("updated_at");
-        });
-
-        modelBuilder.Entity<PromotionItem>(entity =>
-        {
-            entity.HasKey(e => new { e.Promotionid, e.Itemid }).HasName("PRIMARY");
-
-            entity.ToTable("promotion_items");
-
-            entity.HasIndex(e => e.Itemid, "itemid");
-
-            entity.Property(e => e.Promotionid).HasColumnName("promotionid");
-            entity.Property(e => e.Itemid).HasColumnName("itemid");
-            entity.Property(e => e.CreatedAt)
-                .HasColumnType("datetime")
-                .HasColumnName("created_at");
-            entity.Property(e => e.DeletedAt)
-                .HasColumnType("datetime")
-                .HasColumnName("deleted_at");
-            entity.Property(e => e.UpdatedAt)
-                .HasColumnType("datetime")
-                .HasColumnName("updated_at");
-
-            entity.HasOne(d => d.Item).WithMany(p => p.PromotionItems)
-                .HasForeignKey(d => d.Itemid)
-                .HasConstraintName("promotion_items_ibfk_2");
-
-            entity.HasOne(d => d.Promotion).WithMany(p => p.PromotionItems)
-                .HasForeignKey(d => d.Promotionid)
-                .HasConstraintName("promotion_items_ibfk_1");
         });
 
         modelBuilder.Entity<Vote>(entity =>

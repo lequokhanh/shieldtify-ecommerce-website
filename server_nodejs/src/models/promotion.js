@@ -18,7 +18,7 @@ module.exports = (sequelize, Sequelize) => {
                 allowNull: false,
             },
             condition: {
-                type: Sequelize.STRING,
+                type: Sequelize.TEXT('long'),
                 allowNull: false,
             },
             discount_rate: {
