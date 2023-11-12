@@ -265,6 +265,7 @@ module.exports = {
             const salt = await bcrypt.genSalt(10);
             const hashPassword = await bcrypt.hash(password, salt);
             user.password = hashPassword;
+            user.changed_password_at = new Date();
             await user.save();
             authToken.isUsed = true;
             await authToken.save();
