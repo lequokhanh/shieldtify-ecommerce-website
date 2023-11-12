@@ -190,7 +190,7 @@ module.exports = {
             throw new AppError(error.statusCode, error.message);
         }
     },
-    sendEmailResetPassword: async ({ email }) => {
+    sendEmailResetPassword: async (email) => {
         try {
             const user = await db.client_account.findOne({
                 where: {

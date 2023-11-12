@@ -75,7 +75,7 @@ module.exports = {
     },
     sendEmailResetPassword: async (req, res, next) => {
         try {
-            const DTO = await service.sendEmailResetPassword(req.body);
+            const DTO = await service.sendEmailResetPassword(req.query.email);
             res.status(DTO.statusCode).json(DTO);
         } catch (error) {
             next(error);
