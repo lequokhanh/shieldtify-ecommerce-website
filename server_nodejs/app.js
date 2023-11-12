@@ -1,6 +1,5 @@
 const express = require('express');
 const app = express();
-
 const http = require('http');
 const server = http.createServer(app);
 const db = require('./src/models');
@@ -8,9 +7,8 @@ const api = require('./src/api');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const dotenv = require('dotenv');
-const swaggerUI = require('swagger-ui-express');
-const swaggerDocument = require('./docs/swagger.json');
 dotenv.config();
+
 require('./src/common/socket')(server);
 const corsOptions = {
     credentials: true,
@@ -27,14 +25,6 @@ db.sequelize.sync().then(() => {
 });
 
 app.use('/api', api);
-app.use('/docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
-const PORT = process.env.PORT || 3000;
-app.use((_req, res) => {
-    res.status(404).json({
-        statusCode: 404,
-        message: 'Not Found',
-    });
-});
 
 app.use((error, _req, res, _next) => {
     let { statusCode, message } = error;
