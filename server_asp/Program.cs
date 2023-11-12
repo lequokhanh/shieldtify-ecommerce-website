@@ -1,7 +1,4 @@
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.OpenApi.Models;
 using shieldtify.api;
@@ -19,9 +16,11 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAll", builder =>
     {
-        builder.AllowAnyOrigin()
+        builder
             .AllowAnyMethod()
-            .AllowAnyHeader();
+            .AllowAnyHeader()
+            .SetIsOriginAllowed(origin => true) // allow any origin 
+            .AllowCredentials();
     });
 });
 builder.Services.AddHttpContextAccessor();
@@ -33,7 +32,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseCors("AllowAll"); // Add this line to enable CORS
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
@@ -66,6 +65,7 @@ app.UseStatusCodePages(async context =>
 {
     if (context.HttpContext.Response.StatusCode == StatusCodes.Status404NotFound)
     {
+        context.HttpContext.Response.ContentType = "application/json";
         await context.HttpContext.Response.WriteAsync(JsonSerializer.Serialize(new
         {
             code = context.HttpContext.Response.StatusCode,

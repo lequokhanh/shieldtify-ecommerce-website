@@ -36,6 +36,4 @@ public partial class Item
     public virtual ICollection<ItemImg> ItemImgs { get; set; } = new List<ItemImg>();
 
     public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
-
-    public virtual ICollection<PromotionItem> PromotionItems { get; set; } = new List<PromotionItem>();
 }

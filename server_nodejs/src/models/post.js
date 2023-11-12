@@ -11,7 +11,7 @@ module.exports = (sequelize, Sequelize) => {
                 type: Sequelize.STRING,
             },
             content: {
-                type: Sequelize.STRING,
+                type: Sequelize.TEXT('long'),
                 allowNull: false,
             },
             depth: {

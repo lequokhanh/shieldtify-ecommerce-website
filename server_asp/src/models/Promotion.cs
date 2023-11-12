@@ -11,6 +11,8 @@ public partial class Promotion
 
     public string Description { get; set; } = null!;
 
+    public string Condition { get; set; } = null!;
+
     public float DiscountRate { get; set; }
 
     public DateTime StartDate { get; set; }
@@ -22,6 +24,4 @@ public partial class Promotion
     public DateTime UpdatedAt { get; set; }
 
     public DateTime? DeletedAt { get; set; }
-
-    public virtual ICollection<PromotionItem> PromotionItems { get; set; } = new List<PromotionItem>();
 }

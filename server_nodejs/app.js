@@ -6,16 +6,14 @@ const db = require('./src/models');
 const api = require('./src/api');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-const uuid = require('uuid');
-const bcrypt = require('bcrypt');
 const dotenv = require('dotenv');
+const PORT = process.env.PORT || 3000;
 dotenv.config();
 require('./src/common/socket')(server);
 const corsOptions = {
     credentials: true,
-    origin: '*',
+    origin: process.env.ORIGIN.split(','),
 };
-
 app.use(cookieParser());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -27,8 +25,6 @@ db.sequelize.sync().then(() => {
 });
 
 app.use('/api', api);
-
-const PORT = process.env.PORT || 3000;
 app.use((_req, res) => {
     res.status(404).json({
         statusCode: 404,
@@ -47,6 +43,6 @@ app.use((error, _req, res, _next) => {
     });
 });
 
-server.listen(process.env.PORT || 3000, () => {
+server.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
 });

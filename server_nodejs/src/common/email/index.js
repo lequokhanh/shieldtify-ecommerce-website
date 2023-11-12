@@ -35,6 +35,28 @@ If you did not request this, please ignore this email and your password will rem
     }
 };
 
+sendEmailResetPassword = async (recipient, token) => {
+    try {
+        const mainOptions = {
+            from: process.env.EMAIL_ADDRESS,
+            to: recipient,
+            subject: 'Shieldtify - Reset Password',
+            text: `You are receiving this because you (or someone else) have requested the reset of the password for your account.
+Please click on the following link, or paste this into your browser to complete the process: ${
+                process.env.REDIRECT_RESET_PASSWORD_URL
+                    ? process.env.REDIRECT_RESET_PASSWORD_URL
+                    : 'localhost:3000/'
+            }${token}
+If you did not request this, please ignore this email and your password will remain unchanged.
+            `,
+        };
+        await transporter.sendMail(mainOptions);
+    } catch (error) {
+        throw new AppError(500, error.message);
+    }
+};
+
 module.exports = {
     sendMailForCreatePassword,
+    sendEmailResetPassword,
 };

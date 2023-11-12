@@ -39,7 +39,7 @@ const CompletedModal = ({isOpen, onClose}) => {
                     color="#FFFFFF"
                     type='submit'
                     borderRadius="20px"
-                    fontWeight="600px"
+                    fontWeight="600"
                     fontSize="0.875rem"
                     paddingX="80px"
                     as={router.Link} 
