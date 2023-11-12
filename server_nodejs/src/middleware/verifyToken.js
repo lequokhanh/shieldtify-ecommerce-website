@@ -38,7 +38,7 @@ exports.verifyToken = async (req, res, next) => {
         if (!user) {
             throw new AppError(403, "This token doesn't belong to this user");
         }
-        if (user.change_password_at > decodeToken.iat) {
+        if (user.changed_password_at / 1000 > decodeToken.iat) {
             throw new AppError(403, 'This user changed password recently');
         }
         req.user = user;
