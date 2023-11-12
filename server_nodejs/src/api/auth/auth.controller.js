@@ -83,7 +83,7 @@ module.exports = {
     },
     resetPassword: async (req, res, next) => {
         try {
-            const DTO = await service.resetPassword(req.body);
+            const DTO = await service.resetPassword(req.query.token, req.body);
             res.status(DTO.statusCode).json(DTO);
         } catch (error) {
             next(error);
