@@ -100,7 +100,7 @@ module.exports = {
                 display_name: displayname,
                 email,
             });
-            authToken.is_used = true;
+            authToken.is_used = 1;
             await authToken.save();
             return {
                 statusCode: 200,
@@ -260,7 +260,7 @@ module.exports = {
             const hashPassword = await bcrypt.hash(password, salt);
             user.password = hashPassword;
             await user.save();
-            authToken.is_used = true;
+            authToken.is_used = 1;
             await authToken.save();
             return {
                 statusCode: 200,
