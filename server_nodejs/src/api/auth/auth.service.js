@@ -83,6 +83,9 @@ module.exports = {
             if (authToken.usedTo !== 'create-account') {
                 throw new AppError(400, 'Token is invalid');
             }
+            if (authToken.isUsed) {
+                throw new AppError(400, 'Token is invalid');
+            }
             const existedUser = await db.client_account.findOne({
                 where: {
                     email,
@@ -100,7 +103,7 @@ module.exports = {
                 display_name: displayname,
                 email,
             });
-            authToken.is_used = 1;
+            authToken.isUsed = true;
             await authToken.save();
             return {
                 statusCode: 200,
@@ -130,7 +133,7 @@ module.exports = {
             if (!authToken) {
                 throw new AppError(400, 'Token is invalid');
             }
-            if (authToken.is_used) {
+            if (authToken.isUsed) {
                 throw new AppError(400, 'Token is invalid');
             }
             if (authToken.usedTo !== used_to) {
@@ -248,6 +251,9 @@ module.exports = {
             if (authToken.usedTo !== 'reset-password') {
                 throw new AppError(400, 'Token is invalid');
             }
+            if (authToken.isUsed) {
+                throw new AppError(400, 'Token is invalid');
+            }
             const user = await db.client_account.findOne({
                 where: {
                     uid: decodeToken.user_id,
@@ -260,7 +266,7 @@ module.exports = {
             const hashPassword = await bcrypt.hash(password, salt);
             user.password = hashPassword;
             await user.save();
-            authToken.is_used = 1;
+            authToken.isUsed = true;
             await authToken.save();
             return {
                 statusCode: 200,
