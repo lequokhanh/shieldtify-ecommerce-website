@@ -15,9 +15,10 @@ import {Form, Field, Formik} from 'formik';
 import { ArrowForwardIcon } from '@chakra-ui/icons';
 import * as router from "react-router-dom";
 import { useState } from 'react';
-import validator from 'validator';
 import { sendEmail } from '../../utils/api';
 import { checkExistedEmail } from '../../utils/api';
+import validateEmail from '../../utils/validateEmail';
+import validateToSendEmail from '../../utils/validateToSendEmail';
 
 const SignUp = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -28,44 +29,25 @@ const SignUp = () => {
   const closeModal = () => {
     setIsModalOpen(false);
   };
-  function validateEmail(value){
-    let error;
-    if( !value || validator.isEmpty(value.trim())){
-      error='Please enter an email';
-    }
-    else if(!validator.isEmail(value.trim())){
-      error='Please enter a valid email.';
-    } 
-    return error;
-  }
 
-  function validateToSendEmail(value) {
-    let valid = true;
-      if( !value || validator.isEmpty(value.trim())){
-        valid = false;
-      }
-      else if(!validator.isEmail(value.trim())){
-        valid = false;
-      } 
-    return valid;
-  }
   return (
-    <Flex justifyContent="center">
-      <Flex flexDir="column" justifyContent="center" mt="232px"  borderRadius="15px" border="0.5px solid #444" padding="49px 65px">
+    <Box h="100vh">
+
+      <Flex flexDir="column" justifyContent="center" mt="232px" mb="150px" borderRadius="15px" border="0.5px solid #444" padding="49px 65px">
         <Box>
           <Heading fontSize="28px" fontWeight="800" >Join Shieldtify now</Heading>
         </Box>
-        <Box margin="17.5px">
+        <Box marginTop="17.5px" marginBottom="17.5px">
           <Divider/>
         </Box>
         <Box>
           <Formik
             initialValues={{ Email: '' }}
-            onSubmit={async (values, actions) => {
+            onSubmit={ async (values, actions) => {
               try{
                 await checkExistedEmail({
                   email: values.Email
-                });
+                })  
               }catch(error){
                 if(error.response && error.response.data && error.response.data.message==='Email existed'){
                   actions.setFieldError('Email', 'A user with this email address already exists');
@@ -82,16 +64,16 @@ const SignUp = () => {
             }}
           >
             {(props) => (
-              <Form >
+              <Form>
                 <Field name='Email' validate={validateEmail}>
                   {({ field, form }) => (
                     <FormControl  isInvalid={form.errors.Email && form.touched.Email} >
-                      <FormLabel>
-                        <Text fontWeight="500">Email</Text>
+                      <FormLabel fontWeight="500">
+                        Email
                       </FormLabel>
                       <Input border="1px solid rgba(68,68,68,0.8)" borderRadius="8px" {...field} placeholder='Email address *' />
                       <FormErrorMessage>{form.errors.Email}</FormErrorMessage>
-                      <ConfirmModal email={form.values.Email} isOpen={isModalOpen} onClose={closeModal}/>
+                      <ConfirmModal email={form.values.Email} isOpen={isModalOpen} onClose={closeModal} type="register"/>
                     </FormControl>
                     
                   )}
@@ -105,9 +87,8 @@ const SignUp = () => {
                   type='submit'
                   w="full"
                   borderRadius="20px"
-                  fontWeight="600px"
+                  fontWeight="600"
                   fontSize="0.875rem"
-                
                 >
                   Continue
                   <ArrowForwardIcon/>
@@ -118,10 +99,21 @@ const SignUp = () => {
         </Box>
         <Box textAlign="center" bgColor="#E8E8E8" mt="15px" borderRadius="10px" padding="18px 57px">
           <Text fontSize="0.875rem" fontWeight="300">already join shieldtify?</Text>
-          <Text lineHeight="30px" fontWeight="bold" color='#000' as={router.Link} to="#" _hover={{cursor: "pointer"}}>Log in now</Text>
+          <Text 
+          lineHeight="30px" 
+          fontWeight="bold" 
+          color='#000' 
+          as={router.Link} 
+          to="/sign-in" 
+          _hover={
+            {
+              cursor: "pointer",
+              textDecorationLine: "underline"
+            }
+          }>Log in now</Text>
         </Box>
       </Flex> 
-    </Flex> 
+    </Box>
   )
 }
 

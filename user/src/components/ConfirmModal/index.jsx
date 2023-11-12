@@ -11,15 +11,23 @@ import {
 import confirm from '../../assets/Confirm.png';
 import { sendEmail } from '../../utils/api';
 import { useState, useEffect } from 'react';
+import { sendEmailResetPassword } from '../../utils/api';
 
-const ConfirmModal = ({email,isOpen, onClose}) => {
+const ConfirmModal = ({email,isOpen, onClose,type}) => {
     const [lastClickedTime, setLastClickedTime] = useState(0);
     const [resendCountdown, setResendCountdown] = useState(0);
 
-    const handleResendClick = async () => {
+    const handleRegisterResendClick = async () => {
         await sendEmail({
             email
         })
+        setLastClickedTime(Date.now());
+        setResendCountdown(30);
+    }
+    const handleResetResendClick = async () => {
+        await sendEmailResetPassword(
+            email
+        )
         setLastClickedTime(Date.now());
         setResendCountdown(30);
     }
@@ -68,22 +76,45 @@ const ConfirmModal = ({email,isOpen, onClose}) => {
                         <Box whiteSpace="nowrap" fontSize="1.25rem" fontWeight="300" alignItems="flex-start">
                             <Text>We have sent an email to </Text>
                             <Text color="#FF6262" fontWeight="500">{email}</Text>
-                            <Text>
-                                to confirm the validity of your email.<br/> Follow the link provided in your email to complete the registration
+                            {
+                                type==="register" ? (
+                                <Text>
+                                    to confirm the validity of your email.<br/> Follow the link provided in your email to complete the registration
                                 </Text>
+                                ) : (
+                                <Text>
+                                    to reset your password.<br/> Follow the link provided in your email to finish resetting your password
+                                </Text>                                    
+                                )
+                            }
+
                         </Box>
                         <Flex fontStyle="italic" fontSize="0.9375rem" fontWeight="300" gap="3px">
                             <Text>
                                 can{"'"}t find the email? 
                             </Text>
-                            <Text 
-                                style={{ color: resendCountdown > 0 ? "#9ad4f5" : "#00a3ff"}}
-                                onClick={handleResendClick}
-                                _hover={{cursor: resendCountdown > 0 ? "default" : "pointer"}}
-                                disabled={isResendDisabled}
-                                > 
-                                {resendCountdown > 0 ? `Resend confirmation email in ${resendCountdown}s` : ' Resend confirmation email'}
-                                </Text>
+                            {
+                                type==="register" ? (
+                                    <Text 
+                                    style={{ color: resendCountdown > 0 ? "#9ad4f5" : "#00a3ff"}}
+                                    onClick={handleRegisterResendClick}
+                                    _hover={{cursor: resendCountdown > 0 ? "default" : "pointer"}}
+                                    disabled={isResendDisabled}
+                                    > 
+                                    {resendCountdown > 0 ? `Resend confirmation email in ${resendCountdown}s` : ' Resend confirmation email'}
+                                    </Text>
+                                ) :
+                                (
+                                    <Text 
+                                    style={{ color: resendCountdown > 0 ? "#9ad4f5" : "#00a3ff"}}
+                                    onClick={handleResetResendClick}
+                                    _hover={{cursor: resendCountdown > 0 ? "default" : "pointer"}}
+                                    disabled={isResendDisabled}
+                                    > 
+                                    {resendCountdown > 0 ? `Resend confirmation email in ${resendCountdown}s` : ' Resend confirmation email'}
+                                    </Text>                                    
+                                )
+                            }
                         </Flex>
                     </Flex>
                 </Flex>

@@ -19,8 +19,8 @@ import unlockedIMG from '../../assets/unlocked.svg'
 import { useLocation, useNavigate } from 'react-router-dom';
 import { register } from '../../utils/api';
 import CompletedModal from '../../components/CompletedModal';
-import { checkToken } from '../../utils/api';
 import { useToast } from '@chakra-ui/react';
+import checkValidToken from '../../utils/checkValidToken';
 
 
 
@@ -35,10 +35,6 @@ const RegisterComplete = () => {
   const [isPwdEC, setIsPwdEC] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const toast = useToast()
-  const checkValidToken = async () =>  {
-    const result = await checkToken(token);
-    return result;
-  };
   const openModal = () => {
     setIsModalOpen(true);
   };
@@ -94,7 +90,7 @@ const RegisterComplete = () => {
     let isMounted = true; // A flag to check if the component is still mounted
     const checkValid = async () => {
       try {
-        await checkValidToken();
+        await checkValidToken(token,'create-account');
       } catch (error) {
         if (isMounted) {
           if (error.response && error.response.data && (error.response.data.statusCode === 400 || error.response.data.statusCode  === 500)) {
@@ -107,7 +103,7 @@ const RegisterComplete = () => {
               loading: { title: 'Invalid token', description: 'Redirecting to Homepage' },
             })
             setTimeout(() => {
-              navigate('/');
+              navigate('/sign-in');
             },
             5000)
           }
@@ -121,12 +117,20 @@ const RegisterComplete = () => {
   },[]);
 
     return (
-      <Flex justifyContent="center">
-        <Flex border="0.5px solid #444" borderRadius="15px" justifyContent="center" mt="150px"  flexDir="column" padding="84px 65px" >
+      <Box h="100vh">
+        <Flex 
+        border="0.5px solid #444" 
+        borderRadius="15px" 
+        justifyContent="center" 
+        mt="150px" 
+        mb="200px"
+        flexDir="column" 
+        padding="84px 65px" 
+        >
           <Box>
             <Heading fontSize="1.5rem" color="#2D2D2D" fontWeight="800" textAlign="center">Just one more step..</Heading>
           </Box>
-          <Box margin="18.5px">
+          <Box marginTop="18.5px"  marginBottom="18.5px">
             <Divider/>
           </Box>
           <Box>
@@ -167,8 +171,8 @@ const RegisterComplete = () => {
                     <Field name='Username' validate={checkUsernameValidity}>
                       {({field,form}) => (
                         <FormControl isInvalid={form.errors.Username && form.touched.Username} isRequired>
-                            <FormLabel display="flex">
-                              <Text fontWeight="500" fontSize='0.875rem'>Username</Text>
+                            <FormLabel display="flex" fontWeight="500" fontSize='0.875rem'>
+                              Username
                             </FormLabel>
                             <Input 
                             w="330.453px" 
@@ -183,8 +187,8 @@ const RegisterComplete = () => {
                     <Field name='Displayname' validate={checkDisplayNameValidity}>
                       {({field,form}) => (
                         <FormControl isInvalid={form.errors.Displayname && form.touched.Displayname} isRequired>
-                            <FormLabel display="flex">
-                              <Text fontWeight="500" fontSize='0.875rem'>Displayname</Text>
+                            <FormLabel display="flex" fontWeight="500" fontSize='0.875rem'>
+                              Displayname
                             </FormLabel>
                             <Input 
                             w="330.453px" 
@@ -239,8 +243,8 @@ const RegisterComplete = () => {
                     <Field name='ConfirmPassword' validate={checkPwdMatching}>
                       {({field,form}) => (
                           <FormControl isInvalid={form.errors.ConfirmPassword} isRequired>
-                            <FormLabel display="Flex">
-                              <Text fontWeight="500" fontSize='0.875rem'>Confirm Password</Text>
+                            <FormLabel display="Flex" fontWeight="500" fontSize='0.875rem'>
+                              Confirm Password
                             </FormLabel>
                             <Input 
                             border="1px solid rgba(68,68,68,0.8)" 
@@ -262,7 +266,7 @@ const RegisterComplete = () => {
                     type='submit'
                     w="full"
                     borderRadius="20px"
-                    fontWeight="600px"
+                    fontWeight="600"
                     fontSize="0.875rem"
                   >
                     Continue 
@@ -275,9 +279,8 @@ const RegisterComplete = () => {
             <CompletedModal isOpen={isModalOpen} onClose={closeModal}/>
           </Box>
         </Flex>
-      </Flex>
+      </Box>
     );
-  // }  
 }
 
 export default RegisterComplete;

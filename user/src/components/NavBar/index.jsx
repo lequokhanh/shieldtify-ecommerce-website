@@ -6,18 +6,62 @@ import builder from "../../assets/builder.svg"
 import cpu from "../../assets/cpu.svg"
 import book from "../../assets/book.svg"
 import message from "../../assets/message.svg"
-import group from "../../assets/Group.svg"
 import cart from "../../assets/Cart.svg"
 import search_line from "../../assets/clarity_search-line.svg"
+import { useContext, useState } from "react";
+import { AuthContext } from "../../context/auth.context";
+import UserMenu from "../UserMenu";
+import SearchModal from "../SearchModal";
+import CartModal from "../CartModal";
+import ProductModal from "../ProductModal";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@chakra-ui/react";
+import { getUser } from '../../utils/api';
 
 
 const NavBar = () => {
+    const { isLoggedIn } = useContext(AuthContext);
+    const [ isSearchOpen, setIsSearchOpen ] = useState(false);
+    const [ isCartOpen, setIsCartOpen ] = useState(false);
+    const [ isProductCateListOpen, setIsProductCateListOpen] = useState(false);
+    const toast = useToast();
+    const navigate = useNavigate()
+    const openSearch = () => {
+      setIsSearchOpen(true);
+    }
+    const closeSeach = () => {
+      setIsSearchOpen(false);
+    }
+    const openCart = () => {
+      setIsCartOpen(true);
+    }
+    const closeCart = () => {
+      setIsCartOpen(false);
+    }
+    const denyPermission = () => {
+      toast({
+        title: "Error",
+        description: "You must log-in first to use this feature",
+        status: "error",
+        duration: 5000,
+        isClosable: true
+      })
+      navigate("/sign-in");
+    }
+    const openProductCateList = () => {
+      setIsProductCateListOpen(true);
+    }
+    const closeProductCateList = () => {
+      setIsProductCateListOpen(false);
+    }
     return (
-          <Flex alignItems="center" 
+          <Flex 
+          alignItems="center" 
           h="80px" 
           w="full"  
-          justifyContent="space-around" 
-          borderBottom="0.5px solid #444444" 
+          justifyContent="space-between" 
+          paddingX="30px"
+          borderBottom="1px solid rgba(68, 68, 68, 0.4)" 
           fontFamily="Inter, sans-serif" 
           position="fixed"
           top="0" 
@@ -25,39 +69,108 @@ const NavBar = () => {
           zIndex={99}
           bgColor='white'
           >
-            <Box as={router.Link} to="/" _hover={{cursor: "pointer"}}>
-              <Image src={logo} alt="Logo" objectFit="fi"/>
+            <Flex gap="1.875rem"> 
+            <Box as={router.Link} to="/home" _hover={{cursor: "pointer"}}>
+              <Image src={logo} alt="Logo" />
             </Box>
-            <Flex gap="1.875em"> 
-              <Button paddingX="5px" gap="8px" variant="none" as={router.Link} to="#" _hover={{cursor: "pointer"}}>
+              <Button 
+              paddingX="5px" 
+              gap="8px" 
+              variant="none" 
+              as={router.Link} 
+              to="#" 
+              _hover={{cursor: "pointer", textDecorationLine:"underline"}} 
+              color="shieldtify.100"
+              >
                 <Image  src={builder} alt="builder"/>
                 <Text>Builder</Text>
               </Button>
-              <Button gap="8px" paddingX="5px" variant="none" as={router.Link} to="#" _hover={{cursor: "pointer"}}>
+              <Button 
+              gap="8px" 
+              paddingX="5px" 
+              variant="none" 
+              as={router.Link} 
+              to="#" 
+              _hover={{cursor: "pointer", textDecorationLine:"underline"}} 
+              color="shieldtify.100"
+              onClick={openProductCateList}
+              >
                 <Image src={cpu} alt="Products"/>
                 <Text>Products</Text>
                 <ChevronDownIcon/>
               </Button>
-              <Button gap="8px" paddingX="5px" variant="none" as={router.Link} to="#" _hover={{cursor: "pointer"}}>
+              <Button 
+              gap="8px" 
+              paddingX="5px" 
+              variant="none" 
+              as={router.Link} 
+              to="#" 
+              _hover={{cursor: "pointer", textDecorationLine:"underline"}} 
+              color="shieldtify.100">
                 <Image src={book} alt="Guide"/>
                 <Text>Guide</Text>
               </Button>
-              <Button gap="8px" paddingX="5px" variant="none" as={router.Link} to="#" _hover={{cursor: "pointer"}}>
+              <Button 
+              gap="8px" 
+              paddingX="5px" 
+              variant="none" 
+              as={router.Link} 
+              to="#" 
+              _hover={{cursor: "pointer", textDecorationLine:"underline"}} 
+              color="shieldtify.100">
                 <Image src={message} alt="Forum"/>
                 <Text>Forum</Text>
               </Button>
             </Flex>
-            <Flex alignItems="center" gap="40px" >
-              <Box w="20px" h="30px" as={router.Link} _hover={{cursor: "pointer"}} >
-                <Image  src={group} alt="Group"/>
-              </Box>
-              <Box w="20px" h="30px" _hover={{cursor: "pointer"}}>
-                <Image  src={cart} alt="Cart"/>
-              </Box>
-              <Box w="20px" h="30px" _hover={{cursor: "pointer"}}>
-                <Image  src={search_line} alt="Search"/>
-              </Box>
+            <Flex alignItems="center" gap="25px">
+              { isLoggedIn  ? 
+                (
+                  <UserMenu/>
+                )
+              : 
+              (
+                <Flex alignItems="center" gap="15px">
+                <Text  
+                fontSize="0.75rem" 
+                fontWeight="600"
+                _hover={
+                  {
+                    cursor: "pointer",
+                    textDecorationLine: "underline"
+                  }
+                }
+                as={router.Link}
+                to="/sign-up"
+                color="shieldtify.100"
+                >
+                  Sign up
+                </Text>
+                <Button 
+                fontSize="0.75rem" 
+                fontWeight="600"
+                borderRadius="20px"
+                colorScheme='blackAlpha'
+                bgColor="#2D2D2D"
+                color="#FFFFFF"
+                paddingX="28.5px"
+                as={router.Link}
+                to="/sign-in"
+                >
+                  Sign in
+                </Button>
+              </Flex>
+                ) 
+            }
+              <Flex w="20px" h="30px" _hover={{cursor: "pointer"}}>
+                <Image  src={cart} alt="Cart" onClick={isLoggedIn ? openCart : denyPermission}/>
+              </Flex>
+              <Flex w="20px" h="30px" _hover={{cursor: "pointer"}}>
+                <Image  src={search_line} alt="Search" onClick={openSearch}/>
+              </Flex>
             </Flex>
+            <SearchModal isOpen={isSearchOpen} onClose={closeSeach}/>
+            <CartModal isOpen={isCartOpen} onClose={closeCart}/>
+            <ProductModal isOpen={isProductCateListOpen} onClose={closeProductCateList}/>
           </Flex>
     );
 }
