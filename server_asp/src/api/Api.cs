@@ -1,5 +1,5 @@
 using shieldtify.api.auth;
-
+using shieldtify.api.product;
 namespace shieldtify.api;
 
 public static class Group
@@ -8,6 +8,8 @@ public static class Group
     {
         group.MapGroup("/auth")
             .GroupAuth();
+        group.MapGroup("/product")
+            .GroupProduct();
         return group;
     }
 }

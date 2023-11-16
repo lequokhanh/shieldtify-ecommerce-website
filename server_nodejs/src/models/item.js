@@ -20,15 +20,15 @@ module.exports = (sequelize, Sequelize) => {
                 allowNull: false,
             },
             specification: {
-                type: Sequelize.STRING,
+                type: Sequelize.TEXT('long'),
                 allowNull: false,
             },
             description: {
-                type: Sequelize.STRING,
+                type: Sequelize.TEXT('long'),
                 allowNull: false,
             },
             price: {
-                type: Sequelize.INTEGER,
+                type: Sequelize.FLOAT,
                 allowNull: false,
             },
             stock_qty: {
