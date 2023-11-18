@@ -21,7 +21,7 @@ const FilterTagContainer = ({ currentFilter }) => {
                     return (
                         <FilterTag
                             key={filter.priceRange}
-                            name={`$${filter.priceRange}`}
+                            name={filter.priceRange}
                             filterBy="priceRange"
                         />
                     );
