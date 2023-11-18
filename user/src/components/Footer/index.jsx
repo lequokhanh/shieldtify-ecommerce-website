@@ -8,6 +8,7 @@ const Footer = () => (
     background="shieldtify.100"
     padding="110px 145px"
     justifyContent="center"
+    w="100vw"
     >
         <Flex gap="97px">
             <Flex gap="20px" flexDir="column">

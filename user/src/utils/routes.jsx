@@ -6,6 +6,7 @@ import ResetPassword from "../containers/ResetPassword";
 import NotFound from "../components/NotFound";
 import ResetPasswordComplete from "../containers/ResetPasswordComplete";
 import Home from "../containers/Home";
+import Product from "../containers/Products";
 
 const routes = [
     {
@@ -43,6 +44,11 @@ const routes = [
                 name: "reset-password-complete"
             }
             ,
+            {
+                path: '/products/',
+                element: <Product/>,
+                name: 'products'
+            },
             {
                 path: '*',
                 element: <NotFound/>,

@@ -64,7 +64,7 @@ const ProductModal = ({isOpen,onClose}) => {
                                     {
                                         productCategories.map((category) => (
                                             <Flex 
-                                            key={category.key}
+                                            key={category.id}
                                             padding="12px 20px"
                                             borderRadius="8px"
                                             border="1px solid black"
@@ -75,7 +75,7 @@ const ProductModal = ({isOpen,onClose}) => {
                                             onClick={handleProductCategoryClick}
                                             _hover={{ 
                                                 cursor: "pointer",
-                                                background: "shieldtify.hover_item",
+                                                background: "shieldtify.grey.300",
                                             
                                             }}
                                             >

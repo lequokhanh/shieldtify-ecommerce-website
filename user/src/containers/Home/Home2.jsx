@@ -34,6 +34,9 @@ const Home2 = () => {
                                     opacity: "1",
                                     cursor: "pointer"
                                 }}
+                                onClick={() => {
+                                    window.location.href=`/products?category=${category.redir}`
+                                }}
                                 >
                                     <Image src={category.image} width="120px"/>
                                     <Text

@@ -33,7 +33,7 @@ const SecondModal = ({isOpen, onClose, items}) => {
                         justifyContent="center"
                         paddingY="10px"
                         _hover={{
-                            background: "shieldtify.hover_item",
+                            background: "shieldtify.grey.300",
                             cursor: "pointer",
                         }}
                         >

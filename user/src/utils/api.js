@@ -39,8 +39,7 @@ export function register({Username,Password,Displayname,token}){
         "displayname": Displayname
     }
     );
-}
-
+} 
 export function checkToken(token,used_to){
     return axios.get(`/auth/check-token?token=${token}&used_to=${used_to}`);  
 }
@@ -75,3 +74,38 @@ export function resetPassword(token,password){
         "password": password
     })
 }
+export function getAllProductByCategoryOrKeyword({category='', priceRange = '', brands = '', page = 1, sortBy = 'popular', keyword}){
+    let url;
+    if (sortBy === null || sortBy === undefined || sortBy === "Most popular") {
+        sortBy = 'popular';
+    }
+    if (sortBy === "Price (Desc)") {
+        sortBy = 'price-desc';
+    }
+    if (sortBy === "Price (Asc)") {
+        sortBy = 'price-asc';
+    }
+    if (sortBy === "Name (A-Z)") {
+        sortBy = 'name-asc';
+    }
+    if (sortBy === "Name (Z-A)") {
+        sortBy = 'name-desc';
+    }
+    if (page === null || page === undefined) {
+        page = 1;
+    }
+    if(keyword !== undefined && keyword !== null){
+        url = `/product/?keyword=${keyword}&page=${page}&sort=${sortBy}`;
+    }else{
+        url = `/product/category/${category}?page=${page}&sort=${sortBy}`;
+    }
+    if (priceRange !== null) {
+        url += `&priceRange=${priceRange}`;
+    }
+    if (brands !== null && brands !== undefined && brands !== '') {
+        var decodedString = decodeURIComponent(brands);
+        url += `&brands=${decodedString}`;
+    }   
+    return axios.get(url);
+}
+
