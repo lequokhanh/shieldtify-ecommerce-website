@@ -11,9 +11,9 @@ const BrandsContent = ({Brands,selectedBrands,handleCheckBoxChange,submitBrandsS
     return (
         <>
             <PopoverArrow/>
-            <Flex flexDir="column" gap="15px" padding="35px 30px"> 
+            <Flex flexDir="column" gap="15px" padding="25px 20px"> 
                 <FormControl>
-                    <Flex justifyContent="center" flexDir="column" gap="10px">
+                    <Flex justifyContent="center" flexDir="column" gap="5px" maxH="285px" overflowY="auto" minW="145px">
                         <CheckboxGroup
                         value={selectedBrands}
                         onChange={handleCheckBoxChange}
@@ -33,9 +33,13 @@ const BrandsContent = ({Brands,selectedBrands,handleCheckBoxChange,submitBrandsS
                             ))
                         }
                         </CheckboxGroup>
+                    </Flex>
+                    <Flex justifyContent="center">
                         <Button
+                        mt="10px"
                         bgColor="#2D2D2D"
                         borderRadius="25px"
+                        paddingX="50px"
                         colorScheme="blackAlpha"
                         onClick={() => {selectedBrands ? submitBrandsSearch(selectedBrands) : submitBrandsSearch('')}}
                         >

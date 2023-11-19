@@ -37,19 +37,29 @@ const Product = () => {
     const [isBrandsRotated, setIsBrandsRotated] = useState(false);
     const [sortedBy, setIsSortedBy] = useState("Most Popular");
     const [products, setProducts] = useState([]); 
+    const [categoryDescription, setCategoryDescription] = useState("");
     const [maxPrice, setMaxPrice] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
     const [currentFilter, setCurrentFilter] = useState([]);
     const [currentBrands, setCurrentBrands] = useState([]);
     const [isSortOpen, setIsSortOpen] = useState(false);
     const [selectedBrands, setSelectedBrands] = useState([]);  
+    const [sliderValue, setSliderValue] = useState([10,10]);
+
     useEffect(() => {
         async function fetchData() {
+            if(category === ""){
+                window.location.href = "/404";
+            }
             await getAllProductByCategoryOrKeyword({category,page,sortBy,priceRange,brands,keyword}).then((res) => {
+                setCategoryDescription(res.data.data.description);
                 setProducts(res.data.data.items);
                 if(priceRange!==null){
                     let newPriceRange = priceRange.split('-');
                     setSliderValue([newPriceRange[0],newPriceRange[1]]);    
+                }
+                else{
+                    setSliderValue([10,res.data.data.maxPrice]);
                 }
                 setTotalPages(Math.ceil(res.data.data.totalItem / 16));
                 setCurrentBrands(res.data.data.brands);
@@ -72,11 +82,6 @@ const Product = () => {
                         });
                     })
                 }
-                // if(sortBy !== "Most Popular" && sortBy !== null) {
-                //     filter.push({
-                //         sortBy: sortBy,
-                //     });
-                // }
                 setCurrentFilter(filter);
             })
         }
@@ -85,7 +90,6 @@ const Product = () => {
         }
         fetchData();
     },[]);
-    const [sliderValue, setSliderValue] = useState([0,maxPrice]);
     const handleSorted = (category) => {
         setIsSortedBy(category);
     }
@@ -111,15 +115,20 @@ const Product = () => {
     }
     const submitBrandsSearch = (brands) => {
         const brandsString = brands.length > 1 ? brands.join(',') : brands[0];
-        const { search, pathname } = window.location;
+        const { search,pathname } = window.location;
         const queryParams = new URLSearchParams(search);
-        queryParams.set('brands', brandsString);
-        queryParams.set('page','1');
+        if(!brandsString){
+            queryParams.delete('brands');
+            console.log('a')
+        }else{
+            queryParams.set('brands', brandsString);
+        }
+        queryParams.set('page','1');    
         window.location.href = `${pathname}?${queryParams}`;
     }
     return (
         <Flex w="100%" flexDir="column" gap="40px">
-            <Banner/>
+            <Banner category={category} categoryDescription={categoryDescription}/>
             <FilterTagContainer currentFilter={currentFilter}/>
             <Box>
                 <Flex fontFamily="Inter, sans-serif" alignItems="center" >

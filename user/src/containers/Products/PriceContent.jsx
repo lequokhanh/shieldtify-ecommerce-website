@@ -31,9 +31,10 @@ const PriceContent = ({values, handleChange, maxPrice}) => {
                     <Flex gap="20px">
                         <PriceTag price={values[0]}/>
                         <RangeSlider
-                        min={0}
+                        min={10}
                         max={maxPrice}
-                        values={values}
+                        defaultValue={values}
+                        value={values}
                         onChange={handleChange}
                         step={20}
                         w="300px"

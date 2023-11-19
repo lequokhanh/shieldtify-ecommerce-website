@@ -35,7 +35,7 @@ const accessoriesCategories = [
     },
     {
         id:4,
-        name: "monitor"
+        name: "Monitor"
     },
     {
         id:5,

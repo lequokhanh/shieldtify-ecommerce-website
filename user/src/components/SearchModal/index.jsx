@@ -11,7 +11,6 @@ import {
     Box,
     Text,
     Button,
-    HStack,
     VStack
 } from '@chakra-ui/react';
 import core_i7 from '../../assets/core_i7.svg'
@@ -24,9 +23,13 @@ const SearchModal = ({isOpen, onClose}) => {
     const [search, setSearch] = useState('');
     const [filteredProducts, setFilteredProducts] = useState([]);
     const handleSearch = async (search) => {
-        await getAllProductByCategoryOrKeyword({keyword:search}).then((res) => {
-            setFilteredProducts(res.data.data.items);
-        });
+        if(search!==""){
+            await getAllProductByCategoryOrKeyword({keyword:search}).then((res) => {
+                setFilteredProducts(res.data.data.items);
+            });
+        }else{
+            setFilteredProducts([]);
+        }
     };
     const handleSearchChange = (e) => {
         setSearch(e.target.value);
@@ -49,8 +52,9 @@ const SearchModal = ({isOpen, onClose}) => {
         top="3%"
         borderRadius="15px"
         fontFamily="Inter, sans-serif"
-        w="500px"
-        h="700px"
+        
+        // w="500px"
+        // h="700px"
         >
             <ModalCloseButton/>
                 <Flex flexDir='column'>
@@ -87,17 +91,20 @@ const SearchModal = ({isOpen, onClose}) => {
                                 gap="10px"
                                 justifyContent="space-between"
                                 paddingX="70px"
-                                h="580px"
                             >
-                                <Box>
+                                <Box
+                                overflowX="hidden"
+                                >
                                     {filteredProducts.slice(0, 5).map((product) => (
-                                        <Flex key={product.uid} gap="30px">
+                                        <Flex key={product.uid} gap="40px">
                                             <Image src={core_i7} />
                                             <VStack alignItems="flex-start">
                                                 <Text
                                                     fontSize="1.125rem"
                                                     fontWeight="600"
                                                     color="shieldtify.100"
+                                                    textOverflow="ellipsis"
+                                                    whiteSpace="nowrap"
                                                 >
                                                     {product.name}
                                                 </Text>
@@ -112,7 +119,7 @@ const SearchModal = ({isOpen, onClose}) => {
                                         </Flex>
                                     ))}
                                 </Box>
-                                <Flex justifyContent="center" fontFamily="Roboto, sans-serif">
+                                <Flex justifyContent="center" fontFamily="Roboto, sans-serif" mt="20px">
                                     <Button
                                         colorScheme="blackAlpha"
                                         borderRadius="20px"

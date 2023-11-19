@@ -19,6 +19,7 @@ import { getProduct } from '../../utils/api.js'
 import MarkdownRenderer from './markdownRenderer'
 import SpecificationModal from '../../components/SpecificationModal'
 import shieldtify_logo from '../../assets/Product/shieldtify-logo.svg'
+import no_img from "../../assets/no_img.svg"
 
 const PreviewSpecs = (product) => {
     const jsonProductSpecs = JSON.parse(product.specification)
@@ -99,7 +100,7 @@ const ProductDetails = () => {
                                 src={
                                     product.imgs.length >= 1
                                         ? selectedImg
-                                        : shieldtify_logo
+                                        : no_img
                                 }
                             />
                             <Grid templateColumns="repeat(5, 1fr)" gap={'25px'}>
