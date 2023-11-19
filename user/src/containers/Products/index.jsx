@@ -128,7 +128,7 @@ const Product = () => {
     }
     return (
         <Flex w="100%" flexDir="column" gap="40px">
-            <Banner category={category} categoryDescription={categoryDescription}/>
+            <Banner category={category} categoryDescription={categoryDescription} keyword={keyword}/>
             <FilterTagContainer currentFilter={currentFilter}/>
             <Box>
                 <Flex fontFamily="Inter, sans-serif" alignItems="center" >

@@ -2,12 +2,13 @@ import { Box, Image, Flex, Heading, Text } from "@chakra-ui/react"
 import product_cover from "../../assets/Products/product_cover.png";
 
 
-const Banner = ({category,categoryDescription}) => {
+const Banner = ({category,categoryDescription,keyword}) => {
+    console.log(keyword);
     return (
     <Box position="relative">                
         <Image src={product_cover} alt="product-cover" w="100%"/>
         {
-            categoryDescription !== "" ?
+            (categoryDescription !== "" && !keyword) ?
             (
             <Box 
             position="absolute"
