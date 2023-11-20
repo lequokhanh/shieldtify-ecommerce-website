@@ -12,6 +12,7 @@ const PriceTag = ({price}) => {
         bgColor="shieldtify.grey.300"
         borderRadius="10px"
         padding="10px 13px"
+        minW="117px"
         alignSelf="flex-start"
         gap="30px"
         >
