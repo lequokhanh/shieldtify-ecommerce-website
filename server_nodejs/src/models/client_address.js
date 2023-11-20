@@ -28,6 +28,11 @@ module.exports = (sequelize, Sequelize) => {
                 type: Sequelize.STRING,
                 allowNull: false,
             },
+            is_default: {
+                type: Sequelize.BOOLEAN,
+                allowNull: false,
+                defaultValue: false,
+            },
         },
         {
             sequelize,
