@@ -2,9 +2,7 @@ import { Flex, Text, Button, Heading, Box, VStack, HStack } from '@chakra-ui/rea
 import pc1 from '../../assets/pc/pc12.png'
 import pc2 from '../../assets/pc/pc2.png'
 import Home1 from './Home1'
-import Carousel from "../../components/Carousel";
 import Home2 from './Home2'
-import Footer from '../../components/Footer';
 
 
 const Home = () => {

@@ -17,7 +17,7 @@ public partial class Item
 
     public string Description { get; set; } = null!;
 
-    public int Price { get; set; }
+    public float Price { get; set; }
 
     public int StockQty { get; set; }
 

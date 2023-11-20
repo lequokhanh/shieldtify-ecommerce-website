@@ -2,6 +2,7 @@ import {accessoriesCategories, productCategories} from "../../Categories";
 import category_next from "../../assets/category_next.svg"
 import category_next_hover from "../../assets/category_next_hover.svg"
 import SecondModal from "./secondModal";
+import { getAllProductByCategoryOrKeyword } from "../../utils/api";
 import { 
     Modal,
     ModalOverlay,
@@ -13,7 +14,6 @@ import {
     Grid,
     Text,
     Box,
-    ModalHeader,
 } from '@chakra-ui/react';
 import { useState } from 'react';
 
@@ -21,7 +21,9 @@ import { useState } from 'react';
 const ProductModal = ({isOpen,onClose}) => {
     const [modalContentStyle, setModalContentStyle] = useState({borderRadius: "15px"});
     const [isSecondModalOpen, setIsSecondModalOpen] = useState(false);
-    const handleProductCategoryClick = () => {
+    const [selectedProducts, setSelectedProducts] = useState([]);
+    const [currentCategoryRedir, setCurrentCategoryRedir] = useState("");
+    const handleProductCategoryClick = async (category) => {
         setModalContentStyle(prevStyle => {
             if (prevStyle.borderRadius === "15px") {
                 return { borderRadius: "15px 0px 0px 15px" };
@@ -29,7 +31,11 @@ const ProductModal = ({isOpen,onClose}) => {
                 return { borderRadius: "15px" };
             }
         });
-        setIsSecondModalOpen(!isSecondModalOpen);
+        await getAllProductByCategoryOrKeyword({category}).then((res) => {
+            setSelectedProducts(res.data.data.items);
+            setIsSecondModalOpen(!isSecondModalOpen);
+            setCurrentCategoryRedir(category);
+        });
     }
     return(
     <Modal
@@ -46,7 +52,7 @@ const ProductModal = ({isOpen,onClose}) => {
             top="1%"
             left="1%"
             maxW="450px"
-            maxH="800px"
+            h="800px"
             style={modalContentStyle}
             >
                 <ModalCloseButton variant="custom" size="sm" right="0px" left="10px" top="10px"/>
@@ -64,7 +70,7 @@ const ProductModal = ({isOpen,onClose}) => {
                                     {
                                         productCategories.map((category) => (
                                             <Flex 
-                                            key={category.key}
+                                            key={category.id}
                                             padding="12px 20px"
                                             borderRadius="8px"
                                             border="1px solid black"
@@ -72,10 +78,10 @@ const ProductModal = ({isOpen,onClose}) => {
                                             justifyContent="center"
                                             flexDir="column"
                                             textAlign="center"
-                                            onClick={handleProductCategoryClick}
+                                            onClick={() => handleProductCategoryClick(category.redir)}
                                             _hover={{ 
                                                 cursor: "pointer",
-                                                background: "shieldtify.hover_item",
+                                                background: "shieldtify.grey.300",
                                             
                                             }}
                                             >
@@ -131,7 +137,7 @@ const ProductModal = ({isOpen,onClose}) => {
                         
                     {isSecondModalOpen &&
                     <Box>
-                        <SecondModal />
+                        <SecondModal selectedProducts={selectedProducts} currentCategoryRedir={currentCategoryRedir}/>
                     </Box> 
                     }
                 </Flex>

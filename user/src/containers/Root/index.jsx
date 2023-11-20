@@ -15,9 +15,9 @@ const Root = () => {
     }, [location, navigate]);
 
     return (
-        <VStack >
-            <NavBar />
-            <Outlet />
+        <VStack overflow="hidden">
+            <NavBar/>
+            <Outlet/>
             <Footer/>
         </VStack>
     );

@@ -120,9 +120,6 @@ public partial class ShieldtifyContext : DbContext
             entity.Property(e => e.DeletedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("deleted_at");
-            entity.Property(e => e.Image)
-                .HasMaxLength(255)
-                .HasColumnName("image");
             entity.Property(e => e.Name)
                 .HasMaxLength(255)
                 .HasColumnName("name");

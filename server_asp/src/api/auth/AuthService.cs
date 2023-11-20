@@ -236,9 +236,10 @@ namespace shieldtify.api.auth
                     ClockSkew = TimeSpan.Zero,
                 }, out SecurityToken validatedToken);
                 var jwtToken = (JwtSecurityToken)validatedToken;
+                var tokenValue = jwtToken.Claims.First(x => x.Type == "token").Value;
                 var userId = jwtToken.Claims.First(x => x.Type == "user_id").Value;
                 using var dbContext = new ShieldtifyContext();
-                var authToken = dbContext.Authenticates.Where(i => i.Token == token).FirstOrDefault();
+                var authToken = dbContext.Authenticates.Where(i => i.Token == tokenValue).FirstOrDefault();
                 if (authToken == null)
                     return new APIRes(400, "Token is invalid");
                 if (authToken.IsUsed)
