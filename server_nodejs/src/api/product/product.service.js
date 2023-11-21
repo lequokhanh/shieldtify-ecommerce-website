@@ -110,7 +110,8 @@ module.exports = {
                         type: db.Sequelize.QueryTypes.SELECT,
                     },
                 );
-                if (!categoryObj) throw new AppError(404, 'Category not found');
+                if (!categoryObj.length)
+                    throw new AppError(404, 'Category not found');
                 category = categoryObj[0].uid;
                 description = categoryObj[0].description;
             }
@@ -185,6 +186,7 @@ module.exports = {
                 },
             };
         } catch (error) {
+            console.log(error);
             throw new AppError(error.statusCode, error.message);
         }
     },
