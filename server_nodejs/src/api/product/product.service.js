@@ -206,9 +206,9 @@ module.exports = {
                     },
                 ],
             });
+            if (!item) throw new AppError(404, 'Product not found');
             item.dataValues.imgs = item.dataValues.item_img;
             delete item.dataValues.item_img;
-            if (!item) throw new AppError(404, 'Product not found');
             return {
                 statusCode: 200,
                 message: 'Get product detail successfully',
