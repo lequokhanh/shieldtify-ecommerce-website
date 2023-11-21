@@ -12,14 +12,15 @@ import {
     Text,
     UnorderedList,
     useDisclosure,
+    SimpleGrid,
 } from '@chakra-ui/react'
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { getProduct } from '../../utils/api.js'
 import MarkdownRenderer from './markdownRenderer'
 import SpecificationModal from '../../components/SpecificationModal'
-import shieldtify_logo from '../../assets/Product/shieldtify-logo.svg'
-import no_img from "../../assets/no_img.svg"
+import './style.css'
+import no_img from '../../assets/no_img.svg'
 
 const PreviewSpecs = (product) => {
     const jsonProductSpecs = JSON.parse(product.specification)
@@ -51,27 +52,29 @@ const PreviewSpecs = (product) => {
 const ProductDetails = () => {
     const [markdown, setMarkdown] = useState('')
     const [product, setProduct] = useState(null)
-    const [selectedImg, setSelectedImg] = useState(shieldtify_logo)
+    const [selectedImgIndex, setSelectedImgIndex] = useState(0)
+    const [transition, setTransition] = useState('')
     const { isOpen, onOpen, onClose } = useDisclosure()
     const { id } = useParams()
+
+    const transit = (direction) => {
+        setTransition('transition-' + direction)
+        setTimeout(() => {
+            setTransition('')
+        }, 500)
+    }
 
     // fetch product data from api
     useEffect(() => {
         async function fetchData() {
-            await getProduct(id)
-                .then((res) => {
-                    setProduct(res.data.data)
-                    console.log(product)
-                    setMarkdown(
-                        res.data.data.description
-                            ? res.data.data.description
-                            : 'No description available'
-                    )
-                })
-                .catch((err) => {
-                    console.log(err)
-                })
-            console.log(product)
+            await getProduct(id).then((res) => {
+                setProduct(res.data.data)
+                setMarkdown(
+                    res.data.data.description
+                        ? res.data.data.description
+                        : 'No description available'
+                )
+            })
         }
         fetchData()
     }, [])
@@ -89,35 +92,55 @@ const ProductDetails = () => {
                     gap={'10px'}
                     alignContent={'center'}
                 >
-                    <Flex gap={'80px'} justifyContent={'center'}>
+                    <Flex gap={'80px'}>
                         <Flex
                             flexDir={'column'}
                             fontFamily={'Inter, sans-serif'}
                             gap={'20px'}
                             justifyContent={'center'}
+                            alignItems={'center'}
                         >
                             <Image
+                                boxSize={'500px'}
+                                ObjectFit={'contain'}
+                                className={transition}
                                 src={
                                     product.imgs.length >= 1
-                                        ? selectedImg
+                                        ? product.imgs[selectedImgIndex].link
                                         : no_img
                                 }
                             />
                             <Grid templateColumns="repeat(5, 1fr)" gap={'25px'}>
                                 {product.imgs.length >= 1 &&
-                                    product.imgs.map((item, index) => (
+                                    product.imgs.map((_item, index) => (
                                         <Box
+                                            display={'flex'}
                                             key={index}
                                             w={'100px'}
                                             h={'100px'}
-                                            border={'2px solid #919EAB'}
+                                            border={`2px solid ${
+                                                index === selectedImgIndex
+                                                    ? '#3C619E'
+                                                    : '#919EAB'
+                                            }`}
                                             borderRadius={'10px'}
                                             bgSize={'contain'}
+                                            justifyContent={'center'}
                                             onClick={() => {
-                                                setSelectedImg(item.img)
+                                                if (index > selectedImgIndex)
+                                                    transit('right')
+                                                else if (
+                                                    index < selectedImgIndex
+                                                )
+                                                    transit('left')
+
+                                                setSelectedImgIndex(index)
                                             }}
                                         >
-                                            <Image src={item.img} p={'12px'} />
+                                            <Image
+                                                src={product.imgs[index].link}
+                                                p={'12px'}
+                                            />
                                         </Box>
                                     ))}
                             </Grid>
@@ -132,9 +155,9 @@ const ProductDetails = () => {
                         </Box>
                         <Flex
                             flexDir={'column'}
-                            w={'max-content'}
                             mt={'50px'}
                             gap={'10px'}
+                            width="900px"
                         >
                             <Box
                                 py={'10px'}
@@ -162,77 +185,95 @@ const ProductDetails = () => {
                             >
                                 {product.price} $
                             </Box>
-                            <Box mt={'40px'}>
-                                <Text
-                                    as="u"
-                                    fontSize="1.5rem"
-                                    fontWeight={'700'}
-                                    color={'#2D2D2D'}
-                                >
-                                    Specification
-                                </Text>
-                                <Flex flexDir={'column'} ml={'40px'} mt={'5px'}>
-                                    <UnorderedList>
-                                        {PreviewSpecs(product).map(
-                                            (item, index) => {
-                                                return (
-                                                    <ListItem key={index}>
-                                                        <Text
-                                                            fontSize={'1.25rem'}
-                                                            fontWeight={'600'}
-                                                            color={'#2D2D2D'}
-                                                        >
-                                                            {Object.keys(item)}:{' '}
-                                                            <span className="text-zinc-800 text-xl font-normal font-['Inter']'">
-                                                                {Object.values(
+                            <Flex flexDir="column">
+                                <Box mt={'40px'}>
+                                    <Text
+                                        as="u"
+                                        fontSize="1.5rem"
+                                        fontWeight={'700'}
+                                        color={'#2D2D2D'}
+                                    >
+                                        Specification
+                                    </Text>
+                                    <Flex
+                                        flexDir={'column'}
+                                        ml={'40px'}
+                                        mt={'5px'}
+                                    >
+                                        <UnorderedList>
+                                            {PreviewSpecs(product).map(
+                                                (item, index) => {
+                                                    return (
+                                                        <ListItem key={index}>
+                                                            <Text
+                                                                fontSize={
+                                                                    '1.25rem'
+                                                                }
+                                                                fontWeight={
+                                                                    '600'
+                                                                }
+                                                                color={
+                                                                    '#2D2D2D'
+                                                                }
+                                                            >
+                                                                {Object.keys(
                                                                     item
                                                                 )}
-                                                            </span>
-                                                        </Text>
-                                                    </ListItem>
-                                                )
-                                            }
-                                        )}
-                                    </UnorderedList>
-                                </Flex>
-                            </Box>
-                            <Flex flexDir={'row'} gap={'20px'} mt={'50px'}>
-                                <Button
-                                    colorScheme="blackAlpha"
-                                    bgColor="#2D2D2D"
-                                    color="#FFFFFF"
-                                    type="submit"
-                                    borderRadius="25px"
-                                    fontWeight={'500'}
-                                    fontSize="1.25rem"
-                                    fontFamily={'Roboto, sans-serif'}
-                                    width={'400px'}
-                                    height={'50px'}
-                                    onClick={onOpen}
+                                                                :{' '}
+                                                                <span className="text-zinc-800 text-xl font-normal font-['Inter']'">
+                                                                    {Object.values(
+                                                                        item
+                                                                    )}
+                                                                </span>
+                                                            </Text>
+                                                        </ListItem>
+                                                    )
+                                                }
+                                            )}
+                                        </UnorderedList>
+                                    </Flex>
+                                </Box>
+                                <SimpleGrid
+                                    flexDir={'row'}
+                                    gap={'20px'}
+                                    mt={'50px'}
+                                    columns={2}
                                 >
-                                    See detailed specifications
-                                </Button>
-                                <SpecificationModal
-                                    specification={product.specification}
-                                    isOpen={isOpen}
-                                    onClose={onClose}
-                                />
+                                    <Button
+                                        colorScheme="blackAlpha"
+                                        bgColor="#2D2D2D"
+                                        color="#FFFFFF"
+                                        type="submit"
+                                        borderRadius="25px"
+                                        fontWeight={'500'}
+                                        fontSize="1.25rem"
+                                        fontFamily={'Roboto, sans-serif'}
+                                        height={'50px'}
+                                        onClick={onOpen}
+                                    >
+                                        See detailed specifications
+                                    </Button>
+                                    <SpecificationModal
+                                        specification={product.specification}
+                                        isOpen={isOpen}
+                                        onClose={onClose}
+                                    />
 
-                                <Button
-                                    colorScheme="blackAlpha"
-                                    bgColor="#3C619E"
-                                    color="#FFFFFF"
-                                    type="submit"
-                                    borderRadius="25px"
-                                    fontWeight={'500'}
-                                    fontSize="1.25rem"
-                                    fontFamily={'Roboto, sans-serif'}
-                                    width={'400px'}
-                                    height={'50px'}
-                                    gap={'5px'}
-                                >
-                                    <span>+</span>Add to cart
-                                </Button>
+                                    <Button
+                                        colorScheme="blackAlpha"
+                                        bgColor="#3C619E"
+                                        color="#FFFFFF"
+                                        type="submit"
+                                        borderRadius="25px"
+                                        fontWeight={'500'}
+                                        fontSize="1.25rem"
+                                        fontFamily={'Roboto, sans-serif'}
+                                        height={'50px'}
+                                        gap={'5px'}
+                                    >
+                                        <span>+</span>Add to cart
+                                    </Button>
+                                </SimpleGrid>
                             </Flex>
                         </Flex>
                     </Flex>

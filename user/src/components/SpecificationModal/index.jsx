@@ -18,7 +18,12 @@ const SpecificationModal = ({ isOpen, onClose, specification }) => {
     const specsJSON = JSON.parse(specification)
 
     return (
-        <Modal blockScrollOnMount={'false'} isOpen={isOpen} onClose={onClose}>
+        <Modal
+            blockScrollOnMount={'false'}
+            isOpen={isOpen}
+            onClose={onClose}
+            size={'xl'}
+        >
             <ModalOverlay />
             <ModalContent borderRadius={'10px'}>
                 <ModalHeader
