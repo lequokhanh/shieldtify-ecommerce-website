@@ -69,6 +69,9 @@ const Product = () => {
                     itemsArray = brands.split(',');
                     setSelectedBrands(itemsArray);
                 }
+                if(currentPage > Math.ceil(res.data.data.totalItem / 16)){
+                    window.location.href = "/404";
+                }
                 let filter =  [];
                 if(priceRange !== null) {
                 filter.push({

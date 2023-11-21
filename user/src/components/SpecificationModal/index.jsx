@@ -18,7 +18,12 @@ const SpecificationModal = ({ isOpen, onClose, specification }) => {
     const specsJSON = JSON.parse(specification)
 
     return (
-        <Modal blockScrollOnMount={'false'} isOpen={isOpen} onClose={onClose}>
+        <Modal
+            blockScrollOnMount={'false'}
+            isOpen={isOpen}
+            onClose={onClose}
+            size={'xl'}
+        >
             <ModalOverlay />
             <ModalContent borderRadius={'10px'}>
                 <ModalHeader
@@ -52,39 +57,51 @@ const SpecificationModal = ({ isOpen, onClose, specification }) => {
                                         {specsKey}
                                     </Heading>
 
-                                    <UnorderedList>
-                                        {Object.keys(spec).map(
-                                            (specDetailKey) => {
-                                                const specDetail =
-                                                    spec[specDetailKey]
-                                                return (
-                                                    <ListItem
-                                                        key={specDetailKey}
-                                                        ml="10px"
-                                                    >
-                                                        <Text
-                                                            fontSize={'20px'}
-                                                            fontWeight={'600'}
+                                    {typeof spec === 'string' ? (
+                                        <Text fontSize={'20px'} ml="10px">
+                                            {spec}
+                                        </Text>
+                                    ) : (
+                                        <UnorderedList>
+                                            {Object.keys(spec).map(
+                                                (specDetailKey) => {
+                                                    const specDetail =
+                                                        spec[specDetailKey]
+                                                    return (
+                                                        <ListItem
+                                                            key={specDetailKey}
+                                                            ml="10px"
                                                         >
-                                                            {specDetailKey
-                                                                .charAt(0)
-                                                                .toUpperCase() +
-                                                                specDetailKey
-                                                                    .slice(1)
-                                                                    .replace(
-                                                                        '_',
-                                                                        ' '
-                                                                    )}
-                                                            :{' '}
-                                                            <span className="font-normal">
-                                                                {specDetail}
-                                                            </span>
-                                                        </Text>
-                                                    </ListItem>
-                                                )
-                                            }
-                                        )}
-                                    </UnorderedList>
+                                                            <Text
+                                                                fontSize={
+                                                                    '20px'
+                                                                }
+                                                                fontWeight={
+                                                                    '600'
+                                                                }
+                                                            >
+                                                                {specDetailKey
+                                                                    .charAt(0)
+                                                                    .toUpperCase() +
+                                                                    specDetailKey
+                                                                        .slice(
+                                                                            1
+                                                                        )
+                                                                        .replace(
+                                                                            '_',
+                                                                            ' '
+                                                                        )}
+                                                                :{' '}
+                                                                <span className="font-normal">
+                                                                    {specDetail}
+                                                                </span>
+                                                            </Text>
+                                                        </ListItem>
+                                                    )
+                                                }
+                                            )}
+                                        </UnorderedList>
+                                    )}
                                 </Box>
                             )
                         })}

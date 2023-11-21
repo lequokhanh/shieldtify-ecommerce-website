@@ -16,7 +16,6 @@ import CartModal from "../CartModal";
 import ProductModal from "../ProductModal";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@chakra-ui/react";
-import { getUser } from '../../utils/api';
 
 
 const NavBar = () => {
@@ -89,8 +88,6 @@ const NavBar = () => {
               gap="8px" 
               paddingX="5px" 
               variant="none" 
-              as={router.Link} 
-              to="#" 
               _hover={{cursor: "pointer", textDecorationLine:"underline"}} 
               color="shieldtify.100"
               onClick={openProductCateList}
