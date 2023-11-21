@@ -76,7 +76,7 @@ const ResetPasswordComplete = () => {
             } catch (error) {
             if (isMounted) {
                 if (error.response && error.response.data && (error.response.data.statusCode === 400 || error.response.data.statusCode  === 500)) {
-                const popupTime = new Promise((resolve, _reject) => {
+                const popupTime = new Promise((resolve) => {
                     setTimeout(() => resolve(200), 3000)
                 })
                 toast.promise(popupTime, {

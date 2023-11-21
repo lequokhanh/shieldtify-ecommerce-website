@@ -1,4 +1,4 @@
-import { Box, Flex, Image, Text } from "@chakra-ui/react"
+import { Flex, Image, Text } from "@chakra-ui/react"
 import shieldtify_logo from "../../assets/shieldtify-logo.svg"
 import email from "../../assets/Footer/email.svg"
 import position from "../../assets/Footer/position.svg"

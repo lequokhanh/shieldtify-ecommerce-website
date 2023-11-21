@@ -11,9 +11,9 @@ const BrandsContent = ({Brands,selectedBrands,handleCheckBoxChange,submitBrandsS
     return (
         <>
             <PopoverArrow/>
-            <Flex flexDir="column" gap="15px" padding="25px 20px"> 
+            <Flex flexDir="column" gap="15px" padding="25px 20px" > 
                 <FormControl>
-                    <Flex justifyContent="center" flexDir="column" gap="5px" maxH="285px" overflowY="auto" minW="145px">
+                    <Flex  flexDir="column" gap="5px"  minW="145px" maxH="300px" overflowY="auto">
                         <CheckboxGroup
                         value={selectedBrands}
                         onChange={handleCheckBoxChange}
