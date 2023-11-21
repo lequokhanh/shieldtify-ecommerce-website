@@ -101,8 +101,8 @@ const ProductDetails = () => {
                             alignItems={'center'}
                         >
                             <Image
-                                boxSize={'500px'}
-                                ObjectFit={'contain'}
+                                boxSize="500px"
+                                objectFit="contain"
                                 className={transition}
                                 src={
                                     product.imgs.length >= 1
@@ -138,6 +138,7 @@ const ProductDetails = () => {
                                             }}
                                         >
                                             <Image
+                                                objectFit="contain"
                                                 src={product.imgs[index].link}
                                                 p={'12px'}
                                             />
