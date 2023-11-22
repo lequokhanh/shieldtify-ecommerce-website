@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using shieldtify.common;
 using shieldtify.models;
+using shieldtify.middleware;
 namespace shieldtify.api.auth
 {
     public static class AuthController
@@ -102,43 +103,41 @@ namespace shieldtify.api.auth
         {
             try
             {
-                if (context.Items["User"] == null)
+                return Middleware.MiddlewareAuthenticate(() =>
                 {
-                    context.Response.StatusCode = 400;
-                    return new APIRes(400, "Token is invalid");
-                }
-                var role = context.Items["Role"] as string;
-                if (role == "client")
-                {
-                    var user = context.Items["User"] as ClientAccount;
-                    return new APIRes(200, "Get user successfully", new
+                    var role = context.Items["Role"] as string;
+                    if (role == "client")
                     {
-                        uid = user?.Uid,
-                        username = user?.Username,
-                        display_name = user?.DisplayName,
-                        email = user?.Email,
-                        role,
-                        changed_password_at = user?.ChangedPasswordAt,
-                        createdAt = user?.CreatedAt,
-                        updatedAt = user?.UpdatedAt,
-                        deletedAt = user?.DeletedAt,
-                    });
-                }
-                else
-                {
-                    var user = context.Items["User"] as Account;
-                    return new APIRes(200, "Get user successfully", new
+                        var user = context.Items["User"] as ClientAccount;
+                        return new APIRes(200, "Get user successfully", new
+                        {
+                            uid = user?.Uid,
+                            username = user?.Username,
+                            display_name = user?.DisplayName,
+                            email = user?.Email,
+                            role,
+                            changed_password_at = user?.ChangedPasswordAt,
+                            createdAt = user?.CreatedAt,
+                            updatedAt = user?.UpdatedAt,
+                            deletedAt = user?.DeletedAt,
+                        });
+                    }
+                    else
                     {
-                        uid = user?.Uid,
-                        username = user?.Username,
-                        display_name = user?.DisplayName,
-                        role,
-                        changed_password_at = user?.ChangedPasswordAt,
-                        createdAt = user?.CreatedAt,
-                        updatedAt = user?.UpdatedAt,
-                        deletedAt = user?.DeletedAt,
-                    });
-                }
+                        var user = context.Items["User"] as Account;
+                        return new APIRes(200, "Get user successfully", new
+                        {
+                            uid = user?.Uid,
+                            username = user?.Username,
+                            display_name = user?.DisplayName,
+                            role,
+                            changed_password_at = user?.ChangedPasswordAt,
+                            createdAt = user?.CreatedAt,
+                            updatedAt = user?.UpdatedAt,
+                            deletedAt = user?.DeletedAt,
+                        });
+                    }
+                }, context);
             }
             catch (Exception)
             {

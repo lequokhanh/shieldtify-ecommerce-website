@@ -41,7 +41,7 @@ exports.verifyToken = async (req, res, next) => {
         if (user.changed_password_at / 1000 > decodeToken.iat) {
             throw new AppError(403, 'This user changed password recently');
         }
-        req.user = user;
+        req.user = user.dataValues;
         next();
     } catch (error) {
         next(error);

@@ -1,5 +1,6 @@
 using shieldtify.api.auth;
 using shieldtify.api.product;
+using shieldtify.api.cart;
 namespace shieldtify.api;
 
 public static class Group
@@ -10,6 +11,8 @@ public static class Group
             .GroupAuth();
         group.MapGroup("/product")
             .GroupProduct();
+        group.MapGroup("/cart")
+            .GroupCart();
         return group;
     }
 }
