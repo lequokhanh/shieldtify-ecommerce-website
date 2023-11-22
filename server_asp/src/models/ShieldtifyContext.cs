@@ -215,6 +215,7 @@ public partial class ShieldtifyContext : DbContext
             entity.Property(e => e.DeletedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("deleted_at");
+            entity.Property(e => e.IsDefault).HasColumnName("is_default");
             entity.Property(e => e.PhoneNumber)
                 .HasMaxLength(255)
                 .HasColumnName("phone_number");
@@ -281,16 +282,12 @@ public partial class ShieldtifyContext : DbContext
             entity.Property(e => e.DeletedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("deleted_at");
-            entity.Property(e => e.Description)
-                .HasMaxLength(255)
-                .HasColumnName("description");
+            entity.Property(e => e.Description).HasColumnName("description");
             entity.Property(e => e.Name)
                 .HasMaxLength(255)
                 .HasColumnName("name");
             entity.Property(e => e.Price).HasColumnName("price");
-            entity.Property(e => e.Specification)
-                .HasMaxLength(255)
-                .HasColumnName("specification");
+            entity.Property(e => e.Specification).HasColumnName("specification");
             entity.Property(e => e.StockQty).HasColumnName("stock_qty");
             entity.Property(e => e.UpdatedAt)
                 .HasColumnType("datetime")
@@ -416,10 +413,12 @@ public partial class ShieldtifyContext : DbContext
             entity.Property(e => e.OrderStatus)
                 .HasMaxLength(255)
                 .HasColumnName("order_status");
-            entity.Property(e => e.OrderTotal).HasColumnName("order_total");
             entity.Property(e => e.PaymentMethod)
                 .HasMaxLength(255)
                 .HasColumnName("payment_method");
+            entity.Property(e => e.PromotionCode)
+                .HasMaxLength(255)
+                .HasColumnName("promotion_code");
             entity.Property(e => e.ReceiveMethod)
                 .HasMaxLength(255)
                 .HasColumnName("receive_method");
@@ -520,14 +519,12 @@ public partial class ShieldtifyContext : DbContext
 
         modelBuilder.Entity<Promotion>(entity =>
         {
-            entity.HasKey(e => e.Uid).HasName("PRIMARY");
+            entity.HasKey(e => e.Code).HasName("PRIMARY");
 
             entity.ToTable("promotions");
 
-            entity.Property(e => e.Uid).HasColumnName("uid");
-            entity.Property(e => e.Condition)
-                .HasMaxLength(255)
-                .HasColumnName("condition");
+            entity.Property(e => e.Code).HasColumnName("code");
+            entity.Property(e => e.Condition).HasColumnName("condition");
             entity.Property(e => e.CreatedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
@@ -541,9 +538,7 @@ public partial class ShieldtifyContext : DbContext
             entity.Property(e => e.EndDate)
                 .HasColumnType("datetime")
                 .HasColumnName("end_date");
-            entity.Property(e => e.Name)
-                .HasMaxLength(255)
-                .HasColumnName("name");
+            entity.Property(e => e.MaxDiscount).HasColumnName("max_discount");
             entity.Property(e => e.StartDate)
                 .HasColumnType("datetime")
                 .HasColumnName("start_date");

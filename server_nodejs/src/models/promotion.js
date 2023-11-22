@@ -5,15 +5,16 @@ module.exports = (sequelize, Sequelize) => {
 
     Promotion.init(
         {
-            uid: {
-                type: Sequelize.UUID,
+            code: {
+                type: Sequelize.STRING,
                 primaryKey: true,
             },
-            name: {
+            description: {
                 type: Sequelize.STRING,
                 allowNull: false,
             },
-            description: {
+            type: {
+                //enum: ['by total', 'by item'],
                 type: Sequelize.STRING,
                 allowNull: false,
             },
@@ -22,6 +23,10 @@ module.exports = (sequelize, Sequelize) => {
                 allowNull: false,
             },
             discount_rate: {
+                type: Sequelize.FLOAT,
+                allowNull: false,
+            },
+            max_discount: {
                 type: Sequelize.FLOAT,
                 allowNull: false,
             },
@@ -38,9 +43,16 @@ module.exports = (sequelize, Sequelize) => {
             sequelize,
             modelName: 'promotion',
             timestamps: true,
-            paranoid: true,
+            paranoid: false,
             underscored: true,
         },
     );
+
+    Promotion.associate = (models) => {
+        Promotion.hasMany(models.order, {
+            foreignKey: 'promotion_code',
+        });
+    };
+
     return Promotion;
 };

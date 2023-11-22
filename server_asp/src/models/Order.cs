@@ -17,8 +17,6 @@ public partial class Order
 
     public DateTime OrderDate { get; set; }
 
-    public double OrderTotal { get; set; }
-
     public string OrderStatus { get; set; } = null!;
 
     public Guid SupportedBy { get; set; }
@@ -28,6 +26,8 @@ public partial class Order
     public DateTime UpdatedAt { get; set; }
 
     public DateTime? DeletedAt { get; set; }
+
+    public string PromotionCode { get; set; } = null!;
 
     public virtual ClientAccount Client { get; set; } = null!;
 

@@ -23,6 +23,8 @@ public partial class ClientAddress
 
     public DateTime? DeletedAt { get; set; }
 
+    public bool IsDefault { get; set; }
+
     public virtual ClientAccount Client { get; set; } = null!;
 
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();

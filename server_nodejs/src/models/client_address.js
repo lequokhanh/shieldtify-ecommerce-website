@@ -38,7 +38,7 @@ module.exports = (sequelize, Sequelize) => {
             sequelize,
             modelName: 'client_address',
             timestamps: true,
-            paranoid: true,
+            paranoid: false,
             underscored: true,
         },
     );

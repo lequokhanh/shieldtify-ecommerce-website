@@ -40,7 +40,7 @@ module.exports = (sequelize, Sequelize) => {
             sequelize,
             modelName: 'item',
             timestamps: true,
-            paranoid: true,
+            paranoid: false,
             underscored: true,
         },
     );

@@ -21,7 +21,7 @@ module.exports = (sequelize, Sequelize) => {
             sequelize,
             modelName: 'cart_item',
             timestamps: true,
-            paranoid: true,
+            paranoid: false,
             underscored: true,
         },
     );

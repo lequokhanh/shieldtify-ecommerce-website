@@ -21,7 +21,7 @@ module.exports = (sequelize, Sequelize) => {
             sequelize,
             modelName: 'item_category',
             timestamps: true,
-            paranoid: true,
+            paranoid: false,
             underscored: true,
         },
     );

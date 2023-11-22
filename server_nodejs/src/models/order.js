@@ -29,8 +29,8 @@ module.exports = (sequelize, Sequelize) => {
                 type: Sequelize.DATE,
                 allowNull: false,
             },
-            order_total: {
-                type: Sequelize.DOUBLE,
+            promotion_code: {
+                type: Sequelize.STRING,
                 allowNull: false,
             },
             order_status: {
@@ -46,7 +46,7 @@ module.exports = (sequelize, Sequelize) => {
             sequelize,
             modelName: 'order',
             timestamps: true,
-            paranoid: true,
+            paranoid: false,
             underscored: true,
         },
     );
