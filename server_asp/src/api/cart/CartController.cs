@@ -94,9 +94,8 @@ namespace shieldtify.api.cart
             {
                 throw;
             }
-
-
         }
+        [Tags("Cart")]
         public static APIRes getDiscount(HttpContext context, [FromQuery] string code)
         {
             try
