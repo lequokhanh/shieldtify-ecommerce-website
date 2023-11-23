@@ -119,7 +119,6 @@ namespace shieldtify.api.auth
                             changed_password_at = user?.ChangedPasswordAt,
                             createdAt = user?.CreatedAt,
                             updatedAt = user?.UpdatedAt,
-                            deletedAt = user?.DeletedAt,
                         });
                     }
                     else
@@ -134,7 +133,6 @@ namespace shieldtify.api.auth
                             changed_password_at = user?.ChangedPasswordAt,
                             createdAt = user?.CreatedAt,
                             updatedAt = user?.UpdatedAt,
-                            deletedAt = user?.DeletedAt,
                         });
                     }
                 }, context);

@@ -130,7 +130,8 @@ namespace shieldtify.api.cart
                     quantity = i.Quantity,
                     price = i.Item.Price,
                     primary_img = i.Item.ItemImgs.Where(im => im.IsPrimary).Select(im => im.Link).FirstOrDefault(),
-                    itemid = i.Itemid
+                    itemid = i.Itemid,
+                    categoryid = i.Item.Categoryid
                 }).ToList();
                 var itemOutOfStock = db.CartItems.Where(i => i.Clientid.ToString() == clientID && i.Quantity > i.Item.StockQty).Select(i => new
                 {
