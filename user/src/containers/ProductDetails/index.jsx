@@ -14,15 +14,17 @@ import {
     useDisclosure,
     SimpleGrid,
 } from '@chakra-ui/react'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { useParams } from 'react-router-dom'
 import { getProduct } from '../../utils/api.js'
 import MarkdownRenderer from './markdownRenderer'
 import SpecificationModal from '../../components/SpecificationModal'
+import { CartContext } from '../../context/cart.context'
 import './style.css'
 import no_img from '../../assets/no_img.svg'
 
 const PreviewSpecs = (product) => {
+    const { addItemToCart } = useContext(CartContext);
     const jsonProductSpecs = JSON.parse(product.specification)
     let cnt = 0
     const specsArray = []
@@ -50,12 +52,14 @@ const PreviewSpecs = (product) => {
 }
 
 const ProductDetails = () => {
-    const [markdown, setMarkdown] = useState('')
-    const [product, setProduct] = useState(null)
-    const [selectedImgIndex, setSelectedImgIndex] = useState(0)
-    const [transition, setTransition] = useState('')
-    const { isOpen, onOpen, onClose } = useDisclosure()
-    const { id } = useParams()
+    const [markdown, setMarkdown] = useState('');
+    const [product, setProduct] = useState(null);
+    const [selectedImgIndex, setSelectedImgIndex] = useState(0);
+    const [transition, setTransition] = useState('');
+    const { isOpen, onOpen, onClose } = useDisclosure();
+    const { id } = useParams();
+    const { addItemToCart } = useContext(CartContext);
+
 
     const transit = (direction) => {
         setTransition('transition-' + direction)
@@ -271,6 +275,9 @@ const ProductDetails = () => {
                                         fontFamily={'Roboto, sans-serif'}
                                         height={'50px'}
                                         gap={'5px'}
+                                        onClick={() => {
+                                            addItemToCart({item:product});
+                                        }}
                                     >
                                         <span>+</span>Add to cart
                                     </Button>

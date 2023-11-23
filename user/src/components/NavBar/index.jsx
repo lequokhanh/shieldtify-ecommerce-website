@@ -10,6 +10,7 @@ import cart from "../../assets/Cart.svg"
 import search_line from "../../assets/clarity_search-line.svg"
 import { useContext, useState } from "react";
 import { AuthContext } from "../../context/auth.context";
+import { CartContext } from "../../context/cart.context";
 import UserMenu from "../UserMenu";
 import SearchModal from "../SearchModal";
 import CartModal from "../CartModal";
@@ -23,6 +24,7 @@ const NavBar = () => {
     const [ isSearchOpen, setIsSearchOpen ] = useState(false);
     const [ isCartOpen, setIsCartOpen ] = useState(false);
     const [ isProductCateListOpen, setIsProductCateListOpen] = useState(false);
+    const { cartCount } = useContext(CartContext);
     const toast = useToast();
     const navigate = useNavigate()
     const openSearch = () => {
@@ -158,11 +160,25 @@ const NavBar = () => {
               </Flex>
                 ) 
             }
-              <Flex w="20px" h="30px" _hover={{cursor: "pointer"}}>
+              <Flex w="20px" h="30px" _hover={{cursor: "pointer"}} position="relative">
                 <Image  src={cart} alt="Cart" onClick={isLoggedIn ? openCart : denyPermission}/>
+                  {
+                    isLoggedIn && cartCount > 0 &&
+                    <Text 
+                    position="absolute"    
+                    fontSize="0.75rem"
+                    right="-3"
+                    top="-1"
+                    bgColor="#FAFF00"
+                    w="20px"
+                    borderRadius="100vh"
+                    textAlign="center"
+                    >
+                    {cartCount}
+                    </Text>}
               </Flex>
               <Flex w="20px" h="30px" _hover={{cursor: "pointer"}}>
-                <Image  src={search_line} alt="Search" onClick={openSearch}/>
+                <Image src={search_line} alt="Search" onClick={openSearch}/>
               </Flex>
             </Flex>
             <SearchModal isOpen={isSearchOpen} onClose={closeSeach}/>

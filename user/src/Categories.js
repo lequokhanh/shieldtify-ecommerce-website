@@ -374,6 +374,129 @@ const Brands = [
     }
 ]
 
+const cartTest = [
+    {
+        id:1,
+        name: "CPU Intel Core i5-13600K",
+        price:  "500$",
+        quantity: "12"
+    },
+    {
+        id:2,
+        name: "CPU Intel Core i5-13600K",
+        price:  "500$",
+        quantity: "12"
+    },
+    {
+        id:3,
+        name: "CPU Intel Core i5-13600K",
+        price:  "500$",
+        quantity: "12"
+    },
+    {
+        id:4,
+        name: "CPU Intel Core i5-13600K",
+        price:  "500$",
+        quantity: "12"
+    },
+    {
+        id:5,
+        name: "CPU Intel Core i5-13600K",
+        price:  "500$",
+        quantity: "12"
+    },
+    {
+        id:6,
+        name: "CPU Intel Core i5-13600K",
+        price:  "500$",
+        quantity: "12"
+    },
+    {
+        id:7,
+        name: "CPU Intel Core i5-13600K",
+        price:  "500$",
+        quantity: "12"
+    },
+    {
+        id: 8,
+        name: "GPU NVIDIA GeForce RTX 3080",
+        price: "800$",
+        quantity: "8"
+    },
+    {
+        id: 9,
+        name: "Motherboard ASUS ROG Strix Z590",
+        price: "300$",
+        quantity: "15"
+    },
+    {
+        id: 10,
+        name: "RAM Corsair Vengeance LPX 16GB",
+        price: "100$",
+        quantity: "20"
+    },
+    {
+        id: 11,
+        name: "SSD Samsung 970 EVO 1TB",
+        price: "150$",
+        quantity: "10"
+    },
+    {
+        id: 12,
+        name: "Power Supply EVGA SuperNOVA 750W",
+        price: "120$",
+        quantity: "12"
+    },
+    {
+        id: 13,
+        name: "Case NZXT H510i",
+        price: "80$",
+        quantity: "18"
+    },
+    {
+        id: 14,
+        name: "Monitor Dell S2719DGF 27-inch",
+        price: "300$",
+        quantity: "6"
+    },
+    {
+        id: 15,
+        name: "Keyboard Logitech G Pro X",
+        price: "150$",
+        quantity: "8"
+    },
+    {
+        id: 16,
+        name: "Mouse Razer DeathAdder Elite",
+        price: "70$",
+        quantity: "15"
+    },
+    {
+        id: 17,
+        name: "Headset SteelSeries Arctis Pro",
+        price: "200$",
+        quantity: "10"
+    },
+    {
+        id: 18,
+        name: "Graphics Tablet Wacom Intuos Pro",
+        price: "250$",
+        quantity: "5"
+    },
+    {
+        id: 19,
+        name: "External Hard Drive Seagate 4TB",
+        price: "120$",
+        quantity: "10"
+    },
+    {
+        id: 20,
+        name: "Smartphone Samsung Galaxy S21",
+        price: "800$",
+        quantity: "7"
+    },
+]
+
 export { 
     accessoriesCategories, 
     productCategories, 
@@ -382,6 +505,7 @@ export {
     carouselImages,
     testProduct2, 
     SortCategories,
-    Brands  
+    Brands,
+    cartTest
 };
 

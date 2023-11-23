@@ -118,3 +118,29 @@ export function getAllProductByCategoryOrKeyword({
     }
     return axios.get(url)
 }
+
+export function getUserCart () {
+    return axiosCookie.get('/cart');
+}
+
+export function addToCart ({item, quantity}) {
+    return axiosCookie.post('/cart', {
+        item, 
+        quantity
+    });
+}
+
+export function updateCart ({item, quantity}) {
+    return axiosCookie.put('/cart', {
+        item, 
+        quantity
+    }); 
+}
+
+export function removeItemFromCart ({item}) {
+    return axiosCookie.delete(`/cart?item=${item}`);
+}
+
+// export function updateCart (cart) {
+//     return axiosCookie.put('/cart', cart);
+// }
