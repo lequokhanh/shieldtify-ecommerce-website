@@ -1,5 +1,7 @@
 using shieldtify.common;
 using shieldtify.models;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 namespace shieldtify.api.cart
 {
     public static class CartService
@@ -17,7 +19,12 @@ namespace shieldtify.api.cart
                     primary_img = i.Item.ItemImgs.Where(im => im.IsPrimary).Select(im => im.Link).FirstOrDefault(),
                     itemid = i.Itemid
                 }).ToList();
-                return new APIRes(200, "Get cart successfully", cart);
+                float total = 0;
+                foreach (var item in cart)
+                {
+                    total += item.price * item.quantity;
+                }
+                return new APIRes(200, "Get cart successfully", new { cart, total });
             }
             catch (System.Exception)
             {
@@ -112,6 +119,73 @@ namespace shieldtify.api.cart
             }
             catch (System.Exception)
             {
+                throw;
+            }
+        }
+
+        public static APIRes getDiscount(string clientID, string code)
+        {
+            try
+            {
+                using var db = new ShieldtifyContext();
+                var promotion = db.Promotions.Where(i => i.Code == code).FirstOrDefault();
+                if (promotion == null)
+                    return new APIRes(404, "Promotion not found");
+                var cart = db.CartItems.Where(i => i.Clientid.ToString() == clientID).Select(i => new
+                {
+                    name = i.Item.Name,
+                    quantity = i.Quantity,
+                    price = i.Item.Price,
+                    primary_img = i.Item.ItemImgs.Where(im => im.IsPrimary).Select(im => im.Link).FirstOrDefault(),
+                    itemid = i.Itemid,
+                    categoryid = i.Item.Categoryid
+                }).ToList();
+                var condition = JsonConvert.DeserializeObject<JObject>(promotion.Condition);
+                var discountRate = promotion.DiscountRate;
+                var maxDiscount = promotion.MaxDiscount;
+                float total = 0;
+                float discount = 0;
+                var items = new List<object>();
+                if (condition["total"].ToString() != "null")
+                {
+                    foreach (var item in cart)
+                    {
+                        items.Add(new
+                        {
+                            name = item.name,
+                            quantity = item.quantity,
+                            primary_img = item.primary_img,
+                            old_price = item.price,
+                            new_price = item.price
+                        });
+                        total += item.price * item.quantity;
+                    }
+                    discount = Math.Max(total * discountRate, maxDiscount);
+                    total -= discount;
+                }
+                else
+                {
+                    foreach (var item in cart)
+                    {
+                        float newPrice = item.price;
+                        if ((condition["item"][0].ToString() == "*" && (condition["category"][0].ToString() == "*" || condition["category"].ToObject<List<string>>().Contains(item.categoryid.ToString()))) || condition["item"].ToObject<List<string>>().Contains(item.itemid.ToString()))
+                            items.Add(new
+                            {
+                                item.name,
+                                item.quantity,
+                                item.primary_img,
+                                old_price = item.price,
+                                new_price = item.price - Math.Max(item.price * discountRate, maxDiscount)
+                            });
+                        total += newPrice * item.quantity;
+                        discount += Math.Max(newPrice * discountRate, maxDiscount);
+                    }
+                }
+                return new APIRes(200, "Get discount successfully", new { cart = items, discount, total });
+            }
+            catch (System.Exception)
+            {
+
                 throw;
             }
         }

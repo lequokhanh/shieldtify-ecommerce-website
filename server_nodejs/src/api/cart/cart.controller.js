@@ -54,4 +54,13 @@ module.exports = {
             next(err);
         }
     },
+    getDiscount: async (req, res, next) => {
+        try {
+            const user = req.user;
+            const DTO = await service.getDiscount(user.uid, req.query.code);
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
 };

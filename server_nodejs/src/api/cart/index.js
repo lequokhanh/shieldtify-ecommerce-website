@@ -23,5 +23,10 @@ router.post(
     checkPermission('client'),
     controller.createCartItem,
 );
-
+router.get(
+    '/discount',
+    verifyToken,
+    checkPermission('client'),
+    controller.getDiscount,
+);
 module.exports = router;
