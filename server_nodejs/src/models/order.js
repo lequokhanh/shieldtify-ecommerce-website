@@ -65,6 +65,9 @@ module.exports = (sequelize, Sequelize) => {
             foreignKey: 'orderid',
             as: 'order_item',
         });
+        Order.belongsTo(models.promotion, {
+            foreignKey: 'promotion_code',
+        });
     };
 
     return Order;

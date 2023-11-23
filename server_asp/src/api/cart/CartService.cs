@@ -143,10 +143,11 @@ namespace shieldtify.api.cart
                 var condition = JsonConvert.DeserializeObject<JObject>(promotion.Condition);
                 var discountRate = promotion.DiscountRate;
                 var maxDiscount = promotion.MaxDiscount;
+                var type = promotion.Type;
                 float total = 0;
                 float discount = 0;
                 var items = new List<object>();
-                if (condition["total"].ToString() != "null")
+                if (type == "by total")
                 {
                     foreach (var item in cart)
                     {
@@ -160,15 +161,19 @@ namespace shieldtify.api.cart
                         });
                         total += item.price * item.quantity;
                     }
+                    if (int.Parse(condition["total"][0].ToString()) <= total)
+                        return new APIRes(400, "Total is not enough to get discount");
                     discount = Math.Max(total * discountRate, maxDiscount);
                     total -= discount;
                 }
                 else
                 {
+                    var flag = false;
                     foreach (var item in cart)
                     {
                         float newPrice = item.price;
                         if ((condition["item"][0].ToString() == "*" && (condition["category"][0].ToString() == "*" || condition["category"].ToObject<List<string>>().Contains(item.categoryid.ToString()))) || condition["item"].ToObject<List<string>>().Contains(item.itemid.ToString()))
+                        {
                             items.Add(new
                             {
                                 item.name,
@@ -177,9 +182,24 @@ namespace shieldtify.api.cart
                                 old_price = item.price,
                                 new_price = item.price - Math.Max(item.price * discountRate, maxDiscount)
                             });
+                            flag = true;
+                        }
+                        else
+                        {
+                            items.Add(new
+                            {
+                                item.name,
+                                item.quantity,
+                                item.primary_img,
+                                old_price = item.price,
+                                new_price = item.price
+                            });
+                        }
                         total += newPrice * item.quantity;
                         discount += Math.Max(newPrice * discountRate, maxDiscount);
                     }
+                    if (!flag)
+                        return new APIRes(400, "No item in cart is eligible for discount");
                 }
                 return new APIRes(200, "Get discount successfully", new { cart = items, discount, total });
             }

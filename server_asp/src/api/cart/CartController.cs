@@ -17,6 +17,7 @@ namespace shieldtify.api.cart
                 {
                     var user = (ClientAccount?)context.Items["User"];
                     var DTO = CartService.getCart(user.Uid.ToString());
+                    context.Response.StatusCode = DTO.statusCode;
                     return DTO;
                 }, context, new List<string> { "client" });
             }
@@ -34,6 +35,7 @@ namespace shieldtify.api.cart
                 {
                     var user = (ClientAccount?)context.Items["User"];
                     var DTO = CartService.updateCart(user.Uid.ToString(), body.item, int.Parse(body.quantity));
+                    context.Response.StatusCode = DTO.statusCode;
                     return DTO;
                 }, context, new List<string> { "client" });
             }
@@ -51,6 +53,7 @@ namespace shieldtify.api.cart
                 {
                     var user = (ClientAccount?)context.Items["User"];
                     var DTO = CartService.deleteCartItem(user.Uid.ToString(), item);
+                    context.Response.StatusCode = DTO.statusCode;
                     return DTO;
                 }, context, new List<string> { "client" });
             }
@@ -69,6 +72,7 @@ namespace shieldtify.api.cart
                 {
                     var user = (ClientAccount?)context.Items["User"];
                     var DTO = CartService.deleteCart(user.Uid.ToString());
+                    context.Response.StatusCode = DTO.statusCode;
                     return DTO;
                 }, context, new List<string> { "client" });
             }
@@ -87,6 +91,7 @@ namespace shieldtify.api.cart
                 {
                     var user = (ClientAccount?)context.Items["User"];
                     var DTO = CartService.addCartItem(user.Uid.ToString(), body.item, int.Parse(body.quantity));
+                    context.Response.StatusCode = DTO.statusCode;
                     return DTO;
                 }, context, new List<string> { "client" });
             }
@@ -104,6 +109,7 @@ namespace shieldtify.api.cart
                 {
                     var user = (ClientAccount?)context.Items["User"];
                     var DTO = CartService.getDiscount(user.Uid.ToString(), code);
+                    context.Response.StatusCode = DTO.statusCode;
                     return DTO;
                 }, context, new List<string> { "client" });
             }

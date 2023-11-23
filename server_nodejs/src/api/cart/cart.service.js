@@ -108,7 +108,8 @@ module.exports = {
                 },
             });
             if (cartItem) {
-                throw new AppError(400, 'Item already exists in cart');
+                cartItem.quantity += quantity;
+                await cartItem.save();
             } else {
                 await db.cart_item.create({
                     clientid: client,
@@ -121,7 +122,6 @@ module.exports = {
                 message: 'Create cart item successfully',
             };
         } catch (err) {
-            console.log(err);
             throw new AppError(err.statusCode, err.message);
         }
     },
@@ -151,18 +151,22 @@ module.exports = {
             const condition = JSON.parse(promotion.condition);
             const discount_rate = promotion.discount_rate;
             const max_discount = promotion.max_discount;
+            const type = promotion.type;
             let total = 0;
             let discount = 0;
-            if (condition.total != 'null') {
+            if (type === 'by total') {
                 cart.dataValues.forEach((item) => {
                     item.old_price = item.price;
                     item.new_price = item.price;
                     delete item.price;
                     total += item.new_price * item.quantity;
                 });
+                if (condition.total <= total)
+                    throw new AppError(400, 'Total is not enough get discount');
                 discount = max(total * discount_rate, max_discount);
                 total -= discount;
             } else {
+                let flag = false;
                 cart.dataValues.forEach((item) => {
                     item.old_price = item.price;
                     if (
@@ -173,6 +177,7 @@ module.exports = {
                                 ))) ||
                         condition.item.includes(item.itemid)
                     ) {
+                        flag = true;
                         item.new_price =
                             item.price -
                             max(item.price * discount_rate, max_discount);
@@ -185,6 +190,11 @@ module.exports = {
                         item.new_price * item.quantity;
                     total += item.new_price * item.quantity;
                 });
+                if (!flag)
+                    throw new AppError(
+                        400,
+                        'No item in cart is eligible for discount',
+                    );
             }
             delete cart.dataValues.categoryid;
             return {

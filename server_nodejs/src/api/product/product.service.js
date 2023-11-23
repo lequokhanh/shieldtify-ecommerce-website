@@ -75,7 +75,6 @@ module.exports = {
                 },
             };
         } catch (error) {
-            console.log(error);
             throw new AppError(error.statusCode, error.message);
         }
     },
@@ -186,7 +185,6 @@ module.exports = {
                 },
             };
         } catch (error) {
-            console.log(error);
             throw new AppError(error.statusCode, error.message);
         }
     },
