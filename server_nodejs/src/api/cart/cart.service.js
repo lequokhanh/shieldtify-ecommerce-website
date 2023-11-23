@@ -55,9 +55,40 @@ module.exports = {
             if (quantity < 1) await cartItem.destroy();
             else cartItem.quantity = quantity;
             await cartItem.save();
+            const cart = await db.sequelize.query(
+                `
+                SELECT it.name, quantity, link as primary_img, it.price, ct.itemid
+                FROM cart_items ct
+                    JOIN items it ON ct.itemid = it.uid
+                    LEFT JOIN item_imgs itm ON it.uid = itm.itemid AND itm.is_primary = 1
+                WHERE ct.clientid = :clientid
+                `,
+                {
+                    replacements: {
+                        clientid: client,
+                    },
+                    type: db.sequelize.QueryTypes.SELECT,
+                },
+            );
+            const itemOutOfStock = [];
+            for (const item of cart) {
+                const itemObj = await db.item.findOne({
+                    where: {
+                        uid: item.itemid,
+                    },
+                });
+                if (itemObj.stock_qty - item.quantity < 0) {
+                    cart.splice(cart.indexOf(item), 1);
+                    itemOutOfStock.push(item.name);
+                }
+            }
+            const total = cart.reduce((acc, item) => {
+                return acc + item.price * item.quantity;
+            }, 0);
             return {
                 statusCode: 200,
                 message: 'Update cart successfully',
+                data: { cart, total, out_of_stock: itemOutOfStock },
             };
         } catch (err) {
             throw new AppError(err.statusCode, err.message);

@@ -34,7 +34,7 @@ namespace shieldtify.api.cart
                 return Middleware.MiddlewareAuthorize(() =>
                 {
                     var user = (ClientAccount?)context.Items["User"];
-                    var DTO = CartService.updateCart(user.Uid.ToString(), body.item, int.Parse(body.quantity));
+                    var DTO = CartService.updateCart(user.Uid.ToString(), body.item, body.quantity);
                     context.Response.StatusCode = DTO.statusCode;
                     return DTO;
                 }, context, new List<string> { "client" });
@@ -104,7 +104,7 @@ namespace shieldtify.api.cart
     public class UpdateCartBody
     {
         public required string item { get; set; }
-        public required string quantity { get; set; }
+        public required int quantity { get; set; }
     }
 
     public class AddCartItemBody
@@ -115,6 +115,6 @@ namespace shieldtify.api.cart
     public class Items
     {
         public required string item { get; set; }
-        public required string quantity { get; set; }
+        public required int quantity { get; set; }
     }
 }

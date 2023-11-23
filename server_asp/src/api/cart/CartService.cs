@@ -52,7 +52,28 @@ namespace shieldtify.api.cart
                 else
                     cartItem.Quantity = quantity;
                 db.SaveChanges();
-                return new APIRes(200, "Update cart successfully");
+                var cart = db.CartItems.Where(i => i.Clientid.ToString() == clientID && i.Quantity <= i.Item.StockQty).Select(i => new
+                {
+                    name = i.Item.Name,
+                    quantity = i.Quantity,
+                    price = i.Item.Price,
+                    primary_img = i.Item.ItemImgs.Where(im => im.IsPrimary).Select(im => im.Link).FirstOrDefault(),
+                    itemid = i.Itemid
+                }).ToList();
+                var itemOutOfStock = db.CartItems.Where(i => i.Clientid.ToString() == clientID && i.Quantity > i.Item.StockQty).Select(i => new
+                {
+                    name = i.Item.Name,
+                    quantity = i.Quantity,
+                    price = i.Item.Price,
+                    primary_img = i.Item.ItemImgs.Where(im => im.IsPrimary).Select(im => im.Link).FirstOrDefault(),
+                    itemid = i.Itemid
+                }).ToList();
+                float total = 0;
+                foreach (var item in cart)
+                {
+                    total += item.price * item.quantity;
+                }
+                return new APIRes(200, "Update cart successfully", new { cart, total, out_of_stock = itemOutOfStock });
             }
             catch (System.Exception)
             {
@@ -90,12 +111,12 @@ namespace shieldtify.api.cart
                 foreach (var item in items)
                 {
                     var itemObj = db.Items.Where(i => i.Uid.ToString() == item.item).FirstOrDefault();
-                    if (itemObj == null || int.Parse(item.quantity) < 1 || itemObj.StockQty - int.Parse(item.quantity) < 0)
-                        error.Add(new { itemid = item, message = itemObj == null ? "Item not found" : int.Parse(item.quantity) < 1 ? "Quantity must be greater than 0" : "Out of stock" });
+                    if (itemObj == null || item.quantity < 1 || itemObj.StockQty - item.quantity < 0)
+                        error.Add(new { itemid = item, message = itemObj == null ? "Item not found" : item.quantity < 1 ? "Quantity must be greater than 0" : "Out of stock" });
                     var cartItem = db.CartItems.Where(i => i.Clientid.ToString() == clientID && i.Itemid.ToString() == item.item).FirstOrDefault();
                     if (cartItem != null)
                     {
-                        cartItem.Quantity += int.Parse(item.quantity);
+                        cartItem.Quantity += item.quantity;
                     }
                     else
                     {
@@ -103,7 +124,7 @@ namespace shieldtify.api.cart
                         {
                             Clientid = Guid.Parse(clientID),
                             Itemid = Guid.Parse(item.item),
-                            Quantity = int.Parse(item.quantity)
+                            Quantity = item.quantity
                         });
                     }
                 }
