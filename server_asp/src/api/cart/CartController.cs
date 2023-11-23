@@ -95,21 +95,22 @@ namespace shieldtify.api.cart
                 throw;
             }
 
-            public static APIRes getDiscount(HttpContext context, [FromQuery] string code)
+
+        }
+        public static APIRes getDiscount(HttpContext context, [FromQuery] string code)
+        {
+            try
             {
-                try
+                return Middleware.MiddlewareAuthorize(() =>
                 {
-                    return Middleware.MiddlewareAuthorize(() =>
-                    {
-                        var user = (ClientAccount?)context.Items["User"];
-                        var DTO = CartService.getDiscount(user.Uid.ToString(), code);
-                        return DTO;
-                    }, context, new List<string> { "client" });
-                }
-                catch (Exception)
-                {
-                    throw;
-                }
+                    var user = (ClientAccount?)context.Items["User"];
+                    var DTO = CartService.getDiscount(user.Uid.ToString(), code);
+                    return DTO;
+                }, context, new List<string> { "client" });
+            }
+            catch (Exception)
+            {
+                throw;
             }
         }
     }
