@@ -127,7 +127,7 @@ module.exports = {
             for (const item of items) {
                 const itemObj = await db.item.findOne({
                     where: {
-                        uid: item,
+                        uid: item.item,
                     },
                 });
                 if (item.quantity < 1)
@@ -143,7 +143,7 @@ module.exports = {
                 const cartItem = await db.cart_item.findOne({
                     where: {
                         clientid: client,
-                        itemid: item,
+                        itemid: item.item,
                     },
                 });
                 if (cartItem) {
@@ -162,7 +162,7 @@ module.exports = {
                 } else {
                     await db.cart_item.create({
                         clientid: client,
-                        itemid: item,
+                        itemid: item.item,
                         quantity: item.quantity,
                     });
                 }
