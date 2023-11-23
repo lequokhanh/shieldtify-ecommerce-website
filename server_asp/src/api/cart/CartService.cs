@@ -50,7 +50,16 @@ namespace shieldtify.api.cart
                 if (quantity < 1)
                     db.CartItems.Remove(cartItem);
                 else
+                {
+                    if (quantity > cartItem.Item.StockQty)
+                    {
+                        if (cartItem.Item.StockQty == 0)
+                            db.CartItems.Remove(cartItem);
+                        else
+                            cartItem.Quantity = cartItem.Item.StockQty;
+                    }
                     cartItem.Quantity = quantity;
+                }
                 db.SaveChanges();
                 var cart = db.CartItems.Where(i => i.Clientid.ToString() == clientID && i.Quantity <= i.Item.StockQty).Select(i => new
                 {
@@ -111,12 +120,17 @@ namespace shieldtify.api.cart
                 foreach (var item in items)
                 {
                     var itemObj = db.Items.Where(i => i.Uid.ToString() == item.item).FirstOrDefault();
-                    if (itemObj == null || item.quantity < 1 || itemObj.StockQty - item.quantity < 0)
-                        error.Add(new { itemid = item, message = itemObj == null ? "Item not found" : item.quantity < 1 ? "Quantity must be greater than 0" : "Out of stock" });
+                    if (item.quantity < 1)
+                        error.Add(new { itemid = item, message = "Quantity must be greater than 0" });
+                    if (itemObj == null)
+                        error.Add(new { itemid = item, message = "Item not found" });
                     var cartItem = db.CartItems.Where(i => i.Clientid.ToString() == clientID && i.Itemid.ToString() == item.item).FirstOrDefault();
                     if (cartItem != null)
                     {
-                        cartItem.Quantity += item.quantity;
+                        if (cartItem.Quantity + item.quantity > itemObj.StockQty)
+                            error.Add(new { itemid = item, message = "Quantity is greater than stock quantity" });
+                        else
+                            cartItem.Quantity += item.quantity;
                     }
                     else
                     {

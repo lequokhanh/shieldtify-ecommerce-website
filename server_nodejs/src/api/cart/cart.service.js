@@ -53,7 +53,19 @@ module.exports = {
             });
             if (!cartItem) throw new AppError(404, 'Item not found');
             if (quantity < 1) await cartItem.destroy();
-            else cartItem.quantity = quantity;
+            else {
+                const itemObj = await db.item.findOne({
+                    where: {
+                        uid: item,
+                    },
+                });
+                if (itemObj.stock_qty - quantity < 0) {
+                    if (itemObj.stock_qty > 0)
+                        cartItem.quantity = itemObj.stock_qty;
+                    else await cartItem.destroy();
+                }
+                cartItem.quantity = quantity;
+            }
             await cartItem.save();
             const cart = await db.sequelize.query(
                 `
@@ -118,18 +130,15 @@ module.exports = {
                         uid: item,
                     },
                 });
-                if (
-                    !itemObj ||
-                    item.quantity < 1 ||
-                    itemObj.stock_qty - item.quantity < 0
-                )
+                if (item.quantity < 1)
                     error.push({
                         itemid: item.uid,
-                        message: !itemObj
-                            ? 'Item not found'
-                            : item.quantity < 1
-                            ? 'Quantity must be greater than 0'
-                            : 'Out of stock',
+                        message: 'Quantity must be greater than 0',
+                    });
+                if (!itemObj)
+                    error.push({
+                        itemid: item.uid,
+                        message: 'Item not found',
                     });
                 const cartItem = await db.cart_item.findOne({
                     where: {
@@ -138,8 +147,18 @@ module.exports = {
                     },
                 });
                 if (cartItem) {
-                    cartItem.quantity += item.quantity;
-                    await cartItem.save();
+                    if (
+                        itemObj.stock_qty - cartItem.quantity - item.quantity <
+                        0
+                    )
+                        error.push({
+                            itemid: item.uid,
+                            message: 'Quantity is greater than stock quantity',
+                        });
+                    else {
+                        cartItem.quantity += item.quantity;
+                        await cartItem.save();
+                    }
                 } else {
                     await db.cart_item.create({
                         clientid: client,
