@@ -25,7 +25,6 @@ public partial class Item
 
     public DateTime UpdatedAt { get; set; }
 
-    public DateTime? DeletedAt { get; set; }
 
     public virtual Brand Brand { get; set; } = null!;
 

@@ -45,9 +45,12 @@ public partial class ShieldtifyContext : DbContext
 
     public virtual DbSet<Promotion> Promotions { get; set; }
 
+    public virtual DbSet<SequelizeMetum> SequelizeMeta { get; set; }
+
     public virtual DbSet<Vote> Votes { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
         => optionsBuilder.UseMySQL("Server=localhost;User ID=shieldtify_user;Password=shieldtify_password;Database=shieldtify");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -395,6 +398,8 @@ public partial class ShieldtifyContext : DbContext
 
             entity.HasIndex(e => e.Clientid, "clientid");
 
+            entity.HasIndex(e => e.PromotionCode, "promotion_code");
+
             entity.HasIndex(e => e.ShippingAddressid, "shipping_addressid");
 
             entity.HasIndex(e => e.SupportedBy, "supported_by");
@@ -404,9 +409,6 @@ public partial class ShieldtifyContext : DbContext
             entity.Property(e => e.CreatedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
-            entity.Property(e => e.DeletedAt)
-                .HasColumnType("datetime")
-                .HasColumnName("deleted_at");
             entity.Property(e => e.OrderDate)
                 .HasColumnType("datetime")
                 .HasColumnName("order_date");
@@ -416,9 +418,7 @@ public partial class ShieldtifyContext : DbContext
             entity.Property(e => e.PaymentMethod)
                 .HasMaxLength(255)
                 .HasColumnName("payment_method");
-            entity.Property(e => e.PromotionCode)
-                .HasMaxLength(255)
-                .HasColumnName("promotion_code");
+            entity.Property(e => e.PromotionCode).HasColumnName("promotion_code");
             entity.Property(e => e.ReceiveMethod)
                 .HasMaxLength(255)
                 .HasColumnName("receive_method");
@@ -432,13 +432,18 @@ public partial class ShieldtifyContext : DbContext
                 .HasForeignKey(d => d.Clientid)
                 .HasConstraintName("orders_ibfk_1");
 
+            entity.HasOne(d => d.PromotionCodeNavigation).WithMany(p => p.Orders)
+                .HasForeignKey(d => d.PromotionCode)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("orders_ibfk_3");
+
             entity.HasOne(d => d.ShippingAddress).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.ShippingAddressid)
                 .HasConstraintName("orders_ibfk_2");
 
             entity.HasOne(d => d.SupportedByNavigation).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.SupportedBy)
-                .HasConstraintName("orders_ibfk_3");
+                .HasConstraintName("orders_ibfk_4");
         });
 
         modelBuilder.Entity<OrderItem>(entity =>
@@ -454,9 +459,6 @@ public partial class ShieldtifyContext : DbContext
             entity.Property(e => e.CreatedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
-            entity.Property(e => e.DeletedAt)
-                .HasColumnType("datetime")
-                .HasColumnName("deleted_at");
             entity.Property(e => e.Quantity).HasColumnName("quantity");
             entity.Property(e => e.SalesPrice).HasColumnName("sales_price");
             entity.Property(e => e.UpdatedAt)
@@ -528,9 +530,6 @@ public partial class ShieldtifyContext : DbContext
             entity.Property(e => e.CreatedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
-            entity.Property(e => e.DeletedAt)
-                .HasColumnType("datetime")
-                .HasColumnName("deleted_at");
             entity.Property(e => e.Description)
                 .HasMaxLength(255)
                 .HasColumnName("description");
@@ -542,9 +541,21 @@ public partial class ShieldtifyContext : DbContext
             entity.Property(e => e.StartDate)
                 .HasColumnType("datetime")
                 .HasColumnName("start_date");
+            entity.Property(e => e.Type)
+                .HasMaxLength(255)
+                .HasColumnName("type");
             entity.Property(e => e.UpdatedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("updated_at");
+        });
+
+        modelBuilder.Entity<SequelizeMetum>(entity =>
+        {
+            entity.HasKey(e => e.Name).HasName("PRIMARY");
+
+            entity.HasIndex(e => e.Name, "name").IsUnique();
+
+            entity.Property(e => e.Name).HasColumnName("name");
         });
 
         modelBuilder.Entity<Vote>(entity =>
