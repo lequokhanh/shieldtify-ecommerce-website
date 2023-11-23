@@ -9,12 +9,6 @@ router.delete(
     '/',
     verifyToken,
     checkPermission('client'),
-    controller.deleteCartItem,
-);
-router.delete(
-    '/all',
-    verifyToken,
-    checkPermission('client'),
     controller.deleteCart,
 );
 router.post(

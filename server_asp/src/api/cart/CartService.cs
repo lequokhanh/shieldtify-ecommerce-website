@@ -11,7 +11,15 @@ namespace shieldtify.api.cart
             try
             {
                 using var db = new ShieldtifyContext();
-                var cart = db.CartItems.Where(i => i.Clientid.ToString() == clientID).Select(i => new
+                var cart = db.CartItems.Where(i => i.Clientid.ToString() == clientID && i.Quantity <= i.Item.StockQty).Select(i => new
+                {
+                    name = i.Item.Name,
+                    quantity = i.Quantity,
+                    price = i.Item.Price,
+                    primary_img = i.Item.ItemImgs.Where(im => im.IsPrimary).Select(im => im.Link).FirstOrDefault(),
+                    itemid = i.Itemid
+                }).ToList();
+                var itemOutOfStock = db.CartItems.Where(i => i.Clientid.ToString() == clientID && i.Quantity > i.Item.StockQty).Select(i => new
                 {
                     name = i.Item.Name,
                     quantity = i.Quantity,
@@ -24,7 +32,7 @@ namespace shieldtify.api.cart
                 {
                     total += item.price * item.quantity;
                 }
-                return new APIRes(200, "Get cart successfully", new { cart, total });
+                return new APIRes(200, "Get cart successfully", new { cart, total, out_of_stock = itemOutOfStock });
             }
             catch (System.Exception)
             {
@@ -39,7 +47,7 @@ namespace shieldtify.api.cart
                 var cartItem = db.CartItems.Where(i => i.Clientid.ToString() == clientID && i.Itemid.ToString() == itemID).FirstOrDefault();
                 if (cartItem == null)
                     return new APIRes(404, "Item not found in cart");
-                if (quantity <= 0)
+                if (quantity < 1)
                     db.CartItems.Remove(cartItem);
                 else
                     cartItem.Quantity = quantity;
@@ -49,26 +57,6 @@ namespace shieldtify.api.cart
             catch (System.Exception)
             {
 
-                throw;
-            }
-        }
-
-        public static APIRes deleteCartItem(string clientID, string itemID)
-        {
-            try
-            {
-                using var db = new ShieldtifyContext();
-                var cartItem = db.CartItems.Where(i => i.Clientid.ToString() == clientID && i.Itemid.ToString() == itemID).FirstOrDefault();
-                if (cartItem == null)
-                {
-                    return new APIRes(404, "Item not found in cart");
-                }
-                db.CartItems.Remove(cartItem);
-                db.SaveChanges();
-                return new APIRes(200, "Delete cart item successfully");
-            }
-            catch (System.Exception)
-            {
                 throw;
             }
         }
@@ -93,29 +81,34 @@ namespace shieldtify.api.cart
             }
         }
 
-        public static APIRes addCartItem(string clientID, string itemID, int quantity)
+        public static APIRes createCartItem(string clientID, List<Items> items)
         {
             try
             {
                 using var db = new ShieldtifyContext();
-                var item = db.Items.Where(i => i.Uid.ToString() == itemID).FirstOrDefault();
-                if (item == null)
-                    return new APIRes(404, "Item not found");
-                if (quantity <= 0)
-                    return new APIRes(400, "Quantity must be greater than 0");
-                var cartItem = db.CartItems.Where(i => i.Clientid.ToString() == clientID && i.Itemid.ToString() == itemID).FirstOrDefault();
-                if (cartItem != null)
-                    return new APIRes(400, "Item already in cart");
-                db.CartItems.Add(new CartItem
+                var error = new List<object>();
+                foreach (var item in items)
                 {
-                    Clientid = Guid.Parse(clientID),
-                    Itemid = Guid.Parse(itemID),
-                    Quantity = quantity,
-                    CreatedAt = System.DateTime.Now,
-                    UpdatedAt = System.DateTime.Now
-                });
+                    var itemObj = db.Items.Where(i => i.Uid.ToString() == item.item).FirstOrDefault();
+                    if (itemObj == null || int.Parse(item.quantity) < 1 || itemObj.StockQty - int.Parse(item.quantity) < 0)
+                        error.Add(new { itemid = item, message = itemObj == null ? "Item not found" : int.Parse(item.quantity) < 1 ? "Quantity must be greater than 0" : "Out of stock" });
+                    var cartItem = db.CartItems.Where(i => i.Clientid.ToString() == clientID && i.Itemid.ToString() == item.item).FirstOrDefault();
+                    if (cartItem != null)
+                    {
+                        cartItem.Quantity += int.Parse(item.quantity);
+                    }
+                    else
+                    {
+                        db.CartItems.Add(new CartItem
+                        {
+                            Clientid = Guid.Parse(clientID),
+                            Itemid = Guid.Parse(item.item),
+                            Quantity = int.Parse(item.quantity)
+                        });
+                    }
+                }
                 db.SaveChanges();
-                return new APIRes(200, "Add cart item successfully");
+                return new APIRes(200, "Create cart item successfully", error);
             }
             catch (System.Exception)
             {
@@ -131,14 +124,21 @@ namespace shieldtify.api.cart
                 var promotion = db.Promotions.Where(i => i.Code == code).FirstOrDefault();
                 if (promotion == null)
                     return new APIRes(404, "Promotion not found");
-                var cart = db.CartItems.Where(i => i.Clientid.ToString() == clientID).Select(i => new
+                var cart = db.CartItems.Where(i => i.Clientid.ToString() == clientID && i.Quantity <= i.Item.StockQty).Select(i => new
                 {
                     name = i.Item.Name,
                     quantity = i.Quantity,
                     price = i.Item.Price,
                     primary_img = i.Item.ItemImgs.Where(im => im.IsPrimary).Select(im => im.Link).FirstOrDefault(),
-                    itemid = i.Itemid,
-                    categoryid = i.Item.Categoryid
+                    itemid = i.Itemid
+                }).ToList();
+                var itemOutOfStock = db.CartItems.Where(i => i.Clientid.ToString() == clientID && i.Quantity > i.Item.StockQty).Select(i => new
+                {
+                    name = i.Item.Name,
+                    quantity = i.Quantity,
+                    price = i.Item.Price,
+                    primary_img = i.Item.ItemImgs.Where(im => im.IsPrimary).Select(im => im.Link).FirstOrDefault(),
+                    itemid = i.Itemid
                 }).ToList();
                 var condition = JsonConvert.DeserializeObject<JObject>(promotion.Condition);
                 var discountRate = promotion.DiscountRate;
@@ -201,7 +201,7 @@ namespace shieldtify.api.cart
                     if (!flag)
                         return new APIRes(400, "No item in cart is eligible for discount");
                 }
-                return new APIRes(200, "Get discount successfully", new { cart = items, discount, total });
+                return new APIRes(200, "Get discount successfully", new { cart = items, discount, total, out_of_stock = itemOutOfStock });
             }
             catch (System.Exception)
             {

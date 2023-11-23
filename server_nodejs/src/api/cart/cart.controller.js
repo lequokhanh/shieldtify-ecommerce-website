@@ -23,15 +23,6 @@ module.exports = {
             next(err);
         }
     },
-    deleteCartItem: async (req, res, next) => {
-        try {
-            const user = req.user;
-            const DTO = await service.deleteCartItem(user.uid, req.query.item);
-            res.status(DTO.statusCode).json(DTO);
-        } catch (err) {
-            next(err);
-        }
-    },
     deleteCart: async (req, res, next) => {
         try {
             const user = req.user;
@@ -44,11 +35,7 @@ module.exports = {
     createCartItem: async (req, res, next) => {
         try {
             const user = req.user;
-            const DTO = await service.createCartItem(
-                user.uid,
-                req.body.item,
-                req.body.quantity,
-            );
+            const DTO = await service.createCartItem(user.uid, req.body.items);
             res.status(DTO.statusCode).json(DTO);
         } catch (err) {
             next(err);

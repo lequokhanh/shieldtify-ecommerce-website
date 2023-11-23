@@ -19,13 +19,25 @@ module.exports = {
                     type: db.sequelize.QueryTypes.SELECT,
                 },
             );
+            const itemOutOfStock = [];
+            for (const item of cart) {
+                const itemObj = await db.item.findOne({
+                    where: {
+                        uid: item.itemid,
+                    },
+                });
+                if (itemObj.stock_qty - item.quantity < 0) {
+                    cart.splice(cart.indexOf(item), 1);
+                    itemOutOfStock.push(item.name);
+                }
+            }
             const total = cart.reduce((acc, item) => {
                 return acc + item.price * item.quantity;
             }, 0);
             return {
                 statusCode: 200,
                 message: 'Get cart successfully',
-                data: { cart, total },
+                data: { cart, total, out_of_stock: itemOutOfStock },
             };
         } catch (err) {
             throw new AppError(err.statusCode, err.message);
@@ -40,34 +52,12 @@ module.exports = {
                 },
             });
             if (!cartItem) throw new AppError(404, 'Item not found');
-            if (quantity < 1)
-                await cartItem.destroy({ force: true, truncate: fasle });
-            cartItem.quantity = quantity;
+            if (quantity < 1) await cartItem.destroy();
+            else cartItem.quantity = quantity;
             await cartItem.save();
             return {
                 statusCode: 200,
                 message: 'Update cart successfully',
-            };
-        } catch (err) {
-            throw new AppError(err.statusCode, err.message);
-        }
-    },
-    deleteCartItem: async (client, item) => {
-        try {
-            const cartItem = await db.cart_item.findOne({
-                where: {
-                    clientid: client,
-                    itemid: item,
-                },
-            });
-            if (cartItem) {
-                await cartItem.destroy();
-            } else {
-                throw new AppError(404, 'Item not found');
-            }
-            return {
-                statusCode: 200,
-                message: 'Delete cart item successfully',
             };
         } catch (err) {
             throw new AppError(err.statusCode, err.message);
@@ -88,38 +78,49 @@ module.exports = {
             throw new AppError(err.statusCode, err.message);
         }
     },
-    createCartItem: async (client, item, quantity) => {
+    createCartItem: async (client, items) => {
         try {
-            const itemObj = await db.item.findOne({
-                where: {
-                    uid: item,
-                },
-            });
-            if (!itemObj) {
-                throw new AppError(404, 'Item not found');
-            }
-            if (quantity < 1) {
-                throw new AppError(400, 'Quantity must be greater than 0');
-            }
-            const cartItem = await db.cart_item.findOne({
-                where: {
-                    clientid: client,
-                    itemid: item,
-                },
-            });
-            if (cartItem) {
-                cartItem.quantity += quantity;
-                await cartItem.save();
-            } else {
-                await db.cart_item.create({
-                    clientid: client,
-                    itemid: item,
-                    quantity,
+            let error = [];
+            for (const item of items) {
+                const itemObj = await db.item.findOne({
+                    where: {
+                        uid: item,
+                    },
                 });
+                if (
+                    !itemObj ||
+                    item.quantity < 1 ||
+                    itemObj.stock_qty - item.quantity < 0
+                )
+                    error.push({
+                        itemid: item.uid,
+                        message: !itemObj
+                            ? 'Item not found'
+                            : item.quantity < 1
+                            ? 'Quantity must be greater than 0'
+                            : 'Out of stock',
+                    });
+                const cartItem = await db.cart_item.findOne({
+                    where: {
+                        clientid: client,
+                        itemid: item,
+                    },
+                });
+                if (cartItem) {
+                    cartItem.quantity += item.quantity;
+                    await cartItem.save();
+                } else {
+                    await db.cart_item.create({
+                        clientid: client,
+                        itemid: item,
+                        quantity: item.quantity,
+                    });
+                }
             }
             return {
                 statusCode: 200,
                 message: 'Create cart item successfully',
+                data: error,
             };
         } catch (err) {
             throw new AppError(err.statusCode, err.message);
@@ -148,6 +149,19 @@ module.exports = {
                     type: db.sequelize.QueryTypes.SELECT,
                 },
             );
+            if (!cart.length) throw new AppError(400, 'Cart is empty');
+            const itemOutOfStock = [];
+            for (const item of cart) {
+                const itemObj = await db.item.findOne({
+                    where: {
+                        uid: item.itemid,
+                    },
+                });
+                if (itemObj.stock_qty - item.quantity < 0) {
+                    cart.splice(cart.indexOf(item), 1);
+                    itemOutOfStock.push(item.name);
+                }
+            }
             const condition = JSON.parse(promotion.condition);
             const discount_rate = promotion.discount_rate;
             const max_discount = promotion.max_discount;
@@ -204,6 +218,7 @@ module.exports = {
                     cart,
                     discount,
                     total,
+                    out_of_stock: itemOutOfStock,
                 },
             };
         } catch (err) {

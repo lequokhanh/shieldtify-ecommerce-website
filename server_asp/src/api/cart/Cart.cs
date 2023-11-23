@@ -6,9 +6,8 @@ namespace shieldtify.api.cart
         {
             group.MapGet("/", CartController.getCart);
             group.MapPut("/", CartController.updateCart);
-            group.MapDelete("/", CartController.deleteCartItem);
-            group.MapDelete("/all", CartController.deleteCart);
-            group.MapPost("/", CartController.addCartItem);
+            group.MapDelete("/", CartController.deleteCart);
+            group.MapPost("/", CartController.createCartItem);
             group.MapGet("/discount", CartController.getDiscount);
             return group;
         }

@@ -45,25 +45,6 @@ namespace shieldtify.api.cart
             }
         }
         [Tags("Cart")]
-        public static APIRes deleteCartItem(HttpContext context, [FromQuery] string item)
-        {
-            try
-            {
-                return Middleware.MiddlewareAuthorize(() =>
-                {
-                    var user = (ClientAccount?)context.Items["User"];
-                    var DTO = CartService.deleteCartItem(user.Uid.ToString(), item);
-                    context.Response.StatusCode = DTO.statusCode;
-                    return DTO;
-                }, context, new List<string> { "client" });
-            }
-            catch (Exception)
-            {
-                throw;
-            }
-        }
-
-        [Tags("Cart")]
         public static APIRes deleteCart(HttpContext context)
         {
             try
@@ -83,14 +64,14 @@ namespace shieldtify.api.cart
         }
 
         [Tags("Cart")]
-        public static APIRes addCartItem(HttpContext context, [FromBody] AddCartItemBody body)
+        public static APIRes createCartItem(HttpContext context, [FromBody] AddCartItemBody body)
         {
             try
             {
                 return Middleware.MiddlewareAuthorize(() =>
                 {
                     var user = (ClientAccount?)context.Items["User"];
-                    var DTO = CartService.addCartItem(user.Uid.ToString(), body.item, int.Parse(body.quantity));
+                    var DTO = CartService.createCartItem(user.Uid.ToString(), body.items);
                     context.Response.StatusCode = DTO.statusCode;
                     return DTO;
                 }, context, new List<string> { "client" });
@@ -127,6 +108,11 @@ namespace shieldtify.api.cart
     }
 
     public class AddCartItemBody
+    {
+        public required List<Items> items { get; set; }
+    }
+
+    public class Items
     {
         public required string item { get; set; }
         public required string quantity { get; set; }
