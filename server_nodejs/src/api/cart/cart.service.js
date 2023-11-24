@@ -10,7 +10,7 @@ module.exports = {
                 FROM cart_items ct
                     JOIN items it ON ct.itemid = it.uid
                     LEFT JOIN item_imgs itm ON it.uid = itm.itemid AND itm.is_primary = 1
-                WHERE ct.clientid = :clientid
+                WHERE ct.clientid = :clientid AND it.stock_qty > ct.quantity
                 `,
                 {
                     replacements: {
@@ -19,18 +19,21 @@ module.exports = {
                     type: db.sequelize.QueryTypes.SELECT,
                 },
             );
-            const itemOutOfStock = [];
-            for (const item of cart) {
-                const itemObj = await db.item.findOne({
-                    where: {
-                        uid: item.itemid,
+            const itemOutOfStock = await db.sequelize.query(
+                `
+                SELECT it.name, quantity, link as primary_img, it.price, ct.itemid
+                FROM cart_items ct
+                    JOIN items it ON ct.itemid = it.uid
+                    LEFT JOIN item_imgs itm ON it.uid = itm.itemid AND itm.is_primary = 1
+                WHERE ct.clientid = :clientid AND it.stock_qty < ct.quantity
+                `,
+                {
+                    replacements: {
+                        clientid: client,
                     },
-                });
-                if (itemObj.stock_qty - item.quantity < 0) {
-                    cart.splice(cart.indexOf(item), 1);
-                    itemOutOfStock.push(item);
-                }
-            }
+                    type: db.sequelize.QueryTypes.SELECT,
+                },
+            );
             const total = cart.reduce((acc, item) => {
                 return acc + item.price * item.quantity;
             }, 0);
@@ -63,12 +66,11 @@ module.exports = {
                         uid: item,
                     },
                 });
-                if (itemObj.stock_qty - quantity < 0) {
+                if (itemObj.stock_qty < quantity) {
                     if (itemObj.stock_qty > 0)
                         cartItem.quantity = itemObj.stock_qty;
                     else await cartItem.destroy();
-                }
-                cartItem.quantity = quantity;
+                } else cartItem.quantity = quantity;
             }
             await cartItem.save();
             const cart = await db.sequelize.query(
@@ -77,7 +79,7 @@ module.exports = {
                 FROM cart_items ct
                     JOIN items it ON ct.itemid = it.uid
                     LEFT JOIN item_imgs itm ON it.uid = itm.itemid AND itm.is_primary = 1
-                WHERE ct.clientid = :clientid
+                WHERE ct.clientid = :clientid AND it.stock_qty > ct.quantity
                 `,
                 {
                     replacements: {
@@ -86,18 +88,21 @@ module.exports = {
                     type: db.sequelize.QueryTypes.SELECT,
                 },
             );
-            const itemOutOfStock = [];
-            for (const item of cart) {
-                const itemObj = await db.item.findOne({
-                    where: {
-                        uid: item.itemid,
+            const itemOutOfStock = await db.sequelize.query(
+                `
+                SELECT it.name, quantity, link as primary_img, it.price, ct.itemid
+                FROM cart_items ct
+                    JOIN items it ON ct.itemid = it.uid
+                    LEFT JOIN item_imgs itm ON it.uid = itm.itemid AND itm.is_primary = 1
+                WHERE ct.clientid = :clientid AND it.stock_qty < ct.quantity
+                `,
+                {
+                    replacements: {
+                        clientid: client,
                     },
-                });
-                if (itemObj.stock_qty - item.quantity < 0) {
-                    cart.splice(cart.indexOf(item), 1);
-                    itemOutOfStock.push(item);
-                }
-            }
+                    type: db.sequelize.QueryTypes.SELECT,
+                },
+            );
             const total = cart.reduce((acc, item) => {
                 return acc + item.price * item.quantity;
             }, 0);
@@ -156,7 +161,7 @@ module.exports = {
                 });
                 if (cartItem) {
                     if (
-                        itemObj.stock_qty - cartItem.quantity - item.quantity <
+                        itemObj.stock_qty - cartItem.quantity - item.quantity <=
                         0
                     )
                         error.push({
