@@ -28,7 +28,7 @@ module.exports = {
                 });
                 if (itemObj.stock_qty - item.quantity < 0) {
                     cart.splice(cart.indexOf(item), 1);
-                    itemOutOfStock.push(item.name);
+                    itemOutOfStock.push(item);
                 }
             }
             const total = cart.reduce((acc, item) => {
