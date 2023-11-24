@@ -37,7 +37,11 @@ module.exports = {
             return {
                 statusCode: 200,
                 message: 'Get cart successfully',
-                data: { cart, total, out_of_stock: itemOutOfStock },
+                data: {
+                    cart,
+                    total: Math.round(total, 2),
+                    out_of_stock: itemOutOfStock,
+                },
             };
         } catch (err) {
             throw new AppError(err.statusCode, err.message);
@@ -100,7 +104,11 @@ module.exports = {
             return {
                 statusCode: 200,
                 message: 'Update cart successfully',
-                data: { cart, total, out_of_stock: itemOutOfStock },
+                data: {
+                    cart,
+                    total: Math.round(total, 2),
+                    out_of_stock: itemOutOfStock,
+                },
             };
         } catch (err) {
             throw new AppError(err.statusCode, err.message);
@@ -266,8 +274,8 @@ module.exports = {
                 message: 'Get discount successfully',
                 data: {
                     cart,
-                    discount,
-                    total,
+                    discount: Math.round(discount, 2),
+                    total: Math.round(total, 2),
                     out_of_stock: itemOutOfStock,
                 },
             };

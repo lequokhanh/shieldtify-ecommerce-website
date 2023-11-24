@@ -2,6 +2,7 @@ using shieldtify.common;
 using shieldtify.models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Microsoft.EntityFrameworkCore;
 namespace shieldtify.api.cart
 {
     public static class CartService
@@ -32,7 +33,12 @@ namespace shieldtify.api.cart
                 {
                     total += item.price * item.quantity;
                 }
-                return new APIRes(200, "Get cart successfully", new { cart, total, out_of_stock = itemOutOfStock });
+                return new APIRes(200, "Get cart successfully", new
+                {
+                    cart,
+                    total = Math.Round(total, 2),
+                    out_of_stock = itemOutOfStock
+                });
             }
             catch (System.Exception)
             {
@@ -51,12 +57,13 @@ namespace shieldtify.api.cart
                     db.CartItems.Remove(cartItem);
                 else
                 {
-                    if (quantity > cartItem.Item.StockQty)
+                    var item = db.Items.Where(i => i.Uid.ToString() == itemID).FirstOrDefault();
+                    if (quantity > item.StockQty)
                     {
-                        if (cartItem.Item.StockQty == 0)
+                        if (item.StockQty == 0)
                             db.CartItems.Remove(cartItem);
                         else
-                            cartItem.Quantity = cartItem.Item.StockQty;
+                            cartItem.Quantity = item.StockQty;
                     }
                     cartItem.Quantity = quantity;
                 }
@@ -82,7 +89,12 @@ namespace shieldtify.api.cart
                 {
                     total += item.price * item.quantity;
                 }
-                return new APIRes(200, "Update cart successfully", new { cart, total, out_of_stock = itemOutOfStock });
+                return new APIRes(200, "Update cart successfully", new
+                {
+                    cart,
+                    total = Math.Round(total, 2),
+                    out_of_stock = itemOutOfStock
+                });
             }
             catch (System.Exception)
             {
@@ -197,7 +209,7 @@ namespace shieldtify.api.cart
                         });
                         total += item.price * item.quantity;
                     }
-                    if (int.Parse(condition["total"][0].ToString()) <= total)
+                    if (int.Parse(condition["total"].ToString()) <= total)
                         return new APIRes(400, "Total is not enough to get discount");
                     discount = Math.Max(total * discountRate, maxDiscount);
                     total -= discount;
@@ -237,7 +249,13 @@ namespace shieldtify.api.cart
                     if (!flag)
                         return new APIRes(400, "No item in cart is eligible for discount");
                 }
-                return new APIRes(200, "Get discount successfully", new { cart = items, discount, total, out_of_stock = itemOutOfStock });
+                return new APIRes(200, "Get discount successfully", new
+                {
+                    cart = items,
+                    discount = Math.Round(discount, 2),
+                    total = Math.Round(total, 2),
+                    out_of_stock = itemOutOfStock
+                });
             }
             catch (System.Exception)
             {
