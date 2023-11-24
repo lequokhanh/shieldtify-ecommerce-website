@@ -161,7 +161,7 @@ module.exports = {
                 });
                 if (cartItem) {
                     if (
-                        itemObj.stock_qty - cartItem.quantity - item.quantity <=
+                        itemObj.stock_qty - cartItem.quantity - item.quantity <
                         0
                     )
                         error.push({

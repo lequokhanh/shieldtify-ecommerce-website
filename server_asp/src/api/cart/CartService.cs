@@ -140,7 +140,7 @@ namespace shieldtify.api.cart
                     var cartItem = db.CartItems.Where(i => i.Clientid.ToString() == clientID && i.Itemid.ToString() == item.item).FirstOrDefault();
                     if (cartItem != null)
                     {
-                        if (cartItem.Quantity + item.quantity >= itemObj.StockQty)
+                        if (cartItem.Quantity + item.quantity > itemObj.StockQty)
                             error.Add(new { item.item, message = "Quantity is greater than stock quantity" });
                         else
                             cartItem.Quantity += item.quantity;
