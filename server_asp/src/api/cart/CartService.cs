@@ -147,12 +147,15 @@ namespace shieldtify.api.cart
                     }
                     else
                     {
-                        db.CartItems.Add(new CartItem
-                        {
-                            Clientid = Guid.Parse(clientID),
-                            Itemid = Guid.Parse(item.item),
-                            Quantity = item.quantity
-                        });
+                        if (item.quantity > itemObj.StockQty)
+                            error.Add(new { item.item, message = "Quantity is greater than stock quantity" });
+                        else
+                            db.CartItems.Add(new CartItem
+                            {
+                                Clientid = Guid.Parse(clientID),
+                                Itemid = Guid.Parse(item.item),
+                                Quantity = item.quantity
+                            });
                     }
                 }
                 db.SaveChanges();

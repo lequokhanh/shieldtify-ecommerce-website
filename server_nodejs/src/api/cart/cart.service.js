@@ -173,11 +173,17 @@ module.exports = {
                         await cartItem.save();
                     }
                 } else {
-                    await db.cart_item.create({
-                        clientid: client,
-                        itemid: item.item,
-                        quantity: item.quantity,
-                    });
+                    if (itemObj.stock_qty - item.quantity < 0)
+                        error.push({
+                            item: item.item,
+                            message: 'Quantity is greater than stock quantity',
+                        });
+                    else
+                        await db.cart_item.create({
+                            clientid: client,
+                            itemid: item.item,
+                            quantity: item.quantity,
+                        });
                 }
             }
             return {
