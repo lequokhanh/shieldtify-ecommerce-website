@@ -140,12 +140,12 @@ module.exports = {
                 });
                 if (item.quantity < 1)
                     error.push({
-                        itemid: item.uid,
+                        itemid: item.item,
                         message: 'Quantity must be greater than 0',
                     });
                 if (!itemObj)
                     error.push({
-                        itemid: item.uid,
+                        itemid: item.item,
                         message: 'Item not found',
                     });
                 const cartItem = await db.cart_item.findOne({
@@ -160,7 +160,7 @@ module.exports = {
                         0
                     )
                         error.push({
-                            itemid: item.uid,
+                            itemid: item.item,
                             message: 'Quantity is greater than stock quantity',
                         });
                     else {
