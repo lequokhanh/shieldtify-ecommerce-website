@@ -10,7 +10,7 @@ module.exports = {
                 FROM cart_items ct
                     JOIN items it ON ct.itemid = it.uid
                     LEFT JOIN item_imgs itm ON it.uid = itm.itemid AND itm.is_primary = 1
-                WHERE ct.clientid = :clientid AND it.stock_qty > ct.quantity
+                WHERE ct.clientid = :clientid AND it.stock_qty >= ct.quantity
                 `,
                 {
                     replacements: {
@@ -66,10 +66,8 @@ module.exports = {
                         uid: item,
                     },
                 });
-                if (itemObj.stock_qty < quantity) {
-                    if (itemObj.stock_qty > 0)
-                        cartItem.quantity = itemObj.stock_qty;
-                    else await cartItem.destroy();
+                if (itemObj.stock_qty <= quantity) {
+                    throw new AppError(400, 'Quantity is greater than stock');
                 } else cartItem.quantity = quantity;
             }
             await cartItem.save();
@@ -79,7 +77,7 @@ module.exports = {
                 FROM cart_items ct
                     JOIN items it ON ct.itemid = it.uid
                     LEFT JOIN item_imgs itm ON it.uid = itm.itemid AND itm.is_primary = 1
-                WHERE ct.clientid = :clientid AND it.stock_qty > ct.quantity
+                WHERE ct.clientid = :clientid AND it.stock_qty >= ct.quantity
                 `,
                 {
                     replacements: {

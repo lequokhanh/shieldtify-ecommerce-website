@@ -59,12 +59,7 @@ namespace shieldtify.api.cart
                 {
                     var item = db.Items.Where(i => i.Uid.ToString() == itemID).FirstOrDefault();
                     if (quantity > item.StockQty)
-                    {
-                        if (item.StockQty == 0)
-                            db.CartItems.Remove(cartItem);
-                        else
-                            cartItem.Quantity = item.StockQty;
-                    }
+                        return new APIRes(400, "Quantity is greater than stock quantity");
                     else
                         cartItem.Quantity = quantity;
                 }
