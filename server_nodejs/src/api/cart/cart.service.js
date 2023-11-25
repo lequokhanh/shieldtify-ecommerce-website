@@ -66,7 +66,7 @@ module.exports = {
                         uid: item,
                     },
                 });
-                if (itemObj.stock_qty <= quantity) {
+                if (itemObj.stock_qty < quantity) {
                     throw new AppError(400, 'Quantity is greater than stock');
                 } else cartItem.quantity = quantity;
             }
