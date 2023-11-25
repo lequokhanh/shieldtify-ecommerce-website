@@ -3,6 +3,7 @@ using shieldtify.models;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Mvc;
 namespace shieldtify.api.cart
 {
     public static class CartService
@@ -162,7 +163,7 @@ namespace shieldtify.api.cart
             }
         }
 
-        public static APIRes getDiscount(string clientID, string code)
+        public static APIRes getDiscount(string clientID, [FromQuery] string code)
         {
             try
             {
