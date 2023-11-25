@@ -123,10 +123,14 @@ export function getUserCart () {
     return axiosCookie.get('/cart');
 }
 
-export function addToCart ({item, quantity}) {
+export function addToCart({ item, quantity }) {
     return axiosCookie.post('/cart', {
-        item, 
-        quantity
+        items: [
+            {
+                item: item.toString(),
+                quantity: quantity
+            }
+        ]
     });
 }
 
@@ -137,8 +141,14 @@ export function updateCart ({item, quantity}) {
     }); 
 }
 
-export function removeItemFromCart ({item}) {
-    return axiosCookie.delete(`/cart?item=${item}`);
+export function removeAllItemsFromCart () {
+    return axiosCookie.delete(`/cart`);
+}
+
+export function applyDiscountCode (code) {
+    return axiosCookie.get(`/cart/discount`, {
+        code
+    });
 }
 
 // export function updateCart (cart) {

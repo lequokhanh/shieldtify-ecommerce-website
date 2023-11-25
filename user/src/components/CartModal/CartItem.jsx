@@ -9,27 +9,38 @@ import { useState } from "react";
 import { updateCart } from "../../utils/api";
 import { useContext } from "react";
 import { CartContext } from "../../context/cart.context";
-import { getUserCart } from "../../utils/api";
-const CartItem = ({item}) => {
-    const { removeItem, setCartItems, setCartTotal, cartTotal, setCartCount, cartCount } = useContext(CartContext);
+import { useToast } from "@chakra-ui/react";
+import * as router from "react-router-dom";
+const CartItem = ({item,type}) => {
+    const toast = useToast;
+    const { setCartTotal, removeItemFromCart, setCartCount, cartCount, setCartItems, setOutOfStockItems } = useContext(CartContext);
     const [itemQuantity, setItemQuantity] = useState(item.quantity);
     const decreaseCartQuantity = async () => {
-        if(itemQuantity !== 1) {
-            await updateCart({item:item.itemid,quantity:itemQuantity-1});
-            setItemQuantity(itemQuantity-1);
-            setCartTotal(cartTotal-item.price);
-        }
-        else {
-            await removeItem({item:item.itemid});
-            setCartTotal(cartTotal-item.price);
-            console.log(cartCount);
-            setCartCount(cartCount-1);
-        }
+            await updateCart({item:item.itemid,quantity:item.quantity   -1}).then((res) => {
+                    setCartItems(res.data.data.cart);
+                    setOutOfStockItems(res.data.data.out_of_stock);
+                    setCartTotal(res.data.data.total);
+                    setItemQuantity(item.quantity-1);
+                    if(itemQuantity === 1){
+                        setCartCount(cartCount-1);
+                    }
+            })
     }
     const increaseCartQuantity = async () => {
-        await updateCart({item:item.itemid,quantity:item.quantity+1});
-        setItemQuantity(itemQuantity+1);
-        setCartTotal(cartTotal+item.price);
+        await updateCart({item:item.itemid,quantity:item.quantity+1}).then((res) => {
+            setCartItems(res.data.data.cart);
+            setOutOfStockItems(res.data.data.out_of_stock);
+            setCartTotal(res.data.data.total);    
+            setItemQuantity(itemQuantity+1);
+        }).catch((err) => {
+            toast({
+                title: "Error",
+                description: err.response.data.message,
+                status: "error",    
+                duration: 2000,
+                isClosable: true
+            });
+        });
     }
     return (
         <Flex key={item.itemid} gap="20px" padding="10px" whiteSpace="nowrap" position="relative">
@@ -39,19 +50,38 @@ const CartItem = ({item}) => {
                 fontWeight="600" 
                 fontSize="1.0625rem" 
                 maxW="210px"
+                as={router.Link} 
+                to={`/product/${item.itemid}`}
                 isTruncated
                 _hover={
-                    {
+                    type === "stock" ? {
                         cursor: "pointer",
                         textDecorationLine: "underline"
+                    } : {
+                        cursor: "pointer"
                     }
                 }
+                textDecoration={type === "outOfStock" ? "line-through" : "none"}
                 >
                     {item.name}
                 </Text>
-                <Text fontWeight="400" fontSize="1.0625rem" > 
-                    {item.price}
-                </Text>
+                <Flex gap="10px">
+                    <Text 
+                    fontWeight="400" 
+                    fontSize="1.0625rem" 
+                    textDecoration={(type === "outOfStock" || item.old_price)  ? "line-through" : "none"}
+                    > 
+                        {item.old_price ? item.old_price : item.price}$
+                    </Text>
+                    <Text
+                    fontSize="1.0625rem"
+                    fontWeight="400"
+                    color="#DE3B40"
+                    >
+                        {type === "outOfStock" ? "Out of stock!" : null}
+                        {item.new_price ? `${item.new_price}$` : null}
+                    </Text>
+                </Flex>
                 <Flex
                 gap={3}
                 alignItems="center"
@@ -102,7 +132,7 @@ const CartItem = ({item}) => {
                 cursor: "pointer"
             }}
             onClick={ async () => {
-                removeItem({item:item.itemid});
+                removeItemFromCart({item:item.itemid});
                 setItemQuantity(0);
                 }
             }

@@ -1,7 +1,12 @@
 import { createContext, useEffect, useState } from 'react';
 import { getUser } from '../utils/api';
 
-export const AuthContext = createContext();
+export const AuthContext = createContext({
+    isLoggedIn: false,
+    setIsLoggedIn: () => {},
+    currentUser: null,
+    setCurrentUser: () => {}
+});
 
 const getInitialLogInState = () => {
     const isLoggedIn = localStorage.getItem("isLoggedIn");

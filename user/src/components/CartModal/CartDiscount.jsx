@@ -3,12 +3,17 @@ import {
     Text,
     Button, 
     Input,
-    FormControl
+    FormControl,
+    FormErrorMessage
 } from "@chakra-ui/react"
 import { Field, Form, Formik } from "formik";
+import { applyDiscountCode } from "../../utils/api";
+import { CartContext } from "../../context/cart.context";
+import { useContext } from "react";
 
 
 const CartDiscount = () => {
+    const { setCartItems, setCartTotal, setDiscountedPrice  } = useContext(CartContext);
     return (
     <Flex flexDir="column"
     padding="23px 29px" 
@@ -24,7 +29,6 @@ const CartDiscount = () => {
         <Flex
         flexDir="column"
         gap="15px"
-        
         >
             <Text fontSize="1.25rem" color="#444" fontWeight="700">
                 Apply promotion code
@@ -32,6 +36,15 @@ const CartDiscount = () => {
             <Formik
             initialValues={{promotionCode: ''}}
             onSubmit={async (values, actions) => {
+                try {
+                    await applyDiscountCode(values.promotionCode).then((res) => {
+                        setCartItems(res.data.data.cart);
+                        setCartTotal(res.data.data.total);
+                        setDiscountedPrice(res.data.data.discounted_price);
+                    });
+                }catch (err){
+                    actions.setFieldError('promotionCode', err.response.data.message);
+                }
             }}
             >
                 {(props) => (
@@ -46,6 +59,7 @@ const CartDiscount = () => {
                                             placeholder="Enter a promotion code"
                                             pr="40px"
                                             />
+                                            <FormErrorMessage>{form.errors.promotionCode}</FormErrorMessage>
                                         </FormControl>
                                 )}
                             </Field>
