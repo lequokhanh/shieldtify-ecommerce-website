@@ -1,6 +1,7 @@
 import {
     Flex,
     Image,
+    Input,
     Text
 } from "@chakra-ui/react";
 import no_img from '../../assets/no_img.svg';
@@ -13,6 +14,7 @@ import { useToast } from "@chakra-ui/react";
 import * as router from "react-router-dom";
 const CartItem = ({item,type}) => {
     const toast = useToast;
+    const [isValueInvalid, setIsValueInvalid] = useState(false); // [1
     const { setCartTotal, removeItemFromCart, setCartCount, cartCount, setCartItems, setOutOfStockItems } = useContext(CartContext);
     const [itemQuantity, setItemQuantity] = useState(item.quantity);
     const decreaseCartQuantity = async () => {
@@ -83,7 +85,6 @@ const CartItem = ({item,type}) => {
                     </Text>
                 </Flex>
                 <Flex
-                gap={3}
                 alignItems="center"
                 bgColor="shieldtify.300"
                 fontFamily="Robot, sans-serif"
@@ -103,13 +104,38 @@ const CartItem = ({item,type}) => {
                     >
                         -
                     </Text>
-                    <Text
+                    <Input
+                        type="number"
+                        paddingX="5px"
+                        value={itemQuantity}
+                        textAlign="center"
+                        onChange={ async (e) => {
+                            if(e.target.value === ""){
+                                setItemQuantity(1);
+                            }else {
+                                await updateCart({item:item.itemid,quantity:e.target.value}).then((res) => {
+                                        setItemQuantity(res.data.data.cart[0].quantity);
+                                        setCartItems(res.data.data.cart);
+                                        setOutOfStockItems(res.data.data.out_of_stock);
+                                        setCartTotal(res.data.data.total);
+                                        setIsValueInvalid(false);
+                                }).catch(() => {
+                                        setIsValueInvalid(true);
+                                })
+                            }
+                        }}
+                        isInvalid={isValueInvalid}
+                        w="50px"
+                        border="none"
+                        variant="unstyled"
+                    />
+                    {/* <Text
                     fontSize="0.75rem"
                     fontWeight="600"
                     color="shieldtify.100"
                     >
                         {itemQuantity}
-                    </Text>
+                    </Text> */}
                     <Text
                     fontSize="1.25rem"
                     fontWeight="300"

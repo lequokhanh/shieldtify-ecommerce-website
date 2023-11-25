@@ -22,6 +22,7 @@ export const CartContext = createContext({
         setCartCount: () => {},
         setOutOfStockItems: () => {},
         setDiscountedPrice: () => {},
+        updateItemQuantity: () => {}
 });
 
 export const CartProvider = ({children}) => {
@@ -29,7 +30,6 @@ export const CartProvider = ({children}) => {
     const [discountedPrice, setDiscountedPrice] = useState(0); // [1
     const [cartItems, setCartItems] = useState([]);
     const [outOfStockItems, setOutOfStockItems] = useState([]); 
-    const [discountedItems, setDiscountedItems] = useState([]);
     const [cartCount, setCartCount] = useState(0);
     const [cartTotal, setCartTotal] = useState(0);
 
@@ -101,6 +101,23 @@ export const CartProvider = ({children}) => {
             setCartTotal(res.data.data.total);
         })
     }
+    const updateItemQuantity = async ({item,quantity}) => {
+        await updateCart({item:item,quantity:quantity}).then((res) => {
+            if(res.data.data && res.data.data.message === "Quantity is greater than stock quantity"){
+                toast({
+                    title: "Error",
+                    description: res.data.data.message,
+                    status: "error",
+                    duration: 2000,
+                    isClosable: true
+                });
+            }else{
+                setCartItems(res.data.data.cart);
+                setOutOfStockItems(res.data.data.out_of_stock);
+                setCartTotal(res.data.data.total);
+            }
+        })
+    }
     const value = {
         addItemToCart,
         clearCart,
@@ -116,6 +133,7 @@ export const CartProvider = ({children}) => {
         setCartCount,
         setOutOfStockItems,
         setDiscountedPrice,
+        updateItemQuantity
     }
     return (
         <CartContext.Provider value={value}>
