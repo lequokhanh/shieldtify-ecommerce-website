@@ -146,9 +146,7 @@ export function removeAllItemsFromCart () {
 }
 
 export function applyDiscountCode (code) {
-    return axiosCookie.get(`/cart/discount`, {
-        code
-    });
+    return axiosCookie.get(`/cart/discount?code=${code}`);
 }
 
 // export function updateCart (cart) {
