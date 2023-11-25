@@ -78,7 +78,11 @@ const ProductDetails = () => {
                         ? res.data.data.description
                         : 'No description available'
                 )
-            })
+            }).catch((err) => {
+                if(err.response.data.message === "Invalid product id"){
+                    window.location.href = "/404"
+                }
+            });
         }
         fetchData()
     }, [])
