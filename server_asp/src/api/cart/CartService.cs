@@ -171,6 +171,10 @@ namespace shieldtify.api.cart
                 var promotion = db.Promotions.Where(i => i.Code == code).FirstOrDefault();
                 if (promotion == null)
                     return new APIRes(404, "Promotion not found");
+                if (promotion.StartDate > DateTime.Now)
+                    return new APIRes(400, "Promotion is not started yet");
+                if (promotion.EndDate < DateTime.Now)
+                    return new APIRes(400, "Promotion is ended");
                 var cart = db.CartItems.Where(i => i.Clientid.ToString() == clientID && i.Quantity <= i.Item.StockQty).Select(i => new
                 {
                     name = i.Item.Name,
@@ -211,7 +215,7 @@ namespace shieldtify.api.cart
                     }
                     if (int.Parse(condition["total"].ToString()) <= total)
                         return new APIRes(400, "Total is not enough to get discount");
-                    discount = Math.Max(total * discountRate, maxDiscount);
+                    discount = (float)Math.Round(Math.Max(total * discountRate, maxDiscount), 2);
                     total -= discount;
                 }
                 else
@@ -228,7 +232,7 @@ namespace shieldtify.api.cart
                                 item.quantity,
                                 item.primary_img,
                                 old_price = item.price,
-                                new_price = item.price - Math.Max(item.price * discountRate, maxDiscount)
+                                new_price = (float)Math.Round(item.price - Math.Min(item.price * discountRate, maxDiscount), 2)
                             });
                             flag = true;
                         }
@@ -244,7 +248,7 @@ namespace shieldtify.api.cart
                             });
                         }
                         total += newPrice * item.quantity;
-                        discount += Math.Max(newPrice * discountRate, maxDiscount);
+                        discount += Math.Min(newPrice * discountRate, maxDiscount);
                     }
                     if (!flag)
                         return new APIRes(400, "No item in cart is eligible for discount");

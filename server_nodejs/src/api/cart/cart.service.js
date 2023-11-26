@@ -42,7 +42,7 @@ module.exports = {
                 message: 'Get cart successfully',
                 data: {
                     cart,
-                    total: Math.round(total, 2),
+                    total: parseFloat(total.toFixed(2)),
                     out_of_stock: itemOutOfStock,
                 },
             };
@@ -109,7 +109,7 @@ module.exports = {
                 message: 'Update cart successfully',
                 data: {
                     cart,
-                    total: Math.round(total, 2),
+                    total: parseFloat(total.toFixed(2)),
                     out_of_stock: itemOutOfStock,
                 },
             };
@@ -201,6 +201,10 @@ module.exports = {
                 },
             });
             if (!promotion) throw new AppError(404, 'Promotion not found');
+            if (promotion.start_date > Date.now())
+                throw new AppError(400, 'Promotion is not started yet');
+            if (promotion.end_date < Date.now())
+                throw new AppError(400, 'Promotion is ended');
             const cart = await db.sequelize.query(
                 `
                 SELECT it.name, quantity, link as primary_img, it.price, ct.itemid, categoryid
@@ -236,19 +240,20 @@ module.exports = {
             let total = 0;
             let discount = 0;
             if (type === 'by total') {
-                cart.dataValues.forEach((item) => {
+                cart.forEach((item) => {
                     item.old_price = item.price;
                     item.new_price = item.price;
                     delete item.price;
                     total += item.new_price * item.quantity;
+                    delete item.categoryid;
                 });
-                if (condition.total <= total)
+                if (condition.total > total)
                     throw new AppError(400, 'Total is not enough get discount');
-                discount = max(total * discount_rate, max_discount);
+                discount = Math.min(total * discount_rate, max_discount);
                 total -= discount;
             } else {
                 let flag = false;
-                cart.dataValues.forEach((item) => {
+                cart.forEach((item) => {
                     item.old_price = item.price;
                     if (
                         (condition.item[0] === '*' &&
@@ -259,9 +264,15 @@ module.exports = {
                         condition.item.includes(item.itemid)
                     ) {
                         flag = true;
-                        item.new_price =
-                            item.price -
-                            max(item.price * discount_rate, max_discount);
+                        item.new_price = parseFloat(
+                            (
+                                item.price -
+                                Math.min(
+                                    item.price * discount_rate,
+                                    max_discount,
+                                )
+                            ).toFixed(2),
+                        );
                     } else {
                         item.new_price = item.price;
                     }
@@ -270,6 +281,7 @@ module.exports = {
                         item.old_price * item.quantity -
                         item.new_price * item.quantity;
                     total += item.new_price * item.quantity;
+                    delete item.categoryid;
                 });
                 if (!flag)
                     throw new AppError(
@@ -277,14 +289,13 @@ module.exports = {
                         'No item in cart is eligible for discount',
                     );
             }
-            delete cart.dataValues.categoryid;
             return {
                 statusCode: 200,
                 message: 'Get discount successfully',
                 data: {
                     cart,
-                    discount: Math.round(discount, 2),
-                    total: Math.round(total, 2),
+                    discount: parseFloat(discount.toFixed(2)),
+                    total: parseFloat(total.toFixed(2)),
                     out_of_stock: itemOutOfStock,
                 },
             };
