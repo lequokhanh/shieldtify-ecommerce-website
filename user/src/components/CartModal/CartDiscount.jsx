@@ -13,7 +13,7 @@ import { useContext } from "react";
 
 
 const CartDiscount = () => {
-    const { setCartItems, setCartTotal, setDiscountedPrice  } = useContext(CartContext);
+    const { setCartItems, setCartTotal, setDiscountedPrice, setDiscountedCode } = useContext(CartContext);
     return (
     <Flex flexDir="column"
     padding="23px 29px" 
@@ -41,6 +41,7 @@ const CartDiscount = () => {
                         setCartItems(res.data.data.cart);
                         setCartTotal(res.data.data.total);
                         setDiscountedPrice(res.data.data.discount);
+                        setDiscountedCode(values.promotionCode);
                     });
                 }catch (err){
                     actions.setFieldError('promotionCode', err.response.data.message);

@@ -17,12 +17,14 @@ export const CartContext = createContext({
         cartCount: 0,
         cartTotal: 0,
         discountedPrice: 0,
+        discountedCode: "",
         setCartTotal: () => {},
         setCartItems: () => {},
         setCartCount: () => {},
         setOutOfStockItems: () => {},
         setDiscountedPrice: () => {},
-        updateItemQuantity: () => {}
+        updateItemQuantity: () => {},
+        setDiscountedCode: () => {} 
 });
 
 export const CartProvider = ({children}) => {
@@ -32,6 +34,7 @@ export const CartProvider = ({children}) => {
     const [outOfStockItems, setOutOfStockItems] = useState([]); 
     const [cartCount, setCartCount] = useState(0);
     const [cartTotal, setCartTotal] = useState(0);
+    const [discountedCode, setDiscountedCode] = useState("");
 
     useEffect (() => {
         async function fetchCart(){
@@ -67,6 +70,8 @@ export const CartProvider = ({children}) => {
                 getUserCart().then((res) => {
                     setCartItems(res.data.data.cart);
                     setCartTotal(res.data.data.total);
+                    setDiscountedCode("");
+                    setDiscountedPrice(0);
                 });
                 if(!isItemInCart){
                     setCartCount(cartCount+1);
@@ -92,6 +97,8 @@ export const CartProvider = ({children}) => {
             setCartTotal(res.data.data.total);
             setOutOfStockItems(res.data.data.out_of_stock);
             setDiscountedPrice(0);
+            setDiscountedCode("");
+
         })
     }
     const removeItemFromCart = async ({item}) => {
@@ -101,6 +108,7 @@ export const CartProvider = ({children}) => {
             setCartCount(cartCount-1)
             setCartTotal(res.data.data.total);
             setDiscountedPrice(0);
+            setDiscountedCode("");
         })
     }
     const updateItemQuantity = async ({item,quantity}) => {
@@ -130,12 +138,14 @@ export const CartProvider = ({children}) => {
         cartCount,
         cartTotal,
         discountedPrice,
+        discountedCode,
         setCartTotal,
         setCartItems,
         setCartCount,
         setOutOfStockItems,
         setDiscountedPrice,
-        updateItemQuantity
+        updateItemQuantity,
+        setDiscountedCode
     }
     return (
         <CartContext.Provider value={value}>

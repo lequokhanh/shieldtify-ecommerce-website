@@ -21,7 +21,7 @@ import { CartContext } from '../../context/cart.context';
 const CartModal = ({isOpen, onClose}) => {
     const [isDiscountOpen, setIsDiscountOpen] = useState(false);
     const [discountTextStyle, setDisCountTextStyle] = useState({});
-    const { cartItems, cartTotal, clearCart, outOfStockItems, discountedPrice } = useContext(CartContext);
+    const { cartItems, cartTotal, clearCart, outOfStockItems, discountedPrice, discountedCode } = useContext(CartContext);
     const handleOpenDiscount = () => {
         setIsDiscountOpen(!isDiscountOpen);
         isDiscountOpen ? setDisCountTextStyle({
@@ -105,9 +105,10 @@ const CartModal = ({isOpen, onClose}) => {
                                 $
                                 </Text>
                             </HStack>
-                            <HStack color="shieldtify.100" justifyContent="space-between">
+                            <HStack color="shieldtify.100" justifyContent="space-between" position="relative">
                                 <Flex 
                                 position="relative" 
+                                left="-2.5px"
                                 _hover={{
                                     cursor: "pointer",
                                     textDecorationLine: "underline"
@@ -124,11 +125,26 @@ const CartModal = ({isOpen, onClose}) => {
                                         isDiscountOpen ? "rotate(0deg)" : "rotate(180deg)"
                                     }
                                     />
-                                    <Text fontWeight="500" style={discountTextStyle}>Discount</Text>
-                                </Flex>
-                                    <Text fontSize="0.875rem" fontWeight="400">
-                                        {discountedPrice === 0 ? `${discountedPrice}$` : `-${discountedPrice}$`}
+                                    <Text 
+                                    fontWeight="500" 
+                                    style={discountTextStyle}
+                                    >
+                                        Discount
                                     </Text>
+                                </Flex>
+                                    <Flex gap="5px">
+                                        <Text
+                                            color="#9095A1"
+                                            fontSize="0.875rem"
+                                            fontWeight="600"
+                                            textDecorationLine="underline"
+                                        >
+                                            {discountedCode.toUpperCase()}
+                                        </Text>
+                                        <Text fontSize="0.875rem" fontWeight="400">
+                                            {discountedPrice === 0 ? `${discountedPrice}$` : `-${discountedPrice}$`}
+                                        </Text>
+                                    </Flex>
                                 </HStack>
                                 <HStack color="shieldtify.100" justifyContent="space-between">
                                     <Text fontSize="1.25rem" fontWeight="700" color="#3C619E" >

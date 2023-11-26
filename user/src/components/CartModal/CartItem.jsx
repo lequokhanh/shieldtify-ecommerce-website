@@ -15,7 +15,7 @@ import { useToast } from "@chakra-ui/react";
 const CartItem = ({item,type}) => {
     const toast = useToast;
     const [isValueInvalid, setIsValueInvalid] = useState(false); // [1
-    const { setCartTotal, removeItemFromCart, setCartCount, cartCount, setCartItems, setOutOfStockItems, setDiscountedPrice } = useContext(CartContext);
+    const { setCartTotal, removeItemFromCart, setCartCount, cartCount, setCartItems, setOutOfStockItems, setDiscountedPrice, setDiscountedCode } = useContext(CartContext);
     const [itemQuantity, setItemQuantity] = useState(item.quantity);
     const decreaseCartQuantity = async () => {
             await updateCart({item:item.itemid,quantity:item.quantity   -1}).then((res) => {
@@ -24,6 +24,7 @@ const CartItem = ({item,type}) => {
                     setCartTotal(res.data.data.total);
                     setItemQuantity(item.quantity-1);
                     setDiscountedPrice(0);
+                    setDiscountedCode("");
                     if(itemQuantity === 1){
                         setCartCount(cartCount-1);
                     }
@@ -36,6 +37,8 @@ const CartItem = ({item,type}) => {
             setCartTotal(res.data.data.total);    
             setItemQuantity(itemQuantity+1);
             setDiscountedPrice(0);
+            setDiscountedCode("");
+
         }).catch((err) => {
             toast({
                 title: "Error",
@@ -84,7 +87,7 @@ const CartItem = ({item,type}) => {
                     color="#DE3B40"
                     >
                         {type === "outOfStock" ? "Out of stock!" : null}
-                        {item.new_price ? `${item.new_price}$` : null}
+                        {item.new_price && (item.old_price !== item.new_price) ? `${item.new_price}$` : null}
                     </Text>
                 </Flex>
                 <Flex
