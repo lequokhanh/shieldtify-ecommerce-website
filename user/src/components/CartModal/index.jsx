@@ -10,6 +10,7 @@ import {
     Text,
     Button,
     Image,
+    Box,
 } from '@chakra-ui/react';
 import { useState, useContext} from 'react';
 import { ArrowForwardIcon } from '@chakra-ui/icons';
@@ -147,9 +148,18 @@ const CartModal = ({isOpen, onClose}) => {
                                     </Flex>
                                 </HStack>
                                 <HStack color="shieldtify.100" justifyContent="space-between">
-                                    <Text fontSize="1.25rem" fontWeight="700" color="#3C619E" >
-                                        Total
-                                    </Text>
+                                    <Box 
+                                    position="relative"
+                                    left="16.5px"
+                                    >
+                                        <Text 
+                                        fontSize="1.25rem" 
+                                        fontWeight="700" 
+                                        color="#3C619E" 
+                                        >
+                                            Total
+                                        </Text>
+                                    </Box>
                                     <Text fontSize="1.25rem" fontWeight="400">
                                     {cartTotal}$
                                     </Text>
