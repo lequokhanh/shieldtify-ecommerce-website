@@ -11,11 +11,11 @@ import { updateCart } from "../../utils/api";
 import { useContext } from "react";
 import { CartContext } from "../../context/cart.context";
 import { useToast } from "@chakra-ui/react";
-import * as router from "react-router-dom";
+
 const CartItem = ({item,type}) => {
     const toast = useToast;
     const [isValueInvalid, setIsValueInvalid] = useState(false); // [1
-    const { setCartTotal, removeItemFromCart, setCartCount, cartCount, setCartItems, setOutOfStockItems } = useContext(CartContext);
+    const { setCartTotal, removeItemFromCart, setCartCount, cartCount, setCartItems, setOutOfStockItems, setDiscountedPrice } = useContext(CartContext);
     const [itemQuantity, setItemQuantity] = useState(item.quantity);
     const decreaseCartQuantity = async () => {
             await updateCart({item:item.itemid,quantity:item.quantity   -1}).then((res) => {
@@ -23,6 +23,7 @@ const CartItem = ({item,type}) => {
                     setOutOfStockItems(res.data.data.out_of_stock);
                     setCartTotal(res.data.data.total);
                     setItemQuantity(item.quantity-1);
+                    setDiscountedPrice(0);
                     if(itemQuantity === 1){
                         setCartCount(cartCount-1);
                     }
@@ -34,6 +35,7 @@ const CartItem = ({item,type}) => {
             setOutOfStockItems(res.data.data.out_of_stock);
             setCartTotal(res.data.data.total);    
             setItemQuantity(itemQuantity+1);
+            setDiscountedPrice(0);
         }).catch((err) => {
             toast({
                 title: "Error",
@@ -52,8 +54,9 @@ const CartItem = ({item,type}) => {
                 fontWeight="600" 
                 fontSize="1.0625rem" 
                 maxW="210px"
-                as={router.Link} 
-                to={`/product/${item.itemid}`}
+                onClick={() => {
+                    window.location.href=`/product/${item.itemid}`;
+                }}
                 isTruncated
                 _hover={
                     type === "stock" ? {
@@ -71,7 +74,7 @@ const CartItem = ({item,type}) => {
                     <Text 
                     fontWeight="400" 
                     fontSize="1.0625rem" 
-                    textDecoration={(type === "outOfStock" || item.old_price)  ? "line-through" : "none"}
+                    textDecoration={(type === "outOfStock" || item.old_price ) && (item.old_price !== item.new_price)  ? "line-through" : "none"}
                     > 
                         {item.old_price ? item.old_price : item.price}$
                     </Text>
@@ -118,6 +121,7 @@ const CartItem = ({item,type}) => {
                                         setCartItems(res.data.data.cart);
                                         setOutOfStockItems(res.data.data.out_of_stock);
                                         setCartTotal(res.data.data.total);
+                                        setDiscountedPrice(0);
                                         setIsValueInvalid(false);
                                 }).catch(() => {
                                         setIsValueInvalid(true);

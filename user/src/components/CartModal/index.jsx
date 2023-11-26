@@ -99,7 +99,10 @@ const CartModal = ({isOpen, onClose}) => {
                                     Subtotal
                                 </Text>
                                 <Text fontSize="0.875rem" fontWeight="400">
-                                {cartTotal}$
+                                {
+                                    cartTotal + discountedPrice
+                                }
+                                $
                                 </Text>
                             </HStack>
                             <HStack color="shieldtify.100" justifyContent="space-between">
@@ -132,7 +135,7 @@ const CartModal = ({isOpen, onClose}) => {
                                         Total
                                     </Text>
                                     <Text fontSize="1.25rem" fontWeight="400">
-                                    {cartTotal - discountedPrice}$
+                                    {cartTotal}$
                                     </Text>
                                 </HStack>
                             </Flex>

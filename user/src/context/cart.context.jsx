@@ -90,7 +90,8 @@ export const CartProvider = ({children}) => {
         await getUserCart().then((res) => {
             setCartItems(res.data.data.cart);
             setCartTotal(res.data.data.total);
-            setOutOfStockItems(res.data.data.out_of_stock)
+            setOutOfStockItems(res.data.data.out_of_stock);
+            setDiscountedPrice(0);
         })
     }
     const removeItemFromCart = async ({item}) => {
@@ -99,6 +100,7 @@ export const CartProvider = ({children}) => {
             setOutOfStockItems(res.data.data.out_of_stock);
             setCartCount(cartCount-1)
             setCartTotal(res.data.data.total);
+            setDiscountedPrice(0);
         })
     }
     const updateItemQuantity = async ({item,quantity}) => {

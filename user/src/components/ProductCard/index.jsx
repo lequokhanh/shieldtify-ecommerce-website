@@ -8,13 +8,12 @@ import {
 } from "@chakra-ui/react";
 import PriceTag from "../PriceTag";
 import no_img from "../../assets/no_img.svg";
-import { addToCart } from "../../utils/api";
 import { CartContext } from "../../context/cart.context";
 
 
 const ProductCard = ({product}) => {
     const [ hoveredProductId, setHoveredProductId ] = useState(null);
-    const { cartCount, setCartCount, addItemToCart } = useContext(CartContext);
+    const { addItemToCart } = useContext(CartContext);
     const HoverProduct = (id) => {
         setHoveredProductId(id);
     }

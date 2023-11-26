@@ -40,7 +40,7 @@ const CartDiscount = () => {
                     await applyDiscountCode(values.promotionCode).then((res) => {
                         setCartItems(res.data.data.cart);
                         setCartTotal(res.data.data.total);
-                        setDiscountedPrice(res.data.data.discounted_price);
+                        setDiscountedPrice(res.data.data.discount);
                     });
                 }catch (err){
                     actions.setFieldError('promotionCode', err.response.data.message);
