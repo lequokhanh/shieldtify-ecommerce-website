@@ -31,7 +31,7 @@ module.exports = (sequelize, Sequelize) => {
             sequelize,
             modelName: 'post',
             timestamps: true,
-            paranoid: true,
+            paranoid: false,
             underscored: true,
         },
     );

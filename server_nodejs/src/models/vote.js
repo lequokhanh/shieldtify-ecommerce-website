@@ -22,7 +22,7 @@ module.exports = (sequelize, Sequelize) => {
             sequelize,
             modelName: 'vote',
             timestamps: true,
-            paranoid: true,
+            paranoid: false,
             underscored: true,
         },
     );

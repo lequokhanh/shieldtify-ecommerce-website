@@ -21,7 +21,6 @@ public partial class ClientAccount
 
     public DateTime UpdatedAt { get; set; }
 
-    public DateTime? DeletedAt { get; set; }
 
     public virtual ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
 

@@ -65,9 +65,6 @@ public partial class ShieldtifyContext : DbContext
             entity.Property(e => e.CreatedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
-            entity.Property(e => e.DeletedAt)
-                .HasColumnType("datetime")
-                .HasColumnName("deleted_at");
             entity.Property(e => e.DisplayName)
                 .HasMaxLength(255)
                 .HasColumnName("display_name");
@@ -117,9 +114,6 @@ public partial class ShieldtifyContext : DbContext
             entity.Property(e => e.CreatedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
-            entity.Property(e => e.DeletedAt)
-                .HasColumnType("datetime")
-                .HasColumnName("deleted_at");
             entity.Property(e => e.Name)
                 .HasMaxLength(255)
                 .HasColumnName("name");
@@ -141,9 +135,6 @@ public partial class ShieldtifyContext : DbContext
             entity.Property(e => e.CreatedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
-            entity.Property(e => e.DeletedAt)
-                .HasColumnType("datetime")
-                .HasColumnName("deleted_at");
             entity.Property(e => e.Quantity).HasColumnName("quantity");
             entity.Property(e => e.UpdatedAt)
                 .HasColumnType("datetime")
@@ -173,9 +164,6 @@ public partial class ShieldtifyContext : DbContext
             entity.Property(e => e.CreatedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
-            entity.Property(e => e.DeletedAt)
-                .HasColumnType("datetime")
-                .HasColumnName("deleted_at");
             entity.Property(e => e.DisplayName)
                 .HasMaxLength(255)
                 .HasColumnName("display_name");
@@ -212,9 +200,7 @@ public partial class ShieldtifyContext : DbContext
             entity.Property(e => e.CreatedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
-            entity.Property(e => e.DeletedAt)
-                .HasColumnType("datetime")
-                .HasColumnName("deleted_at");
+            entity.Property(e => e.IsDefault).HasColumnName("is_default");
             entity.Property(e => e.PhoneNumber)
                 .HasMaxLength(255)
                 .HasColumnName("phone_number");
@@ -245,9 +231,6 @@ public partial class ShieldtifyContext : DbContext
             entity.Property(e => e.CreatedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
-            entity.Property(e => e.DeletedAt)
-                .HasColumnType("datetime")
-                .HasColumnName("deleted_at");
             entity.Property(e => e.Staffid).HasColumnName("staffid");
             entity.Property(e => e.UpdatedAt)
                 .HasColumnType("datetime")
@@ -278,19 +261,12 @@ public partial class ShieldtifyContext : DbContext
             entity.Property(e => e.CreatedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
-            entity.Property(e => e.DeletedAt)
-                .HasColumnType("datetime")
-                .HasColumnName("deleted_at");
-            entity.Property(e => e.Description)
-                .HasMaxLength(255)
-                .HasColumnName("description");
+            entity.Property(e => e.Description).HasColumnName("description");
             entity.Property(e => e.Name)
                 .HasMaxLength(255)
                 .HasColumnName("name");
             entity.Property(e => e.Price).HasColumnName("price");
-            entity.Property(e => e.Specification)
-                .HasMaxLength(255)
-                .HasColumnName("specification");
+            entity.Property(e => e.Specification).HasColumnName("specification");
             entity.Property(e => e.StockQty).HasColumnName("stock_qty");
             entity.Property(e => e.UpdatedAt)
                 .HasColumnType("datetime")
@@ -316,9 +292,6 @@ public partial class ShieldtifyContext : DbContext
             entity.Property(e => e.CreatedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
-            entity.Property(e => e.DeletedAt)
-                .HasColumnType("datetime")
-                .HasColumnName("deleted_at");
             entity.Property(e => e.Description)
                 .HasMaxLength(255)
                 .HasColumnName("description");
@@ -342,9 +315,6 @@ public partial class ShieldtifyContext : DbContext
             entity.Property(e => e.CreatedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
-            entity.Property(e => e.DeletedAt)
-                .HasColumnType("datetime")
-                .HasColumnName("deleted_at");
             entity.Property(e => e.IsPrimary).HasColumnName("is_primary");
             entity.Property(e => e.Itemid).HasColumnName("itemid");
             entity.Property(e => e.Link)
@@ -375,9 +345,6 @@ public partial class ShieldtifyContext : DbContext
             entity.Property(e => e.CreatedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
-            entity.Property(e => e.DeletedAt)
-                .HasColumnType("datetime")
-                .HasColumnName("deleted_at");
             entity.Property(e => e.Role)
                 .HasMaxLength(255)
                 .HasColumnName("role");
@@ -398,6 +365,8 @@ public partial class ShieldtifyContext : DbContext
 
             entity.HasIndex(e => e.Clientid, "clientid");
 
+            entity.HasIndex(e => e.PromotionCode, "promotion_code");
+
             entity.HasIndex(e => e.ShippingAddressid, "shipping_addressid");
 
             entity.HasIndex(e => e.SupportedBy, "supported_by");
@@ -407,19 +376,16 @@ public partial class ShieldtifyContext : DbContext
             entity.Property(e => e.CreatedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
-            entity.Property(e => e.DeletedAt)
-                .HasColumnType("datetime")
-                .HasColumnName("deleted_at");
             entity.Property(e => e.OrderDate)
                 .HasColumnType("datetime")
                 .HasColumnName("order_date");
             entity.Property(e => e.OrderStatus)
                 .HasMaxLength(255)
                 .HasColumnName("order_status");
-            entity.Property(e => e.OrderTotal).HasColumnName("order_total");
             entity.Property(e => e.PaymentMethod)
                 .HasMaxLength(255)
                 .HasColumnName("payment_method");
+            entity.Property(e => e.PromotionCode).HasColumnName("promotion_code");
             entity.Property(e => e.ReceiveMethod)
                 .HasMaxLength(255)
                 .HasColumnName("receive_method");
@@ -433,13 +399,18 @@ public partial class ShieldtifyContext : DbContext
                 .HasForeignKey(d => d.Clientid)
                 .HasConstraintName("orders_ibfk_1");
 
+            entity.HasOne(d => d.PromotionCodeNavigation).WithMany(p => p.Orders)
+                .HasForeignKey(d => d.PromotionCode)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("orders_ibfk_3");
+
             entity.HasOne(d => d.ShippingAddress).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.ShippingAddressid)
                 .HasConstraintName("orders_ibfk_2");
 
             entity.HasOne(d => d.SupportedByNavigation).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.SupportedBy)
-                .HasConstraintName("orders_ibfk_3");
+                .HasConstraintName("orders_ibfk_4");
         });
 
         modelBuilder.Entity<OrderItem>(entity =>
@@ -455,9 +426,6 @@ public partial class ShieldtifyContext : DbContext
             entity.Property(e => e.CreatedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
-            entity.Property(e => e.DeletedAt)
-                .HasColumnType("datetime")
-                .HasColumnName("deleted_at");
             entity.Property(e => e.Quantity).HasColumnName("quantity");
             entity.Property(e => e.SalesPrice).HasColumnName("sales_price");
             entity.Property(e => e.UpdatedAt)
@@ -491,9 +459,6 @@ public partial class ShieldtifyContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
             entity.Property(e => e.CreatedBy).HasColumnName("created_by");
-            entity.Property(e => e.DeletedAt)
-                .HasColumnType("datetime")
-                .HasColumnName("deleted_at");
             entity.Property(e => e.Depth).HasColumnName("depth");
             entity.Property(e => e.IsEdited).HasColumnName("is_edited");
             entity.Property(e => e.KeyWords)
@@ -520,20 +485,15 @@ public partial class ShieldtifyContext : DbContext
 
         modelBuilder.Entity<Promotion>(entity =>
         {
-            entity.HasKey(e => e.Uid).HasName("PRIMARY");
+            entity.HasKey(e => e.Code).HasName("PRIMARY");
 
             entity.ToTable("promotions");
 
-            entity.Property(e => e.Uid).HasColumnName("uid");
-            entity.Property(e => e.Condition)
-                .HasMaxLength(255)
-                .HasColumnName("condition");
+            entity.Property(e => e.Code).HasColumnName("code");
+            entity.Property(e => e.Condition).HasColumnName("condition");
             entity.Property(e => e.CreatedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
-            entity.Property(e => e.DeletedAt)
-                .HasColumnType("datetime")
-                .HasColumnName("deleted_at");
             entity.Property(e => e.Description)
                 .HasMaxLength(255)
                 .HasColumnName("description");
@@ -541,17 +501,17 @@ public partial class ShieldtifyContext : DbContext
             entity.Property(e => e.EndDate)
                 .HasColumnType("datetime")
                 .HasColumnName("end_date");
-            entity.Property(e => e.Name)
-                .HasMaxLength(255)
-                .HasColumnName("name");
+            entity.Property(e => e.MaxDiscount).HasColumnName("max_discount");
             entity.Property(e => e.StartDate)
                 .HasColumnType("datetime")
                 .HasColumnName("start_date");
+            entity.Property(e => e.Type)
+                .HasMaxLength(255)
+                .HasColumnName("type");
             entity.Property(e => e.UpdatedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("updated_at");
         });
-
         modelBuilder.Entity<Vote>(entity =>
         {
             entity.HasKey(e => new { e.Postid, e.Clientid }).HasName("PRIMARY");
@@ -565,9 +525,6 @@ public partial class ShieldtifyContext : DbContext
             entity.Property(e => e.CreatedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
-            entity.Property(e => e.DeletedAt)
-                .HasColumnType("datetime")
-                .HasColumnName("deleted_at");
             entity.Property(e => e.Type)
                 .HasMaxLength(255)
                 .HasColumnName("type");

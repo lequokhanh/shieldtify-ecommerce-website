@@ -5,15 +5,17 @@ namespace shieldtify.models;
 
 public partial class Promotion
 {
-    public Guid Uid { get; set; }
-
-    public string Name { get; set; } = null!;
+    public string Code { get; set; } = null!;
 
     public string Description { get; set; } = null!;
+
+    public string Type { get; set; } = null!;
 
     public string Condition { get; set; } = null!;
 
     public float DiscountRate { get; set; }
+
+    public float MaxDiscount { get; set; }
 
     public DateTime StartDate { get; set; }
 
@@ -23,5 +25,5 @@ public partial class Promotion
 
     public DateTime UpdatedAt { get; set; }
 
-    public DateTime? DeletedAt { get; set; }
+    public virtual ICollection<Order> Orders { get; set; } = new List<Order>();
 }

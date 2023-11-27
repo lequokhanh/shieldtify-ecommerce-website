@@ -17,7 +17,6 @@ public partial class Message
 
     public DateTime UpdatedAt { get; set; }
 
-    public DateTime? DeletedAt { get; set; }
 
     public virtual Conversation Conversation { get; set; } = null!;
 }

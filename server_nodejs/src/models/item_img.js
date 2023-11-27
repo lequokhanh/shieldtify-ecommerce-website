@@ -26,7 +26,7 @@ module.exports = (sequelize, Sequelize) => {
             sequelize,
             modelName: 'item_img',
             timestamps: true,
-            paranoid: true,
+            paranoid: false,
             underscored: true,
         },
     );

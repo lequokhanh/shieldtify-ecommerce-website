@@ -15,7 +15,6 @@ public partial class CartItem
 
     public DateTime UpdatedAt { get; set; }
 
-    public DateTime? DeletedAt { get; set; }
 
     public virtual ClientAccount Client { get; set; } = null!;
 

@@ -26,7 +26,7 @@ module.exports = (sequelize, Sequelize) => {
             sequelize,
             modelName: 'message',
             timestamps: true,
-            paranoid: true,
+            paranoid: false,
             underscored: true,
         },
     );

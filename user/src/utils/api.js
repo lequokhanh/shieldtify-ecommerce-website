@@ -118,3 +118,37 @@ export function getAllProductByCategoryOrKeyword({
     }
     return axios.get(url)
 }
+
+export function getUserCart () {
+    return axiosCookie.get('/cart');
+}
+
+export function addToCart({ item, quantity }) {
+    return axiosCookie.post('/cart', {
+        items: [
+            {
+                item: item.toString(),
+                quantity: quantity
+            }
+        ]
+    });
+}
+
+export function updateCart ({item, quantity}) {
+    return axiosCookie.put('/cart', {
+        item, 
+        quantity
+    }); 
+}
+
+export function removeAllItemsFromCart () {
+    return axiosCookie.delete(`/cart`);
+}
+
+export function applyDiscountCode (code) {
+    return axiosCookie.get(`/cart/discount?code=${code}`);
+}
+
+// export function updateCart (cart) {
+//     return axiosCookie.put('/cart', cart);
+// }

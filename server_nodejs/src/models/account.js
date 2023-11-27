@@ -33,7 +33,7 @@ module.exports = (sequelize, Sequelize) => {
             sequelize,
             modelName: 'account',
             timestamps: true,
-            paranoid: true,
+            paranoid: false,
             underscored: true,
         },
     );

@@ -48,7 +48,7 @@ module.exports = {
             const maxPrice = await db.sequelize.query(
                 `SELECT MAX(price) max
                 FROM items
-                WHERE lower(name) LIKE '%${keyword.toLowerCase()}%';`,
+                WHERE lower(name) LIKE '%${keyword.toLowerCase()}%'`,
                 {
                     type: db.Sequelize.QueryTypes.SELECT,
                 },
@@ -58,7 +58,7 @@ module.exports = {
                     `SELECT DISTINCT br.name
                 FROM items it
                     LEFT JOIN brands br ON it.brandid = br.uid
-                WHERE lower(it.name) LIKE '%${keyword.toLowerCase()}%';`,
+                WHERE lower(it.name) LIKE '%${keyword.toLowerCase()}%'`,
                     {
                         type: db.Sequelize.QueryTypes.SELECT,
                     },
@@ -75,7 +75,6 @@ module.exports = {
                 },
             };
         } catch (error) {
-            console.log(error);
             throw new AppError(error.statusCode, error.message);
         }
     },
@@ -157,7 +156,7 @@ module.exports = {
             const maxPrice = await db.sequelize.query(
                 `SELECT MAX(price) max
                 FROM items
-                WHERE categoryid = '${category}' AND lower(name) LIKE '%${keyword.toLowerCase()}%';`,
+                WHERE categoryid = '${category}' AND lower(name) LIKE '%${keyword.toLowerCase()}%'`,
                 {
                     type: db.Sequelize.QueryTypes.SELECT,
                 },
@@ -167,7 +166,7 @@ module.exports = {
                     `SELECT DISTINCT br.name
                 FROM items it
                     LEFT JOIN brands br ON it.brandid = br.uid
-                WHERE categoryid = '${category}' AND lower(it.name) LIKE '%${keyword.toLowerCase()}%';`,
+                WHERE categoryid = '${category}' AND lower(it.name) LIKE '%${keyword.toLowerCase()}%'`,
                     {
                         type: db.Sequelize.QueryTypes.SELECT,
                     },
@@ -186,7 +185,6 @@ module.exports = {
                 },
             };
         } catch (error) {
-            console.log(error);
             throw new AppError(error.statusCode, error.message);
         }
     },

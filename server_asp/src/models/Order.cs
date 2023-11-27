@@ -17,7 +17,7 @@ public partial class Order
 
     public DateTime OrderDate { get; set; }
 
-    public double OrderTotal { get; set; }
+    public string PromotionCode { get; set; } = null!;
 
     public string OrderStatus { get; set; } = null!;
 
@@ -27,11 +27,11 @@ public partial class Order
 
     public DateTime UpdatedAt { get; set; }
 
-    public DateTime? DeletedAt { get; set; }
-
     public virtual ClientAccount Client { get; set; } = null!;
 
     public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
+
+    public virtual Promotion PromotionCodeNavigation { get; set; } = null!;
 
     public virtual ClientAddress ShippingAddress { get; set; } = null!;
 
