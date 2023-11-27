@@ -16,10 +16,13 @@ import { login } from '../../utils/api';
 import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import { AuthContext } from '../../context/auth.context';
+import { CartContext } from '../../context/cart.context';
+import { getUserCart } from '../../utils/api';
 
 const SignIn = () => {
     const navigate = useNavigate();
-    const { setIsLoggedIn, currentUser } = useContext(AuthContext);
+    const { setIsLoggedIn } = useContext(AuthContext);
+    const { setCartItems, setCartCount, setCartTotal, setOutOfStockItems } = useContext(CartContext);
     return (
         <Box h="100vh">
             <Flex  border="0.5px solid #444" borderRadius="15px" justifyContent="center" mt="150px" mb="300px" flexDir="column" textAlign="center" padding="42px 65px">
@@ -34,19 +37,24 @@ const SignIn = () => {
                 <Box>
                     <Formik 
                     initialValues={{loginCred: '', password: ''}} 
-                    onSubmit={ async (values, actions) => {
-                        try{
+                    onSubmit={async (values, actions) => {
+                        try {
                             await login({
                                 loginCred: values.loginCred,
                                 password: values.password
-                            }).then(() => {
-                                setIsLoggedIn(true);
-                                navigate('/home')
-                                }
-                            );
-                        }catch(error){
+                            });
+                    
+                            setIsLoggedIn(true);
+                            navigate('/home');
+                    
+                            const userCartResponse = await getUserCart();
+                            setCartItems(userCartResponse.data.data.cart);
+                            setCartCount(userCartResponse.data.data.cart.length + userCartResponse.data.data.out_of_stock.length);
+                            setCartTotal(userCartResponse.data.data.total);
+                            setOutOfStockItems(userCartResponse.data.data.out_of_stock);
+                        } catch (error) {
                             actions.setFieldError('loginCred', error.response.data.message);
-                        }   
+                        }
                         actions.setSubmitting(false);
                     }}
                     >
