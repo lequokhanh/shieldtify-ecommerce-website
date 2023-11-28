@@ -17,11 +17,11 @@ public partial class Order
 
     public DateTime OrderDate { get; set; }
 
-    public string PromotionCode { get; set; } = null!;
+    public string? PromotionCode { get; set; }
 
     public string OrderStatus { get; set; } = null!;
 
-    public Guid SupportedBy { get; set; }
+    public Guid? SupportedBy { get; set; }
 
     public DateTime CreatedAt { get; set; }
 
@@ -31,9 +31,9 @@ public partial class Order
 
     public virtual ICollection<OrderItem> OrderItems { get; set; } = new List<OrderItem>();
 
-    public virtual Promotion PromotionCodeNavigation { get; set; } = null!;
+    public virtual Promotion? PromotionCodeNavigation { get; set; }
 
     public virtual ClientAddress ShippingAddress { get; set; } = null!;
 
-    public virtual Account SupportedByNavigation { get; set; } = null!;
+    public virtual Account? SupportedByNavigation { get; set; }
 }

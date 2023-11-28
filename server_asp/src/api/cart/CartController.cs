@@ -117,4 +117,12 @@ namespace shieldtify.api.cart
         public required string item { get; set; }
         public required int quantity { get; set; }
     }
+
+    public class CheckoutBody
+    {
+        public string? code { get; set; }
+        public required string payment_method { get; set; }
+        public required string receive_method { get; set; }
+        public required string shipping_addressid { get; set; }
+    }
 }

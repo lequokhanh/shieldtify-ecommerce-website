@@ -1,6 +1,6 @@
 const { AppError } = require('../../common/errors/AppError');
 const db = require('../../models');
-
+const { v4 } = require('uuid');
 module.exports = {
     getCart: async (client) => {
         try {
@@ -301,6 +301,65 @@ module.exports = {
             };
         } catch (err) {
             throw new AppError(err.statusCode, err.message);
+        }
+    },
+    checkout: async (
+        clientid,
+        { code, payment_method, receive_method, shipping_addressid },
+    ) => {
+        try {
+            let cart;
+            if (code) {
+                cart = this.getDiscount(clientid, code)
+                    .then((res) => res.data.cart)
+                    .catch((err) => {
+                        throw new AppError(err.statusCode, err.message);
+                    });
+            } else cart = (await this.getCart(clientid)).data.cart;
+            const address = db.client_address.findOne({
+                where: {
+                    uid: shipping_addressid,
+                },
+            });
+            if (!address) throw new AppError(404, 'Address not found');
+            if (address.clientid !== clientid)
+                throw new AppError(400, 'Address is not belong to client');
+            const order = await db.order.create({
+                uid: v4(),
+                clientid,
+                payment_method,
+                receive_method,
+                shipping_addressid,
+                order_date: Date.now(),
+                promotion_code: code || null,
+                order_status: 'pending',
+            });
+            cart.forEach(async (item) => {
+                await db.order_item.create({
+                    orderid: order.uid,
+                    itemid: item.itemid,
+                    quantity: item.quantity,
+                    sales_price: item.old_price || item.price,
+                });
+                const itemObj = await db.item.findOne({
+                    where: {
+                        uid: item.itemid,
+                    },
+                });
+                itemObj.stock_qty -= item.quantity;
+                await itemObj.save();
+            });
+            await db.cart_item.destroy({
+                where: {
+                    clientid,
+                },
+            });
+            return {
+                statusCode: 200,
+                message: 'Checkout successfully',
+            };
+        } catch (error) {
+            throw new AppError(error.statusCode, error.message);
         }
     },
 };
