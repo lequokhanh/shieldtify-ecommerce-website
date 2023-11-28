@@ -5,13 +5,13 @@ const { checkPermission } = require('../../middleware/checkPermission');
 
 router.get('/me', verifyToken, controller.getUser);
 router.get(
-    '/addresses',
+    '/address',
     verifyToken,
     checkPermission('client'),
     controller.getAdresses,
 );
 router.post(
-    '/addresses',
+    '/address',
     verifyToken,
     checkPermission('client'),
     controller.createAddress,

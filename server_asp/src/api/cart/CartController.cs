@@ -99,6 +99,24 @@ namespace shieldtify.api.cart
                 throw;
             }
         }
+        [Tags("Cart")]
+        public static APIRes checkout(HttpContext context, [FromBody] CheckoutBody body)
+        {
+            try
+            {
+                return Middleware.MiddlewareAuthorize(() =>
+                {
+                    var user = (ClientAccount?)context.Items["User"];
+                    var DTO = CartService.checkout(user.Uid.ToString(), body);
+                    context.Response.StatusCode = DTO.statusCode;
+                    return DTO;
+                }, context, new List<string> { "client" });
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 
     public class UpdateCartBody

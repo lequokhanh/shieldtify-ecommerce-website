@@ -50,6 +50,42 @@ namespace shieldtify.api.user
                 throw;
             }
         }
+        [Tags("User")]
+        public static APIRes getAddresses(HttpContext context)
+        {
+            try
+            {
+                return Middleware.MiddlewareAuthorize(() =>
+                {
+                    var user = context.Items["User"] as ClientAccount;
+                    var DTO = UserService.getAddresses(user.Uid.ToString());
+                    context.Response.StatusCode = DTO.statusCode;
+                    return DTO;
+                }, context, new List<string> { "client" });
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        [Tags("User")]
+        public static APIRes createAddress(HttpContext context, [FromBody] CreateAddressBody body)
+        {
+            try
+            {
+                return Middleware.MiddlewareAuthorize(() =>
+                {
+                    var user = context.Items["User"] as ClientAccount;
+                    var DTO = UserService.createAddress(user.Uid.ToString(), body);
+                    context.Response.StatusCode = DTO.statusCode;
+                    return DTO;
+                }, context, new List<string> { "client" });
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 
     public class CreateAddressBody
