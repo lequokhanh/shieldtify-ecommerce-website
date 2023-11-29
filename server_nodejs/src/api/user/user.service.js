@@ -15,7 +15,7 @@ module.exports = {
                 data: addresses,
             };
         } catch (error) {
-            throw AppError(error.statusCode, error.message);
+            throw new AppError(error.statusCode, error.message);
         }
     },
     createAddress: async (
@@ -58,7 +58,7 @@ module.exports = {
                 data: newAddress,
             };
         } catch (error) {
-            throw AppError(error.statusCode, error.message);
+            throw new AppError(error.statusCode, error.message);
         }
     },
 };
