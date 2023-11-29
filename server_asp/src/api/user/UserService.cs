@@ -13,8 +13,8 @@ namespace shieldtify.api.user
             try
             {
                 using var db = new ShieldtifyContext();
-                var user = db.ClientAddresses.Where(x => x.Clientid.ToString() == clientid).ToList();
-                return new APIRes(200, "Get addresses successfully", user);
+                var addresses = db.ClientAddresses.Where(x => x.Clientid.ToString() == clientid).ToList();
+                return new APIRes(200, "Get addresses successfully", addresses);
             }
             catch (Exception)
             {

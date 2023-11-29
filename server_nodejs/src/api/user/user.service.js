@@ -6,7 +6,7 @@ module.exports = {
         try {
             const addresses = await db.client_address.findAll({
                 where: {
-                    uid,
+                    clientid: uid,
                 },
             });
             return {
