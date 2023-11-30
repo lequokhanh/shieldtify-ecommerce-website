@@ -8,6 +8,7 @@ import ResetPasswordComplete from '../containers/ResetPasswordComplete'
 import Home from '../containers/Home'
 import Product from '../containers/Products'
 import ProductDetails from '../containers/ProductDetails'
+import Checkout from '../containers/CheckOut'
 
 const routes = [
     {
@@ -53,6 +54,11 @@ const routes = [
                 path: '/product/:id',
                 element: <ProductDetails />,
                 name: 'product',
+            },
+            {
+                path: '/checkout',
+                element: <Checkout />,
+                name: 'checkout',
             },
             {
                 path: '*',

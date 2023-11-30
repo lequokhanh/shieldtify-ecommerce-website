@@ -5,13 +5,16 @@ import './index.css'
 import theme from './theme.jsx'
 import { AuthProvider } from './context/auth.context.jsx';
 import { CartProvider } from './context/cart.context.jsx';
+import { CheckOutProvider } from './context/checkout.context.jsx'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <CartProvider>
       <AuthProvider>
-        <ChakraProvider theme={extendTheme(theme)}>
-            <App />
-        </ChakraProvider>
+        <CheckOutProvider>
+          <ChakraProvider theme={extendTheme(theme)}>
+              <App />
+          </ChakraProvider>
+        </CheckOutProvider>
       </AuthProvider>
     </CartProvider>
 )

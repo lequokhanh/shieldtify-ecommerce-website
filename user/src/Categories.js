@@ -497,6 +497,16 @@ const cartTest = [
     },
 ]
 
+const addresses = [
+    {
+        id: 1,
+        name: "Default address",
+        address: "1234 North Main Street, aaaaaaaaaaaaa",
+        city: "Bien Hoa",
+        province: "DongNai"
+    }
+]
+
 export { 
     accessoriesCategories, 
     productCategories, 
@@ -506,6 +516,7 @@ export {
     testProduct2, 
     SortCategories,
     Brands,
-    cartTest
+    cartTest,
+    addresses
 };
 

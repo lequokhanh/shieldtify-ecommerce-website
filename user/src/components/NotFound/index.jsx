@@ -1,6 +1,7 @@
 import notfound from '../../assets/notfound.svg'
 import { Flex, Button, Text } from '@chakra-ui/react'
 import { Image } from '@chakra-ui/image'
+import * as router from 'react-router-dom'
 
 const NotFound = () => {
     return (
@@ -24,6 +25,8 @@ const NotFound = () => {
                 borderRadius="20px"
                 fontWeight="600"
                 fontSize="0.875rem"
+                as={router.Link}
+                to="/home"
             >
                 Go to home
             </Button>

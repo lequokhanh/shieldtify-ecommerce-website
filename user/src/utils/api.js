@@ -149,6 +149,30 @@ export function applyDiscountCode(code) {
     return axiosCookie.get(`/cart/discount?code=${code}`)
 }
 
+
+export function getAddresses() {
+    return axiosCookie.get(`/user/address`);
+}
+export function createAddress(add) {
+    console.log(add);
+    return axiosCookie.post(`/user/address`,{
+        address: add.address,
+        city: add.city,
+        province: add.province,
+        phone_number: add.phone_number,
+        is_default: add.is_default
+    })
+}
+
+export function checkOut({code,payment_method,receive_method,shipping_addresid}){
+    return axiosCookie.post(`/cart/checkout`,{
+        code,
+        payment_method,
+        receive_method,
+        shipping_addresid
+    })
+}
+
 // export function updateCart (cart) {
 //     return axiosCookie.put('/cart', cart);
 // }

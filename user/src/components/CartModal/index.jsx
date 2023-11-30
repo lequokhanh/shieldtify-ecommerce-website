@@ -18,6 +18,7 @@ import CartItem from './CartItem';
 import discount from "../../assets/Cart/discount.svg";
 import CartDiscount from './CartDiscount';
 import { CartContext } from '../../context/cart.context';
+import * as router from 'react-router-dom'
 
 const CartModal = ({isOpen, onClose}) => {
     const [isDiscountOpen, setIsDiscountOpen] = useState(false);
@@ -176,6 +177,9 @@ const CartModal = ({isOpen, onClose}) => {
                                 fontWeight="600"
                                 fontSize="0.875rem"     
                                 mt="22px"
+                                as={router.Link}
+                                to="/checkout"
+                                onClick={onClose}
                                 >
                                     Confirm order
                                 <ArrowForwardIcon/>
