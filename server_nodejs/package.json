@@ -5,7 +5,7 @@
     "main": "index.js",
     "scripts": {
         "start": "node app.js",
-        "dev": "nodemon app.js",
+        "dev": "nodemon app.js -w . -w .env -e js,mjs,cjs,json,env --ignore node_modules",
         "migrate:up": "npx sequelize-cli db:migrate",
         "migrate:down": "npx sequelize-cli db:migrate:undo",
         "seed:up": "npx sequelize-cli db:seed:all",

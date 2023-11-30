@@ -332,7 +332,7 @@ module.exports = {
                 shipping_addressid,
                 order_date: Date.now(),
                 promotion_code: code || null,
-                order_status: 'pending',
+                order_status: 'Initiated',
             });
             cart.forEach(async (item) => {
                 await db.order_item.create({

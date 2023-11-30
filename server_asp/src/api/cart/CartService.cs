@@ -310,7 +310,7 @@ namespace shieldtify.api.cart
                     ShippingAddressid = Guid.Parse(shipping_addressid),
                     OrderDate = DateTime.Now,
                     PromotionCode = code,
-                    OrderStatus = "pending"
+                    OrderStatus = "Initiated"
                 };
                 db.Orders.Add(order);
                 foreach (dynamic item in cart)
