@@ -282,19 +282,21 @@ namespace shieldtify.api.cart
                 var shipping_addressid = checkoutBody.shipping_addressid;
                 using var db = new ShieldtifyContext();
                 var cart = new List<object>();
+                var flag = false;
                 if (code != null)
                 {
                     dynamic res = getDiscount(clientid, code);
                     if (res.statusCode != 200)
                         return res;
-                    cart = (List<object>)res.data.cart;
+                    cart = ((IEnumerable<object>)res.data.cart).ToList();
                 }
                 else
                 {
                     dynamic res = getCart(clientid);
                     if (res.statusCode != 200)
                         return res;
-                    cart = (List<object>)res.data.cart;
+                    cart = ((IEnumerable<object>)res.data.cart).ToList();
+                    flag = true;
                 }
                 var address = db.ClientAddresses.Where(i => i.Uid.ToString() == shipping_addressid).FirstOrDefault();
                 if (address == null)
@@ -322,7 +324,7 @@ namespace shieldtify.api.cart
                         Orderid = order.Uid,
                         Itemid = Guid.Parse(itemid),
                         Quantity = int.Parse(item.quantity.ToString()),
-                        SalesPrice = item.old_price ?? item.price
+                        SalesPrice = flag ? item.price : item.old_price
                     };
                     db.OrderItems.Add(orderItem);
                     itemObj.StockQty -= int.Parse(item.quantity.ToString());

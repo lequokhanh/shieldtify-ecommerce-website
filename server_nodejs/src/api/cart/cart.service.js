@@ -310,12 +310,13 @@ module.exports = {
         try {
             let cart;
             if (code) {
-                cart = this.getDiscount(clientid, code)
+                cart = module.exports
+                    .getDiscount(clientid, code)
                     .then((res) => res.data.cart)
                     .catch((err) => {
                         throw new AppError(err.statusCode, err.message);
                     });
-            } else cart = (await this.getCart(clientid)).data.cart;
+            } else cart = (await module.exports.getCart(clientid)).data.cart;
             const address = db.client_address.findOne({
                 where: {
                     uid: shipping_addressid,
