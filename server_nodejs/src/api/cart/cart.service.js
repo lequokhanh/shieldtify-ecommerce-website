@@ -317,7 +317,7 @@ module.exports = {
                         throw new AppError(err.statusCode, err.message);
                     });
             } else cart = (await module.exports.getCart(clientid)).data.cart;
-            const address = db.client_address.findOne({
+            const address = await db.client_address.findOne({
                 where: {
                     uid: shipping_addressid,
                 },
