@@ -15,7 +15,7 @@ const Root = () => {
     }, [location, navigate]);
 
     return (
-        <VStack overflow="hidden">
+        <VStack overflow="hidden" >
             <NavBar/>
             <Outlet/>
             <Footer/>

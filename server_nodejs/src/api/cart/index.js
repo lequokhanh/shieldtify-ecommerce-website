@@ -22,7 +22,7 @@ router.get(
     verifyToken,
     checkPermission('client'),
     controller.getDiscount,
-);
+);  
 router.post(
     '/checkout',
     verifyToken,

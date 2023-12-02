@@ -29,6 +29,7 @@ export const AuthProvider = ({children}) => {
     }
 
     useEffect( () => {
+        console.log(currentUser)
         const intervalId = setInterval(() => {
             getUser().catch(() => {
                     setIsLoggedIn(false);

@@ -6,7 +6,8 @@ import {
     FormLabel,
     Checkbox,
     Button,
-    FormErrorMessage, 
+    FormErrorMessage,
+    useToast, 
 } from "@chakra-ui/react"
 import { Field, Form, Formik } from "formik";
 import { createAddress } from "../../utils/api";
@@ -14,7 +15,8 @@ import { useState } from "react";
 import validator from 'validator'
 
 
-const NewAddressForm = ({isOpen,pushAddress}) => {
+const NewAddressForm = ({isOpen,pushAddress,setIsCreateAddressOpen}) => {
+    const toast = useToast();
     const [ isDefault, setIsDefault ] = useState(false);
     const handleCheckBoxChange = () => {
         setIsDefault(!isDefault);
@@ -22,7 +24,6 @@ const NewAddressForm = ({isOpen,pushAddress}) => {
     return (
         <Flex 
         flexDir="column" 
-        gap="5px" 
         fontFamily="Inter, sans-serif" 
         display={!isOpen && "none"}
         >
@@ -30,6 +31,7 @@ const NewAddressForm = ({isOpen,pushAddress}) => {
             color="shieldtify.200"
             fontSize="1.125rem"
             fontWeight="500"
+            mb="20px"
             >
                 Input your new address
             </Heading>       
@@ -45,11 +47,22 @@ const NewAddressForm = ({isOpen,pushAddress}) => {
                         is_default: isDefault
                     }
                     await createAddress(add).then((res) => {
-                        pushAddress(res.data.data);
+                        pushAddress({
+                            value: res.data.data,
+                            setIsCreateAddressOpen: setIsCreateAddressOpen  
+                        });
                     })
+                    
                 }catch(error){
-                    console.log(error);
+                    toast({
+                        title: "Error",
+                        description: error.response.data.message ,
+                        status: "Error",
+                        duration: 2000,
+                        isClosable: true
+                    });
                 }
+                actions.setSubmitting(false);
             }}
             >
             {(props) => (

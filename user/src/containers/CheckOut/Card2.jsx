@@ -45,12 +45,13 @@ const Card2 = () => {
                 value={paymentMethod}
                 fontFamily="Inter, sans-serif"
                 >
-                    <HStack>
+                    <HStack gap="40px">
                         <Radio 
                         colorScheme="blackAlpha"
                         borderColor="#D9D9D9"
                         box-shadow="0px 3px 5px 0px rgba(46, 46, 66, 0.08)"
-                        value="Cash">
+                        value="Cash"
+                        >
                             Cash
                         </Radio>
                         <Radio 
@@ -59,7 +60,7 @@ const Card2 = () => {
                         borderColor="#D9D9D9"
                         box-shadow="0px 3px 5px 0px rgba(46, 46, 66, 0.08)"
                         >
-                            Card
+                            Bank transfers
                         </Radio>
                     </HStack>
                 </RadioGroup>

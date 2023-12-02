@@ -22,11 +22,12 @@ import { CheckOutContext } from "../../context/checkout.context";
 
 const Card3 = () => {
     const { isOpen, onClose, onOpen } = useDisclosure();
-    const { addresses, pushAddress, beingSelected  } = useContext(CheckOutContext);
+    const { addresses, pushAddress, beingSelected } = useContext(CheckOutContext);
     const [ isCreateAddressOpen, setIsCreateAddressOpen] = useState(false);
-    const toggleCreateAddress = () => {
+        const toggleCreateAddress = () => {
         setIsCreateAddressOpen(!isCreateAddressOpen);
     }
+    
     return(
     <Flex
     padding="25px 28px"
@@ -71,10 +72,10 @@ const Card3 = () => {
                                 address.is_default &&
                                 (
                                     beingSelected!=="" ? (
-                                        <AddressCard key={beingSelected.uid} add={beingSelected}/>
+                                        <AddressCard key={beingSelected.uid} add={beingSelected} isShowMoreOpen={isOpen}  isCreateAddressOpen={isCreateAddressOpen} type="being-selected" isSelected={false}/>
                                     ):
                                     (
-                                        <AddressCard key={address.uid} add={address}/>
+                                        <AddressCard key={address.uid} add={address} isShowMoreOpen={isOpen} isCreateAddressOpen={isCreateAddressOpen} type="being-selected" isSelected={false}/>
                                     )
                                 )
                         
@@ -104,6 +105,9 @@ const Card3 = () => {
                 variant="checkout"
                 direction="row"        
                 onClick={toggleCreateAddress}
+                background={
+                    isCreateAddressOpen ? "#DEE1E6": "#FFFFFF"
+                }
                 >
                     <CardBody>
                         <VStack gap="0px">
@@ -115,9 +119,9 @@ const Card3 = () => {
                     </CardBody>
                 </Card>
             </Grid>
-        <ShowMoreModal isOpen={isOpen} onClose={onClose} addresses={addresses}/>
+        <ShowMoreModal isOpen={isOpen} onClose={onClose} addresses={addresses} />
         </Flex>
-        <NewAddressForm isOpen={isCreateAddressOpen} pushAddress={pushAddress}/>
+        <NewAddressForm isOpen={isCreateAddressOpen} pushAddress={pushAddress} setIsCreateAddressOpen={setIsCreateAddressOpen}/>
     </Flex>
     )
 }

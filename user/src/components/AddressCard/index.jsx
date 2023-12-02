@@ -6,14 +6,16 @@ import {
     Text,
 } from "@chakra-ui/react";
 import confirmed from '../../assets/CheckOut/confirmed.svg';
-const AddressCard = ({add, onClick, isSelected}) => {
+
+const AddressCard = ({add, onClick, isSelected, isCreateAddressOpen,type, isShowMoreOpen}) => {
+    console.log(isShowMoreOpen);
     return (
         <Card
         variant="checkout"
         direction="row"
         onClick={onClick}
         style={{
-            backgroundColor: isSelected ? '#DEE1E6' : 'white',
+            backgroundColor: (!isCreateAddressOpen && (!isShowMoreOpen || isShowMoreOpen == undefined) && type==="being-selected") || isSelected ? '#DEE1E6' : 'white',
             alignItems:"center",
             padding:"16px 20px",
             border:"1px solid #9095A1",
@@ -69,7 +71,7 @@ const AddressCard = ({add, onClick, isSelected}) => {
                     color="shieldtify.checkout"
                     fontSize="0.75rem"
                     >
-                        {add.phone}
+                        {add.phone_number}
                     </Text>
                     
                 </Flex>

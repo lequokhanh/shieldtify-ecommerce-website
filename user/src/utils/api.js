@@ -164,12 +164,19 @@ export function createAddress(add) {
     })
 }
 
-export function checkOut({code,payment_method,receive_method,shipping_addresid}){
+export function checkOut({code,payment_method,receive_method,shipping_addressid}){
+    if(!code){
+        return axiosCookie.post(`/cart/checkout`,{
+            payment_method,
+            receive_method,
+            shipping_addressid
+        })
+    }
     return axiosCookie.post(`/cart/checkout`,{
         code,
         payment_method,
         receive_method,
-        shipping_addresid
+        shipping_addressid
     })
 }
 

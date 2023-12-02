@@ -9,9 +9,14 @@ import {
     HStack,
     Button
 } from "@chakra-ui/react"
+import * as router from 'react-router-dom';
 import check from '../../assets/CheckOut/check.svg';
+import { useContext } from "react";
+import { CheckOutContext } from "../../context/checkout.context";
+
 
 const CheckOutConfirmModal = ({isOpen, onClose}) => {
+    const { callCheckOut } = useContext(CheckOutContext);
     return (
         <Modal
         blockScrollOnMount={'false'}
@@ -71,6 +76,9 @@ const CheckOutConfirmModal = ({isOpen, onClose}) => {
                         bgColor="#444444"
                         borderRadius="12px"
                         fontWeight="400"
+                        as={router.Link}
+                        to="/checkout/complete"
+                        onClick={callCheckOut}
                         >
                             Confirm
                         </Button>

@@ -9,7 +9,8 @@ import {
     Button,
     Box,
     Divider,
-    useDisclosure
+    useDisclosure,
+    FormErrorMessage
 } from '@chakra-ui/react';
 import money_blue from '../../assets/Checkout/money_blue.svg';
 import bill from '../../assets/Checkout/bill.svg';
@@ -61,6 +62,7 @@ const OrderInfo = () => {
                 initialValues={{code: ""}}
                 onSubmit={ async (values,actions) => {
                     try {
+                        
                         await applyDiscountCode(voucherCode).then((res) => {
                             setCartItems(res.data.data.cart);
                             setCartTotal(res.data.data.total);
@@ -68,7 +70,7 @@ const OrderInfo = () => {
                             setDiscountedCode(voucherCode);
                         });
                     }catch (err){
-                        actions.setFieldError('promotionCode', err.response.data.message);
+                        actions.setFieldError('code', err.response.data.message);
                     }
                     actions.setSubmitting(false);
                 }}
@@ -103,6 +105,7 @@ const OrderInfo = () => {
                                                     Apply
                                                 </Button>
                                             </Flex>
+                                            <FormErrorMessage>{form.errors.code}</FormErrorMessage>
                                         </FormControl>
                                     )}
                                 </Field>
