@@ -331,7 +331,7 @@ namespace shieldtify.api.cart
                 }
                 db.CartItems.RemoveRange(db.CartItems.Where(i => i.Clientid.ToString() == clientid));
                 db.SaveChanges();
-                return new APIRes(200, "Checkout successfully");
+                return new APIRes(200, "Checkout successfully", order);
             }
             catch (System.Exception)
             {

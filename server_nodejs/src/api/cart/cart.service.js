@@ -358,6 +358,7 @@ module.exports = {
             return {
                 statusCode: 200,
                 message: 'Checkout successfully',
+                data: order,
             };
         } catch (error) {
             throw new AppError(error.statusCode, error.message);
