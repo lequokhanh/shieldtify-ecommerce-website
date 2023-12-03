@@ -18,17 +18,16 @@ import NewAddressForm from './NewAddressForm'
 import AddressCard from '../../components/AddressCard'
 import ShowMoreModal from '../../components/ShowMoreModal'
 import { CheckOutContext } from '../../context/checkout.context'
-
 const Card3 = () => {
     const { isOpen, onClose, onOpen } = useDisclosure()
-    const { addresses, pushAddress, beingSelected } =
-        useContext(CheckOutContext)
-    const [isCreateAddressOpen, setIsCreateAddressOpen] = useState(false)
+    const {
+        addresses,
+        pushAddress,
+        beingSelected,
+        isCreateAddressOpen,
+        setIsCreateAddressOpen,
+    } = useContext(CheckOutContext)
     const [isSelected, setIsSelected] = useState(false)
-    const toggleCreateAddress = () => {
-        setIsCreateAddressOpen(true)
-        setIsSelected(false)
-    }
 
     return (
         <Flex
@@ -123,7 +122,10 @@ const Card3 = () => {
                     <Card
                         variant="checkout"
                         direction="row"
-                        onClick={toggleCreateAddress}
+                        onClick={() => {
+                            setIsCreateAddressOpen(true)
+                            setIsSelected(false)
+                        }}
                         background={isCreateAddressOpen ? '#DEE1E6' : '#FFFFFF'}
                     >
                         <CardBody>

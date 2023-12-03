@@ -1,18 +1,13 @@
-import {
-    createContext,
-    useState,
-    useEffect 
-} from 'react';
-import { getAddresses } from '../utils/api';
-import { checkOut } from '../utils/api';
-import { useContext } from 'react';
-import { CartContext } from './cart.context';
-
+import { createContext, useState, useEffect } from 'react'
+import { getAddresses } from '../utils/api'
+import { checkOut } from '../utils/api'
+import { useContext } from 'react'
+import { CartContext } from './cart.context'
 
 export const CheckOutContext = createContext({
-    paymentMethod: "Cash",
+    paymentMethod: 'Cash',
     setPaymentMethod: () => {},
-    deliveryOptions: "Home delivery",
+    deliveryOptions: 'Home delivery',
     setDeliveryOptions: () => {},
     addresses: [],
     setAddresses: () => {},
@@ -24,84 +19,101 @@ export const CheckOutContext = createContext({
     callCheckOut: () => {},
     orderList: [],
     setOrderList: () => {},
-    orderId: "",
+    orderId: '',
     setOrderId: () => {},
     orderTotal: 0,
     setOrderTotal: () => {},
     addressStyle: true,
-    setAddressStyle: () => {}
+    setAddressStyle: () => {},
+    isCreateAddressOpen: false,
+    setIsCreateAddressOpen: () => {},
 })
 
-export const CheckOutProvider = ({children}) => {
-    const [paymentMethod , setPaymentMethod] = useState("Cash");
-    const [deliveryOptions, setDeliveryOptions] = useState("Home");
-    const [addresses, setAddresses] = useState([]);
-    const [orderList, setOrderList] = useState([]);
-    const [selectedAddress, setSelectedAddress] = useState("");
-    const [beingSelected, setBeingSelected] = useState("");
-    const [orderId, setOrderId] = useState(""); 
-    const [orderTotal, setOrderTotal] = useState(0); 
-    const [ addressStyle, setAddressStyle ] = useState(true);
-    const {discountedCode, setCartCount, cartItems, setCartItems, setCartTotal, setDiscountedPrice, cartTotal} = useContext(CartContext);
-    const pushAddress = ({value,setIsCreateAddressOpen}) => {
-        if(value.is_default){
-            const defaultIndex = addresses.findIndex(address => address.is_default);
+export const CheckOutProvider = ({ children }) => {
+    const [paymentMethod, setPaymentMethod] = useState('Cash')
+    const [deliveryOptions, setDeliveryOptions] = useState('Home')
+    const [addresses, setAddresses] = useState([])
+    const [orderList, setOrderList] = useState([])
+    const [selectedAddress, setSelectedAddress] = useState('')
+    const [beingSelected, setBeingSelected] = useState('')
+    const [orderId, setOrderId] = useState('')
+    const [orderTotal, setOrderTotal] = useState(0)
+    const [addressStyle, setAddressStyle] = useState(true)
+    const [isCreateAddressOpen, setIsCreateAddressOpen] = useState(false)
+    const {
+        discountedCode,
+        setCartCount,
+        cartItems,
+        setCartItems,
+        setCartTotal,
+        setDiscountedPrice,
+        cartTotal,
+    } = useContext(CartContext)
+    const pushAddress = ({ value, setIsCreateAddressOpen }) => {
+        if (value.is_default) {
+            const defaultIndex = addresses.findIndex(
+                (address) => address.is_default
+            )
 
             if (defaultIndex !== -1) {
-              // Create a copy of the addresses array to avoid mutating state directly
-                const updatedAddresses = [...addresses];
-        
-              // Update the is_default property to false for the current default address
+                // Create a copy of the addresses array to avoid mutating state directly
+                const updatedAddresses = [...addresses]
+
+                // Update the is_default property to false for the current default address
                 updatedAddresses[defaultIndex] = {
-                ...updatedAddresses[defaultIndex],
-                is_default: false
-            };        
-              // Update the state with the modified addresses array
-                setAddresses([...updatedAddresses,value]);
-                setBeingSelected(value);
-                setSelectedAddress(value);  
-                setIsCreateAddressOpen(false);
+                    ...updatedAddresses[defaultIndex],
+                    is_default: false,
+                }
+                // Update the state with the modified addresses array
+                setAddresses([...updatedAddresses, value])
+                setBeingSelected(value)
+                setSelectedAddress(value)
+                setIsCreateAddressOpen(false)
             }
-        }else{
-            setAddresses([...addresses,value]);
-            setBeingSelected(value);
-            setSelectedAddress(value);
-            setIsCreateAddressOpen(false);
+        } else {
+            setAddresses([...addresses, value])
+            setBeingSelected(value)
+            setSelectedAddress(value)
+            setIsCreateAddressOpen(false)
         }
     }
     useEffect(() => {
-        async function fetchData(){
+        async function fetchData() {
             await getAddresses().then((res) => {
-                setAddresses(res.data.data);
-                const defaultAddress = res.data.data.find(address => address.is_default === true);
-                setSelectedAddress(defaultAddress);
+                setAddresses(res.data.data)
+                const defaultAddress = res.data.data.find(
+                    (address) => address.is_default === true
+                )
+                setSelectedAddress(defaultAddress)
             })
         }
-        fetchData();
-    },[]);
+        fetchData()
+    }, [])
     const callCheckOut = async () => {
-        setOrderList(cartItems);
-        setOrderTotal(cartTotal);
+        setOrderList(cartItems)
+        setOrderTotal(cartTotal)
         if (cartItems.length === 0) {
-            window.location.href = "/404"
-            return null; 
+            window.location.href = '/404'
+            return null
         }
         await checkOut({
             code: discountedCode,
             payment_method: paymentMethod,
             receive_method: deliveryOptions,
-            shipping_addressid: selectedAddress.uid  
-        }).then((res) => {
-            setOrderId(res.data.data.uid);
-            setCartItems([]);
-            setCartCount(0);
-            setDiscountedPrice(0);
-            setCartTotal(0);
-        }).catch((err) => {
-            console.log(err);
+            shipping_addressid: selectedAddress.uid,
         })
+            .then((res) => {
+                setOrderId(res.data.data.uid)
+                setCartItems([])
+                setCartCount(0)
+                setDiscountedPrice(0)
+                setCartTotal(0)
+            })
+            .catch((err) => {
+                console.log(err)
+            })
     }
-    
+
     const value = {
         paymentMethod,
         setPaymentMethod,
@@ -122,7 +134,9 @@ export const CheckOutProvider = ({children}) => {
         orderTotal,
         setOrderTotal,
         addressStyle,
-        setAddressStyle
+        setAddressStyle,
+        isCreateAddressOpen,
+        setIsCreateAddressOpen,
     }
 
     return (
