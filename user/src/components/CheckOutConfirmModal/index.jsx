@@ -17,7 +17,7 @@ import { CheckOutContext } from '../../context/checkout.context'
 import { useNavigate } from 'react-router-dom'
 
 const CheckOutConfirmModal = ({ isOpen, onClose }) => {
-    const { callCheckOut, isCreateAddressOpen } = useContext(CheckOutContext)
+    const { callCheckOut, isCreateAddressOpen, setIsCheckOutClicked, beingSelected } = useContext(CheckOutContext)
     const toast = useToast()
     const navigate = useNavigate()
     return (
@@ -80,11 +80,7 @@ const CheckOutConfirmModal = ({ isOpen, onClose }) => {
                             fontWeight="400"
                             as={router.Link}
                             onClick={async () => {
-                                console.log(
-                                    'isCreateAddressOpen',
-                                    isCreateAddressOpen
-                                )
-                                if (isCreateAddressOpen) {
+                                if (isCreateAddressOpen ) {
                                     toast({
                                         title: 'Please select an address',
                                         status: 'error',
@@ -92,8 +88,18 @@ const CheckOutConfirmModal = ({ isOpen, onClose }) => {
                                         isClosable: true,
                                     })
                                     onClose()
-                                } else {
+                                } else if (beingSelected === '') {
+                                    toast({
+                                        title: 'No address found in your account',
+                                        status: 'error',
+                                        duration: 3000,
+                                        isClosable: true,
+                                    })
+                                    onClose()
+                                }
+                                else {
                                     callCheckOut()
+                                    setIsCheckOutClicked(true);
                                     navigate('/checkout/complete')
                                 }
                             }}

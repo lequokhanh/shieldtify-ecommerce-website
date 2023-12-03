@@ -54,6 +54,7 @@ const NewAddressForm = ({ isOpen, pushAddress, setIsCreateAddressOpen }) => {
                                 value: res.data.data,
                                 setIsCreateAddressOpen: setIsCreateAddressOpen,
                             })
+                            actions.resetForm();
                         })
                     } catch (error) {
                         toast({
@@ -171,12 +172,20 @@ const NewAddressForm = ({ isOpen, pushAddress, setIsCreateAddressOpen }) => {
                                         <Input
                                             {...field}
                                             type="tel"
-                                            pattern="[0-9]*"
                                             inputMode="numeric"
                                             maxLength={10}
                                             borderRadius="12px"
                                             border="none"
                                             bgColor="#F3F4F6"
+                                            onChange={(e) => {
+                                                const re = /^[0-9\b]+$/
+                                                if (
+                                                    e.target.value === '' ||
+                                                    re.test(e.target.value)
+                                                ) {
+                                                    field.onChange(e)
+                                                }
+                                            }}
                                         />
                                         <FormErrorMessage>
                                             {form.errors.phone}

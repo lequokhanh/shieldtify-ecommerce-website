@@ -18,6 +18,7 @@ import NewAddressForm from './NewAddressForm'
 import AddressCard from '../../components/AddressCard'
 import ShowMoreModal from '../../components/ShowMoreModal'
 import { CheckOutContext } from '../../context/checkout.context'
+import { useEffect } from 'react'
 const Card3 = () => {
     const { isOpen, onClose, onOpen } = useDisclosure()
     const {
@@ -26,9 +27,14 @@ const Card3 = () => {
         beingSelected,
         isCreateAddressOpen,
         setIsCreateAddressOpen,
+        setBeingSelected
     } = useContext(CheckOutContext)
     const [isSelected, setIsSelected] = useState(false)
-
+    useEffect(() => {
+        if(beingSelected===""){
+            setBeingSelected(addresses.filter((address) => address.is_default)[0]);
+        }
+    },[])
     return (
         <Flex
             padding="25px 28px"
@@ -58,10 +64,8 @@ const Card3 = () => {
                     gap="15px"
                     fontFamily="Inter, sans-serif"
                 >
-                    {addresses.map(
-                        (address) =>
-                            address.is_default &&
-                            (beingSelected !== '' ? (
+                    {
+                        beingSelected && (
                                 <AddressCard
                                     key={beingSelected.uid}
                                     add={beingSelected}
@@ -72,25 +76,10 @@ const Card3 = () => {
                                     onClick={() => {
                                         setIsSelected(true)
                                         setIsCreateAddressOpen(false)
-                                        onClose()
                                     }}
                                 />
-                            ) : (
-                                <AddressCard
-                                    key={address.uid}
-                                    add={address}
-                                    isShowMoreOpen={isOpen}
-                                    isCreateAddressOpen={isCreateAddressOpen}
-                                    type="being-selected"
-                                    isSelected={isSelected}
-                                    onClick={() => {
-                                        setIsSelected(true)
-                                        setIsCreateAddressOpen(false)
-                                        onClose()
-                                    }}
-                                />
-                            ))
-                    )}
+                        )       
+                    }
                     <Card
                         variant="checkout"
                         direction="row"

@@ -8,7 +8,6 @@ import {
 import confirmed from '../../assets/CheckOut/confirmed.svg';
 
 const AddressCard = ({add, onClick, isSelected, isCreateAddressOpen,type, isShowMoreOpen}) => {
-    console.log(isShowMoreOpen);
     return (
         <Card
         variant="checkout"
