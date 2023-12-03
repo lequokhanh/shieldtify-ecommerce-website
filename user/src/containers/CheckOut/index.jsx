@@ -12,13 +12,13 @@ const CheckOut = () => {
     useEffect(() => {
         async function checkData() {
             await getUserCart().then((res) => {
-                if (!res.data.data.cart) {
+                if (res.data.data.cart.length === 0) {
                     window.location.href = '/404'
                 }
             })
         }
         checkData()
-    })
+    },[])
     return (
         <Flex alignItems="center">
             <Flex

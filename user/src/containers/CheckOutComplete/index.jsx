@@ -1,5 +1,5 @@
 import { Box, Button, Divider, Flex, HStack, Image, Text, VStack } from "@chakra-ui/react"
-import { useContext } from "react"
+import { useContext, useEffect } from "react"
 import { CheckOutContext } from "../../context/checkout.context"
 import { AuthContext } from "../../context/auth.context"
 import complete from "../../assets/CheckOut/complete.svg"
@@ -7,11 +7,14 @@ import bill from '../../assets/Checkout/bill.svg';
 import dollar_sign from "../../assets/CheckOut/dollar_sign.svg"
 import { checkOutCompletedCategories } from "../../Categories"
 import * as router from "react-router-dom"
+import { CartContext } from "../../context/cart.context"
+import { getUserCart } from "../../utils/api"
 
 
 
 const CheckOutComplete = () => {
     const { currentUser } = useContext(AuthContext);
+    const { cartItems } = useContext(CartContext);
     const { paymentMethod, deliveryOptions, selectedAddress, orderList, orderId, orderTotal} = useContext(CheckOutContext);
     const currentDate = new Date();
     const formattedDate = {
@@ -19,7 +22,16 @@ const CheckOutComplete = () => {
         month: currentDate.getMonth() + 1,
         day: currentDate.getDate()
     }
-    
+    useEffect(() => {
+        async function checkData() {
+            await getUserCart().then((res) => {
+                if ((res.data.data.cart.length === 0) || (res.data.data.cart.length > 0 && orderList.length === 0)) {
+                    window.location.href = '/404'
+                }
+            })
+        }
+        checkData();
+    },[])
     return (
         <VStack mt="100px" mb="130px" gap="10px">
             <VStack mb="20px">
