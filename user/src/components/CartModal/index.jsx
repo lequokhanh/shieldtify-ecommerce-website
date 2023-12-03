@@ -18,11 +18,12 @@ import CartItem from './CartItem';
 import discount from "../../assets/Cart/discount.svg";
 import CartDiscount from './CartDiscount';
 import { CartContext } from '../../context/cart.context';
+import * as router from 'react-router-dom'
 
 const CartModal = ({isOpen, onClose}) => {
     const [isDiscountOpen, setIsDiscountOpen] = useState(false);
     const [discountTextStyle, setDisCountTextStyle] = useState({});
-    const { cartItems, cartTotal, clearCart, outOfStockItems, discountedPrice, discountedCode } = useContext(CartContext);
+    const { cartItems, cartTotal, clearCart, outOfStockItems, discountedPrice, discountedCode, setIsOrderConfirmed } = useContext(CartContext);
     const handleOpenDiscount = () => {
         setIsDiscountOpen(!isDiscountOpen);
         isDiscountOpen ? setDisCountTextStyle({
@@ -176,6 +177,16 @@ const CartModal = ({isOpen, onClose}) => {
                                 fontWeight="600"
                                 fontSize="0.875rem"     
                                 mt="22px"
+                                as={router.Link}
+                                to={'/checkout'}
+                                onClick={() => {
+                                    if(cartItems.length === 0){
+                                        window.location.href ='/404';
+                                    }else{
+                                        setIsOrderConfirmed(true);
+                                    }
+                                    onClose();
+                                }}
                                 >
                                     Confirm order
                                 <ArrowForwardIcon/>

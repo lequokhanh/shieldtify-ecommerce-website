@@ -83,7 +83,8 @@ export default {
               100: "#545454",
               200: "#B6B6B6",
               300: "#E8E8E8"
-            }
+            },
+            checkout: "#171A1F"
         },
         valid: {
             pink: "rgba(255, 98, 98, 0.20)",
@@ -122,5 +123,23 @@ export default {
         Popover: {
           baseStyle: basePopOverStyle,
         },
+        Card: {
+          variants: {
+            checkout: {
+              container: {
+                alignItems:"center",
+                padding:"16px 20px",
+                border:"1px solid #9095A1",
+                borderRadius:"12px",
+                _hover:{
+                  cursor: 'pointer',
+                  transition: 'background-color 0.5s ease',
+                  backgroundColor: '#DEE1E6',
+                  boxShadow: "0px 0px 1px 0px rgba(23, 26, 31, 0.07), 0px 0px 2px 0px rgba(23, 26, 31, 0.12)"
+                }
+              }
+            }
+          }
+        }
   }
 };

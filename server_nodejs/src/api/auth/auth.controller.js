@@ -62,17 +62,6 @@ module.exports = {
             next(error);
         }
     },
-    getUser: async (req, res, next) => {
-        try {
-            res.status(200).json({
-                statusCode: 200,
-                message: 'Get user successfully',
-                data: req.user,
-            });
-        } catch (error) {
-            next(error);
-        }
-    },
     sendEmailResetPassword: async (req, res, next) => {
         try {
             const DTO = await service.sendEmailResetPassword(req.query.email);

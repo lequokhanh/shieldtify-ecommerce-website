@@ -28,12 +28,11 @@ export const AuthProvider = ({children}) => {
         setCurrentUser
     }
 
-    useEffect(() => {
+    useEffect( () => {
+        console.log(currentUser)
         const intervalId = setInterval(() => {
-            getUser().catch(e => {
-                if(e){
+            getUser().catch(() => {
                     setIsLoggedIn(false);
-                }
             }); 
         }, 60000);
         return () => clearInterval(intervalId);
@@ -45,6 +44,8 @@ export const AuthProvider = ({children}) => {
             getUser().then((res) => {
                 setCurrentUser(res.data.data);
                 localStorage.setItem("currentUser", JSON.stringify(res.data.data))
+            }).catch(() => {
+                setIsLoggedIn(false);
             })
         }else {
             localStorage.setItem("currentUser",null);

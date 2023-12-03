@@ -50,4 +50,13 @@ module.exports = {
             next(error);
         }
     },
+    checkout: async (req, res, next) => {
+        try {
+            const user = req.user;
+            const DTO = await service.checkout(user.uid, req.body);
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
 };

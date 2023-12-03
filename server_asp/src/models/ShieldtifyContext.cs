@@ -401,7 +401,7 @@ public partial class ShieldtifyContext : DbContext
 
             entity.HasOne(d => d.PromotionCodeNavigation).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.PromotionCode)
-                .OnDelete(DeleteBehavior.ClientSetNull)
+                .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("orders_ibfk_3");
 
             entity.HasOne(d => d.ShippingAddress).WithMany(p => p.Orders)
@@ -410,6 +410,7 @@ public partial class ShieldtifyContext : DbContext
 
             entity.HasOne(d => d.SupportedByNavigation).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.SupportedBy)
+                .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("orders_ibfk_4");
         });
 
@@ -452,9 +453,7 @@ public partial class ShieldtifyContext : DbContext
             entity.HasIndex(e => e.ParentPost, "parent_post");
 
             entity.Property(e => e.Uid).HasColumnName("uid");
-            entity.Property(e => e.Content)
-                .HasMaxLength(255)
-                .HasColumnName("content");
+            entity.Property(e => e.Content).HasColumnName("content");
             entity.Property(e => e.CreatedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
@@ -512,6 +511,7 @@ public partial class ShieldtifyContext : DbContext
                 .HasColumnType("datetime")
                 .HasColumnName("updated_at");
         });
+
         modelBuilder.Entity<Vote>(entity =>
         {
             entity.HasKey(e => new { e.Postid, e.Clientid }).HasName("PRIMARY");

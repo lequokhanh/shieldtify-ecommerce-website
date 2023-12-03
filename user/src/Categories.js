@@ -18,6 +18,13 @@ import img3 from "./assets/pc/Home1/img3.svg"
 import img4 from "./assets/pc/Home1/img4.svg"
 import img5 from "./assets/pc/Home1/img5.svg"
 import product1 from "./assets/Products/product_img/product1.svg"
+import calendar from "./assets/CheckOut/calendar.svg"
+import truck from "./assets/CheckOut/truck.svg"
+import group from "./assets/Group.svg"
+import money from './assets/CheckOut/money.svg';
+import map from './assets/CheckOut/map.svg';
+import bill from './assets/Checkout/bill.svg';
+import dolar_sign from "./assets/CheckOut/dollar_sign.svg"
 
 
 const accessoriesCategories = [
@@ -497,6 +504,43 @@ const cartTest = [
     },
 ]
 
+const addresses = [
+    {
+        id: 1,
+        name: "Default address",
+        address: "1234 North Main Street, aaaaaaaaaaaaa",
+        city: "Bien Hoa",
+        province: "DongNai"
+    }
+]
+const checkOutCompletedCategories = [
+    {
+        id:1,
+        name: "Date",
+        img: calendar
+    },
+    {
+        id:2,
+        name: "Customer",
+        img: group
+    },
+    {
+        id:3,
+        name: "Payment Method",
+        img: money
+    },
+    {
+        id:4,
+        name: "Delivery method",
+        img: truck
+    },
+    {
+        id:5,
+        name: "Address",
+        img: map
+    }
+]
+
 export { 
     accessoriesCategories, 
     productCategories, 
@@ -506,6 +550,8 @@ export {
     testProduct2, 
     SortCategories,
     Brands,
-    cartTest
+    cartTest,
+    addresses,
+    checkOutCompletedCategories
 };
 

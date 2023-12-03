@@ -31,7 +31,7 @@ module.exports = (sequelize, Sequelize) => {
             },
             promotion_code: {
                 type: Sequelize.STRING,
-                allowNull: false,
+                allowNull: true,
             },
             order_status: {
                 type: Sequelize.STRING,
@@ -39,7 +39,7 @@ module.exports = (sequelize, Sequelize) => {
             },
             supported_by: {
                 type: Sequelize.UUID,
-                allowNull: false,
+                allowNull: true,
             },
         },
         {

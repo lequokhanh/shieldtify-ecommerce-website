@@ -56,7 +56,7 @@ export function login({ loginCred, password }) {
 }
 
 export function getUser() {
-    return axiosCookie.get('/auth/me')
+    return axiosCookie.get('/user/me')
 }
 
 export function logout() {
@@ -119,8 +119,8 @@ export function getAllProductByCategoryOrKeyword({
     return axios.get(url)
 }
 
-export function getUserCart () {
-    return axiosCookie.get('/cart');
+export function getUserCart() {
+    return axiosCookie.get('/cart')
 }
 
 export function addToCart({ item, quantity }) {
@@ -128,25 +128,56 @@ export function addToCart({ item, quantity }) {
         items: [
             {
                 item: item.toString(),
-                quantity: quantity
-            }
-        ]
-    });
+                quantity: quantity,
+            },
+        ],
+    })
 }
 
-export function updateCart ({item, quantity}) {
+export function updateCart({ item, quantity }) {
     return axiosCookie.put('/cart', {
-        item, 
-        quantity
-    }); 
+        item,
+        quantity,
+    })
 }
 
-export function removeAllItemsFromCart () {
-    return axiosCookie.delete(`/cart`);
+export function removeAllItemsFromCart() {
+    return axiosCookie.delete(`/cart`)
 }
 
-export function applyDiscountCode (code) {
-    return axiosCookie.get(`/cart/discount?code=${code}`);
+export function applyDiscountCode(code) {
+    return axiosCookie.get(`/cart/discount?code=${code}`)
+}
+
+
+export function getAddresses() {
+    return axiosCookie.get(`/user/address`);
+}
+export function createAddress(add) {
+    console.log(add);
+    return axiosCookie.post(`/user/address`,{
+        address: add.address,
+        city: add.city,
+        province: add.province,
+        phone_number: add.phone_number,
+        is_default: add.is_default
+    })
+}
+
+export function checkOut({code,payment_method,receive_method,shipping_addressid}){
+    if(!code){
+        return axiosCookie.post(`/cart/checkout`,{
+            payment_method,
+            receive_method,
+            shipping_addressid
+        })
+    }
+    return axiosCookie.post(`/cart/checkout`,{
+        code,
+        payment_method,
+        receive_method,
+        shipping_addressid
+    })
 }
 
 // export function updateCart (cart) {
