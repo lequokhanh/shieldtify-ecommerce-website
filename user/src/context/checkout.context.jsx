@@ -27,6 +27,8 @@ export const CheckOutContext = createContext({
     setAddressStyle: () => {},
     isCreateAddressOpen: false,
     setIsCreateAddressOpen: () => {},
+    isCheckOutClicked: false,
+    setIsCheckOutClicked: () => {},
 })
 
 export const CheckOutProvider = ({ children }) => {
@@ -40,6 +42,7 @@ export const CheckOutProvider = ({ children }) => {
     const [orderTotal, setOrderTotal] = useState(0)
     const [addressStyle, setAddressStyle] = useState(true)
     const [isCreateAddressOpen, setIsCreateAddressOpen] = useState(false)
+    const [ isCheckOutClicked, setIsCheckOutClicked ] = useState(false);
     const {
         discountedCode,
         setCartCount,
@@ -54,6 +57,7 @@ export const CheckOutProvider = ({ children }) => {
             const defaultIndex = addresses.findIndex(
                 (address) => address.is_default
             )
+            console.log(defaultIndex);
 
             if (defaultIndex !== -1) {
                 // Create a copy of the addresses array to avoid mutating state directly
@@ -66,6 +70,11 @@ export const CheckOutProvider = ({ children }) => {
                 }
                 // Update the state with the modified addresses array
                 setAddresses([...updatedAddresses, value])
+                setBeingSelected(value)
+                setSelectedAddress(value)
+                setIsCreateAddressOpen(false)
+            }else{
+                setAddresses([value])
                 setBeingSelected(value)
                 setSelectedAddress(value)
                 setIsCreateAddressOpen(false)
@@ -137,6 +146,8 @@ export const CheckOutProvider = ({ children }) => {
         setAddressStyle,
         isCreateAddressOpen,
         setIsCreateAddressOpen,
+        isCheckOutClicked,
+        setIsCheckOutClicked,
     }
 
     return (
