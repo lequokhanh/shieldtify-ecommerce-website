@@ -5,20 +5,15 @@ import Card1 from './Card1'
 import Card2 from './Card2'
 import Card3 from './Card3'
 import OrderInfo from './OrderInfo'
-import { getUserCart } from '../../utils/api'
 
 const CheckOut = () => {
-    const { cartItems } = useContext(CartContext)
+    const { cartItems, isOrderConfirmed } = useContext(CartContext)
     useEffect(() => {
-        async function checkData() {
-            await getUserCart().then((res) => {
-                if (res.data.data.cart.length === 0) {
-                    window.location.href = '/404'
-                }
-            })
+        if(!isOrderConfirmed ){
+            window.location.href = '/404'
         }
-        checkData()
-    },[])
+
+    },[]);
     return (
         <Flex alignItems="center">
             <Flex

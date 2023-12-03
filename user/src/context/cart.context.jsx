@@ -24,7 +24,9 @@ export const CartContext = createContext({
         setOutOfStockItems: () => {},
         setDiscountedPrice: () => {},
         updateItemQuantity: () => {},
-        setDiscountedCode: () => {} 
+        setDiscountedCode: () => {},
+        isOrderConfirmed: false,
+        setIsOrderConfirmed: () => {},
 });
 
 export const CartProvider = ({children}) => {
@@ -35,6 +37,7 @@ export const CartProvider = ({children}) => {
     const [cartCount, setCartCount] = useState(0);
     const [cartTotal, setCartTotal] = useState(0);
     const [discountedCode, setDiscountedCode] = useState("");
+    const [isOrderConfirmed, setIsOrderConfirmed] = useState(false);
 
     useEffect (() => {
         async function fetchCart(){
@@ -145,7 +148,9 @@ export const CartProvider = ({children}) => {
         setOutOfStockItems,
         setDiscountedPrice,
         updateItemQuantity,
-        setDiscountedCode
+        setDiscountedCode,
+        isOrderConfirmed,
+        setIsOrderConfirmed,
     }
     return (
         <CartContext.Provider value={value}>
