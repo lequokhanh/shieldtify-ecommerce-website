@@ -85,6 +85,9 @@ const Card3 = () => {
                 variant="checkout"
                 direction="row"       
                 onClick={onOpen}
+                background={
+                    isOpen ? "#DEE1E6": "#FFFFFF"
+                }
                 >
                     <CardBody>
                         <VStack
