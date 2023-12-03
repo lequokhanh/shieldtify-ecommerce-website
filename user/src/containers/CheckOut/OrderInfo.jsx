@@ -32,6 +32,7 @@ const OrderInfo = () => {
     bgColor="rgba(222, 225, 230, 0.50)"
     borderRadius="12px"
     w="340px"
+    mt="56px"
     >
         <HStack
         gap="8px"
