@@ -165,7 +165,8 @@ module.exports = {
     },
     updateAddress: async (
         clientid,
-        { uid, address, city, province, phone_number, is_default },
+        uid,
+        { address, city, province, phone_number, is_default },
     ) => {
         try {
             const allAddress = await db.client_address.findAll({

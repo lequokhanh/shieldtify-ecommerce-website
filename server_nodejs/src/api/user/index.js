@@ -64,12 +64,6 @@ router.put(
     checkPermission('admin', 'superadmin'),
     controller.resetPassword,
 );
-router.get(
-    '/profile/client',
-    verifyToken,
-    checkPermission('client'),
-    controller.getProfileClient,
-);
 router.put(
     '/profile/client',
     verifyToken,
@@ -77,13 +71,13 @@ router.put(
     controller.updateProfileClient,
 );
 router.put(
-    '/profile/client/address',
+    '/address/:addressId',
     verifyToken,
     checkPermission('client'),
     controller.updateAddressClient,
 );
 router.delete(
-    '/profile/client/address/:addressId',
+    '/address/:addressId',
     verifyToken,
     checkPermission('client'),
     controller.deleteAddressClient,

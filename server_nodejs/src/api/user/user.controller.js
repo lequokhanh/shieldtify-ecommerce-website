@@ -110,14 +110,6 @@ module.exports = {
             next(error);
         }
     },
-    getProfileClient: async (req, res, next) => {
-        try {
-            const DTO = await service.getClientById(req.user.uid);
-            res.status(DTO.statusCode).json(DTO);
-        } catch (error) {
-            next(error);
-        }
-    },
     updateProfileClient: async (req, res, next) => {
         try {
             const DTO = await service.updateClient(req.user.uid, req.body);
@@ -126,15 +118,19 @@ module.exports = {
             next(error);
         }
     },
-    updateAddressClient: async (req, res, next) => {
+    updateAddress: async (req, res, next) => {
         try {
-            const DTO = await service.updateAddress(req.user.uid, req.body);
+            const DTO = await service.updateAddress(
+                req.user.uid,
+                req.params.addressId,
+                req.body,
+            );
             res.status(DTO.statusCode).json(DTO);
         } catch (error) {
             next(error);
         }
     },
-    deleteAddressClient: async (req, res, next) => {
+    deleteAddress: async (req, res, next) => {
         try {
             const DTO = await service.deleteAddress(
                 req.user.uid,
