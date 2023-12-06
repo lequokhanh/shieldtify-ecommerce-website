@@ -186,6 +186,12 @@ module.exports = {
             if (updateAddress.clientid !== clientid) {
                 throw new AppError(400, 'Address not belong to this client');
             }
+            if (!is_default && updateAddress.is_default) {
+                throw new AppError(
+                    400,
+                    'You cannot set this address to not default, please set another address to default first',
+                );
+            }
             updateAddress.address = address;
             updateAddress.city = city;
             updateAddress.province = province;
@@ -205,6 +211,7 @@ module.exports = {
                     },
                 );
             }
+
             updateAddress.is_default = is_default;
             await updateAddress.save();
             return {
