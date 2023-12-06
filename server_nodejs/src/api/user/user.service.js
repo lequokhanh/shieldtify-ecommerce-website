@@ -139,6 +139,9 @@ module.exports = {
                 const checkUsername = await db.client_account.findOne({
                     where: {
                         username,
+                        uid: {
+                            [db.Sequelize.Op.not]: uid,
+                        },
                     },
                 });
                 if (checkUsername) {
