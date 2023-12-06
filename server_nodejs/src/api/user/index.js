@@ -17,31 +17,31 @@ router.post(
     controller.createAddress,
 );
 router.get(
-    '/client',
+    '/client/admin',
     verifyToken,
     checkPermission('admin', 'superadmin'),
     controller.getClients,
 );
 router.get(
-    '/client/:userId',
+    '/client/admin/:userId',
     verifyToken,
     checkPermission('admin', 'superadmin'),
     controller.getClientById,
 );
 router.put(
-    '/client/:userId',
+    '/client/admin/:userId',
     verifyToken,
     checkPermission('admin', 'superadmin'),
     controller.updateClient,
 );
 router.put(
-    '/address/:userId',
+    '/address/admin/:userId',
     verifyToken,
     checkPermission('admin', 'superadmin'),
     controller.updateAddress,
 );
 router.delete(
-    '/address/:userId',
+    '/address/admin/:userId',
     verifyToken,
     checkPermission('admin', 'superadmin'),
     controller.deleteAddress,
