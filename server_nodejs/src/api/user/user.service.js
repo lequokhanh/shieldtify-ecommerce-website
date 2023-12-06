@@ -150,10 +150,10 @@ module.exports = {
                 client.username = username;
             }
             await client.save();
-            delete client.password;
-            delete client.changed_password_at;
-            delete client.createdAt;
-            delete client.updatedAt;
+            delete client.dataValues.password;
+            delete client.dataValues.changed_password_at;
+            delete client.dataValues.createdAt;
+            delete client.dataValues.updatedAt;
             return {
                 statusCode: 200,
                 message: 'Update client successfully',
