@@ -30,4 +30,84 @@ module.exports = {
             next(error);
         }
     },
+    getClients: async (req, res, next) => {
+        try {
+            const DTO = await service.getClients(
+                req.query.page,
+                req.query.keyword,
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    getClientById: async (req, res, next) => {
+        try {
+            const DTO = await service.getClientById(req.params.userId);
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    updateClient: async (req, res, next) => {
+        try {
+            const DTO = await service.updateClient(req.param.userId, req.body);
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    updateAddress: async (req, res, next) => {
+        try {
+            const DTO = await service.updateAddress(req.param.userId, req.body);
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    deleteAddress: async (req, res, next) => {
+        try {
+            const DTO = await service.deleteAddress(
+                req.param.clientid,
+                req.query.uid,
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    getAccounts: async (req, res, next) => {
+        try {
+            const DTO = await service.getAccounts(
+                req.query.page,
+                req.query.keyword,
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    updateAccount: async (req, res, next) => {
+        try {
+            const DTO = await service.updateAccount(
+                req.user.role,
+                req.params.id,
+                req.body,
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    resetPassword: async (req, res, next) => {
+        try {
+            const DTO = await service.resetPassword(
+                req.user.role,
+                req.params.id,
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
 };

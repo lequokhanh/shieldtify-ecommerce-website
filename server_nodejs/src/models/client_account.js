@@ -11,6 +11,7 @@ module.exports = (sequelize, Sequelize) => {
             username: {
                 type: Sequelize.STRING,
                 allowNull: false,
+                unique: true,
             },
             password: {
                 type: Sequelize.STRING,
@@ -23,6 +24,7 @@ module.exports = (sequelize, Sequelize) => {
             email: {
                 type: Sequelize.STRING,
                 allowNull: false,
+                unique: true,
             },
             changed_password_at: {
                 type: Sequelize.DATE,
@@ -49,7 +51,7 @@ module.exports = (sequelize, Sequelize) => {
         });
         ClientAccount.hasMany(models.client_address, {
             foreignKey: 'clientid',
-            as: 'client_address',
+            as: 'addresses',
         });
         ClientAccount.hasMany(models.conversation, {
             foreignKey: 'clientid',

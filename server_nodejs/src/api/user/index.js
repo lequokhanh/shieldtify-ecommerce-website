@@ -16,4 +16,52 @@ router.post(
     checkPermission('client'),
     controller.createAddress,
 );
+router.get(
+    '/client',
+    verifyToken,
+    checkPermission('admin', 'superadmin'),
+    controller.getClients,
+);
+router.get(
+    '/client/:userId',
+    verifyToken,
+    checkPermission('admin', 'superadmin'),
+    controller.getClientById,
+);
+router.put(
+    '/client/:userId',
+    verifyToken,
+    checkPermission('admin', 'superadmin'),
+    controller.updateClient,
+);
+router.put(
+    '/address/:userId',
+    verifyToken,
+    checkPermission('admin', 'superadmin'),
+    controller.updateAddress,
+);
+router.delete(
+    '/address/:userId',
+    verifyToken,
+    checkPermission('admin', 'superadmin'),
+    controller.deleteAddress,
+);
+router.get(
+    '/staff',
+    verifyToken,
+    checkPermission('admin', 'superadmin'),
+    controller.getAccounts,
+);
+router.put(
+    '/staff/:id',
+    verifyToken,
+    checkPermission('admin', 'superadmin'),
+    controller.updateAccount,
+);
+router.put(
+    '/staff/:id/reset-password',
+    verifyToken,
+    checkPermission('admin', 'superadmin'),
+    controller.resetPassword,
+);
 module.exports = router;

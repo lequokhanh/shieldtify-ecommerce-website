@@ -7,6 +7,7 @@ router.get('/send-email-register', controller.sendEmailRegister);
 router.post('/register', controller.register);
 router.get('/check-token', controller.checkToken);
 router.post('/login/client', controller.login);
+router.post('/login/admin', controller.loginAdmin);
 router.post('/logout', controller.logout);
 router.get('/send-email-reset-password', controller.sendEmailResetPassword);
 router.post('/reset-password', controller.resetPassword);
