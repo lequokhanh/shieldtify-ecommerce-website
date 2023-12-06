@@ -74,12 +74,12 @@ router.put(
     '/address/:addressId',
     verifyToken,
     checkPermission('client'),
-    controller.updateAddressClient,
+    controller.updateAddress,
 );
 router.delete(
     '/address/:addressId',
     verifyToken,
     checkPermission('client'),
-    controller.deleteAddressClient,
+    controller.deleteAddress,
 );
 module.exports = router;
