@@ -230,6 +230,11 @@ module.exports = {
             if (address.clientid !== clientid) {
                 throw new AppError(400, 'Address not belong to this client');
             }
+            if (address.is_default)
+                throw new AppError(
+                    400,
+                    'You cannot delete default address, please set another address to default first',
+                );
             await address.destroy();
             return {
                 statusCode: 200,
