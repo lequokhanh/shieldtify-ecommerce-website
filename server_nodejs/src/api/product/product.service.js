@@ -117,7 +117,8 @@ module.exports = {
             var query = `FROM items it
                     LEFT JOIN item_imgs im ON it.uid = im.itemid AND im.is_primary = 1
                     LEFT JOIN order_items oi ON it.uid = oi.itemid
-                WHERE categoryid = '${category}' AND lower(name) LIKE '%${keyword.toLowerCase()}%'`;
+                    LEFT JOIN brands br ON it.brandid = br.uid
+                WHERE categoryid = '${category}' AND lower(it.name) LIKE '%${keyword.toLowerCase()}%'`;
             if (priceRange) {
                 query += ` AND price BETWEEN ${priceRange.split('-')[0]} AND ${
                     priceRange.split('-')[1]
@@ -134,7 +135,7 @@ module.exports = {
             });
             if (sort === 'popular')
                 query +=
-                    ' GROUP BY it.uid, name, price, link ORDER BY COUNT(oi.itemid) DESC';
+                    ' GROUP BY it.uid, it.name, price, link ORDER BY COUNT(oi.itemid) DESC';
             else {
                 sortField = sort.split('-')[0];
                 sortOrder = sort.split('-')[1];
@@ -145,7 +146,7 @@ module.exports = {
                 }
             }
             const items = await db.sequelize.query(
-                `SELECT it.uid, name, price, link primary_img
+                `SELECT it.uid, it.name, price, link primary_img, stock_qty, br.name as brand
                 ${query}
                 LIMIT 16
                 OFFSET ${(page - 1) * 16};`,
