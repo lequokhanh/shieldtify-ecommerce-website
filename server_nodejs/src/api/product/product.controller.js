@@ -46,4 +46,58 @@ module.exports = {
             next(error);
         }
     },
+    getAllBrand: async (req, res, next) => {
+        try {
+            const DTO = await service.getAllBrand();
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    createBrand: async (req, res, next) => {
+        try {
+            const DTO = await service.createBrand(req.body);
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    createProduct: async (req, res, next) => {
+        try {
+            const DTO = await service.createProduct(req.body);
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    updateProduct: async (req, res, next) => {
+        try {
+            const DTO = await service.updateProduct(
+                req.params.productid,
+                req.body,
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    updateProductForStaff: async (req, res, next) => {
+        try {
+            const allowedUpdates = ['description'];
+            const updates = Object.keys(req.body);
+            const isValidOperation = updates.every((update) =>
+                allowedUpdates.includes(update),
+            );
+            if (!isValidOperation) {
+                return res.status(400).send({ error: 'Invalid updates!' });
+            }
+            const DTO = await service.updateProduct(
+                req.params.productid,
+                req.body,
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
 };

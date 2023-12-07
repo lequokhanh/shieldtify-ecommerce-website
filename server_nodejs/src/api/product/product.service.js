@@ -219,4 +219,94 @@ module.exports = {
             throw new AppError(error.statusCode, error.message);
         }
     },
+    createProduct: async ({
+        categoryid,
+        brandid,
+        name,
+        specification,
+        description,
+        price,
+        stock_qty,
+    }) => {
+        try {
+            const item = await db.item.create({
+                uid: v4(),
+                categoryid,
+                brandid,
+                name,
+                specification,
+                description,
+                price,
+                stock_qty,
+            });
+            return {
+                statusCode: 200,
+                message: 'Create product successfully',
+                data: item,
+            };
+        } catch (error) {
+            throw new AppError(error.statusCode, error.message);
+        }
+    },
+    updateProduct: async (
+        uid,
+        {
+            categoryid,
+            brandid,
+            name,
+            specification,
+            description,
+            price,
+            stock_qty,
+        },
+    ) => {
+        try {
+            const item = await db.item.findByPk(uid);
+            if (!item) throw new AppError(404, 'Product not found');
+            item.categoryid = categoryid ? categoryid : item.categoryid;
+            item.brandid = brandid ? brandid : item.brandid;
+            item.name = name ? name : item.name;
+            item.specification = specification
+                ? specification
+                : item.specification;
+            item.description = description ? description : item.description;
+            item.price = price ? price : item.price;
+            item.stock_qty = stock_qty ? stock_qty : item.stock_qty;
+            await item.save();
+            return {
+                statusCode: 200,
+                message: 'Update product successfully',
+                data: item,
+            };
+        } catch (error) {
+            throw new AppError(error.statusCode, error.message);
+        }
+    },
+    getAllBrand: async () => {
+        try {
+            const brands = await db.brand.findAll({});
+            return {
+                statusCode: 200,
+                message: 'Get all brand successfully',
+                data: brands,
+            };
+        } catch (error) {
+            throw new AppError(error.statusCode, error.message);
+        }
+    },
+    createBrand: async ({ name }) => {
+        try {
+            const brand = await db.brand.create({
+                uid: v4(),
+                name,
+            });
+            return {
+                statusCode: 200,
+                message: 'Create brand successfully',
+                data: brand,
+            };
+        } catch (error) {
+            throw new AppError(error.statusCode, error.message);
+        }
+    },
 };
