@@ -65,7 +65,7 @@ module.exports = {
             next(error);
         }
     },
-    deleteAddress: async (req, res, next) => {
+    deleteAddressAdmin: async (req, res, next) => {
         try {
             const DTO = await service.deleteAddress(
                 req.param.clientid,
@@ -124,6 +124,17 @@ module.exports = {
                 req.user.uid,
                 req.params.addressId,
                 req.body,
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    deleteAddressClient: async (req, res, next) => {
+        try {
+            const DTO = await service.deleteAddress(
+                req.user.uid,
+                req.params.addressId,
             );
             res.status(DTO.statusCode).json(DTO);
         } catch (error) {

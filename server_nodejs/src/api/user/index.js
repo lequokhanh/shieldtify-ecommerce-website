@@ -44,7 +44,7 @@ router.delete(
     '/address/admin/:userId',
     verifyToken,
     checkPermission('admin', 'superadmin'),
-    controller.deleteAddress,
+    controller.deleteAddressAdmin,
 );
 router.get(
     '/staff',
@@ -80,7 +80,7 @@ router.delete(
     '/address/:addressId',
     verifyToken,
     checkPermission('client'),
-    controller.deleteAddress,
+    controller.deleteAddressClient,
 );
 router.get(
     '/order/client',
