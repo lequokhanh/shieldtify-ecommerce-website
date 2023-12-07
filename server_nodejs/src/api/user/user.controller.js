@@ -130,11 +130,41 @@ module.exports = {
             next(error);
         }
     },
-    deleteAddress: async (req, res, next) => {
+    getAllOrders: async (req, res, next) => {
         try {
-            const DTO = await service.deleteAddress(
+            const DTO = await service.getAllOrders(
+                req.query.page,
+                req.query.keyword,
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    getOrderByClientID: async (req, res, next) => {
+        try {
+            const DTO = await service.getOrderByClientID(req.user.uid);
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    getOrderByIdClient: async (req, res, next) => {
+        try {
+            const DTO = await service.getOrderByID(
+                req.params.orderId,
                 req.user.uid,
-                req.params.addressId,
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    getOrderByIdAdmin: async (req, res, next) => {
+        try {
+            const DTO = await service.getOrderByID(
+                req.params.orderId,
+                req.user.uid,
             );
             res.status(DTO.statusCode).json(DTO);
         } catch (error) {

@@ -82,4 +82,16 @@ router.delete(
     checkPermission('client'),
     controller.deleteAddress,
 );
+router.get(
+    '/order/client',
+    verifyToken,
+    checkPermission('client'),
+    controller.getOrderByClientID,
+);
+router.get(
+    '/order/client/:orderId',
+    verifyToken,
+    checkPermission('client'),
+    controller.getOrderByIdClient,
+);
 module.exports = router;

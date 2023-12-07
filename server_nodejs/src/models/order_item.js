@@ -17,7 +17,11 @@ module.exports = (sequelize, Sequelize) => {
                 type: Sequelize.INTEGER,
                 allowNull: false,
             },
-            sales_price: {
+            old_price: {
+                type: Sequelize.FLOAT,
+                allowNull: false,
+            },
+            new_price: {
                 type: Sequelize.FLOAT,
                 allowNull: false,
             },
@@ -34,6 +38,7 @@ module.exports = (sequelize, Sequelize) => {
     OrderItem.associate = (models) => {
         OrderItem.belongsTo(models.item, {
             foreignKey: 'itemid',
+            as: 'item',
         });
         OrderItem.belongsTo(models.order, {
             foreignKey: 'orderid',

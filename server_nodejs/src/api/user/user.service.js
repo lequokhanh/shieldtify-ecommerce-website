@@ -372,4 +372,124 @@ module.exports = {
             throw new AppError(error.statusCode, error.message);
         }
     },
+    getAllOrders: async (page = 1, keyword = '') => {
+        try {
+            const limit = 10;
+            const offset = (page - 1) * limit;
+            const orders = await db.sequelize.query(
+                `
+                SELECT od.uid, od.clientid, od.payment_method, od.receive_method,  od.order_date, od.order_status, ca.display_name
+                FROM orders od
+                LEFT JOIN client_accounts ca ON od.clientid = ca.uid
+                WHERE od.order_status LIKE '%${keyword}%' OR ca.display_name LIKE '%${keyword}%' OR od.uid LIKE '%${keyword}%' OR od.payment_method LIKE '%${keyword}%' OR od.receive_method LIKE '%${keyword}%' OR od.order_date LIKE '%${keyword}%'
+                LIMIT ${limit} OFFSET ${offset}`,
+                {
+                    type: db.sequelize.QueryTypes.SELECT,
+                },
+            );
+            const count = await db.sequelize.query(
+                `
+                SELECT order_status, COUNT(distinct orders.uid) as count, ROUND(SUM(oi.new_price * oi.quantity),2) as total
+                FROM orders
+                    LEFT JOIN order_items oi ON orders.uid = oi.orderid
+                GROUP BY order_status`,
+                {
+                    type: db.sequelize.QueryTypes.SELECT,
+                },
+            );
+            return {
+                statusCode: 200,
+                message: 'Get orders successfully',
+                data: {
+                    orders,
+                    count,
+                },
+            };
+        } catch (error) {
+            throw new AppError(error.statusCode, error.message);
+        }
+    },
+    getOrderByClientID: async (clientid) => {
+        try {
+            const orders = await db.sequelize.query(
+                `
+                SELECT od.uid, od.clientid, od.payment_method, od.receive_method,  od.order_date, od.order_status
+                FROM orders od
+                WHERE od.clientid = '${clientid}'`,
+                {
+                    type: db.sequelize.QueryTypes.SELECT,
+                },
+            );
+            return {
+                statusCode: 200,
+                message: 'Get orders successfully',
+                data: orders,
+            };
+        } catch (error) {
+            throw new AppError(error.statusCode, error.message);
+        }
+    },
+    getOrderByID: async (uid) => {
+        try {
+            //calculate total price with old price and new price
+            const order = await db.order.findOne({
+                where: {
+                    uid,
+                },
+                attributes: [
+                    'uid',
+                    'clientid',
+                    'payment_method',
+                    'receive_method',
+                    'order_date',
+                    'order_status',
+                ],
+                include: [
+                    {
+                        model: db.client_account,
+                        as: 'client',
+                        attributes: ['display_name'],
+                    },
+                    {
+                        model: db.client_address,
+                        as: 'shipping_address',
+                    },
+                    {
+                        model: db.order_item,
+                        as: 'order_item',
+                        attributes: [
+                            'itemid',
+                            'quantity',
+                            'old_price',
+                            'new_price',
+                        ],
+                        include: [
+                            {
+                                model: db.item,
+                                as: 'item',
+                                attributes: ['name'],
+                            },
+                        ],
+                    },
+                ],
+            });
+            let old_total = 0;
+            let new_total = 0;
+            for (item of order.dataValues.order_item) {
+                old_total +=
+                    item.dataValues.old_price * item.dataValues.quantity;
+                new_total +=
+                    item.dataValues.new_price * item.dataValues.quantity;
+            }
+            order.dataValues.old_total = parseFloat(old_total.toFixed(2));
+            order.dataValues.new_total = parseFloat(new_total.toFixed(2));
+            return {
+                statusCode: 200,
+                message: 'Get order successfully',
+                data: order,
+            };
+        } catch (error) {
+            throw new AppError(error.statusCode, error.message);
+        }
+    },
 };

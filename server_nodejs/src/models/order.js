@@ -54,9 +54,11 @@ module.exports = (sequelize, Sequelize) => {
     Order.associate = (models) => {
         Order.belongsTo(models.client_account, {
             foreignKey: 'clientid',
+            as: 'client',
         });
         Order.belongsTo(models.client_address, {
             foreignKey: 'shipping_addressid',
+            as: 'shipping_address',
         });
         Order.belongsTo(models.account, {
             foreignKey: 'supported_by',
