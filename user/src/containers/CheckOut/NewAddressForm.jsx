@@ -54,7 +54,7 @@ const NewAddressForm = ({ isOpen, pushAddress, setIsCreateAddressOpen }) => {
                                 value: res.data.data,
                                 setIsCreateAddressOpen: setIsCreateAddressOpen,
                             })
-                            actions.resetForm();
+                            actions.resetForm()
                         })
                     } catch (error) {
                         toast({

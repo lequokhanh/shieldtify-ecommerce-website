@@ -27,14 +27,16 @@ const Card3 = () => {
         beingSelected,
         isCreateAddressOpen,
         setIsCreateAddressOpen,
-        setBeingSelected
+        setBeingSelected,
     } = useContext(CheckOutContext)
     const [isSelected, setIsSelected] = useState(false)
     useEffect(() => {
-        if(beingSelected===""){
-            setBeingSelected(addresses.filter((address) => address.is_default)[0]);
+        if (beingSelected === '') {
+            setBeingSelected(
+                addresses.filter((address) => address.is_default)[0]
+            )
         }
-    },[])
+    }, [])
     return (
         <Flex
             padding="25px 28px"
@@ -64,22 +66,20 @@ const Card3 = () => {
                     gap="15px"
                     fontFamily="Inter, sans-serif"
                 >
-                    {
-                        beingSelected && (
-                                <AddressCard
-                                    key={beingSelected.uid}
-                                    add={beingSelected}
-                                    isShowMoreOpen={isOpen}
-                                    isCreateAddressOpen={isCreateAddressOpen}
-                                    type="being-selected"
-                                    isSelected={isSelected}
-                                    onClick={() => {
-                                        setIsSelected(true)
-                                        setIsCreateAddressOpen(false)
-                                    }}
-                                />
-                        )       
-                    }
+                    {beingSelected && (
+                        <AddressCard
+                            key={beingSelected.uid}
+                            add={beingSelected}
+                            isShowMoreOpen={isOpen}
+                            isCreateAddressOpen={isCreateAddressOpen}
+                            type="being-selected"
+                            isSelected={isSelected}
+                            onClick={() => {
+                                setIsSelected(true)
+                                setIsCreateAddressOpen(false)
+                            }}
+                        />
+                    )}
                     <Card
                         variant="checkout"
                         direction="row"

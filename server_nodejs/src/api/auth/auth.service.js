@@ -193,6 +193,41 @@ module.exports = {
             throw new AppError(error.statusCode, error.message);
         }
     },
+    loginAdmin: async ({ username, password }) => {
+        try {
+            const user = await db.account.findOne({
+                where: {
+                    username,
+                },
+            });
+            if (!user) {
+                throw new AppError(400, 'Username or password is incorrect');
+            }
+            const validPassword = await bcrypt.compare(password, user.password);
+            if (!validPassword) {
+                throw new AppError(400, 'Username or password is incorrect');
+            }
+            const token = JWT.sign(
+                {
+                    user_id: user.uid,
+                    role: 'admin',
+                },
+                process.env.JWT_SECRET_KEY
+                    ? process.env.JWT_SECRET_KEY
+                    : 'default_secret_key',
+                {
+                    expiresIn: '24h',
+                },
+            );
+            return {
+                statusCode: 200,
+                message: 'Login successfully',
+                token,
+            };
+        } catch (error) {
+            throw new AppError(error.statusCode, error.message);
+        }
+    },
     sendEmailResetPassword: async (email) => {
         try {
             const user = await db.client_account.findOne({

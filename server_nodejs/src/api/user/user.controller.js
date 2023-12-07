@@ -30,4 +30,145 @@ module.exports = {
             next(error);
         }
     },
+    getClients: async (req, res, next) => {
+        try {
+            const DTO = await service.getClients(
+                req.query.page,
+                req.query.keyword,
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    getClientById: async (req, res, next) => {
+        try {
+            const DTO = await service.getClientById(req.params.userId);
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    updateClient: async (req, res, next) => {
+        try {
+            const DTO = await service.updateClient(req.param.userId, req.body);
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    updateAddress: async (req, res, next) => {
+        try {
+            const DTO = await service.updateAddress(req.param.userId, req.body);
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    deleteAddress: async (req, res, next) => {
+        try {
+            const DTO = await service.deleteAddress(
+                req.param.clientid,
+                req.query.uid,
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    getAccounts: async (req, res, next) => {
+        try {
+            const DTO = await service.getAccounts(
+                req.query.page,
+                req.query.keyword,
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    updateAccount: async (req, res, next) => {
+        try {
+            const DTO = await service.updateAccount(
+                req.user.role,
+                req.params.id,
+                req.body,
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    resetPassword: async (req, res, next) => {
+        try {
+            const DTO = await service.resetPassword(
+                req.user.role,
+                req.params.id,
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    updateProfileClient: async (req, res, next) => {
+        try {
+            const DTO = await service.updateClient(req.user.uid, req.body);
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    updateAddress: async (req, res, next) => {
+        try {
+            const DTO = await service.updateAddress(
+                req.user.uid,
+                req.params.addressId,
+                req.body,
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    getAllOrders: async (req, res, next) => {
+        try {
+            const DTO = await service.getAllOrders(
+                req.query.page,
+                req.query.keyword,
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    getOrderByClientID: async (req, res, next) => {
+        try {
+            const DTO = await service.getOrderByClientID(req.user.uid);
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    getOrderByIdClient: async (req, res, next) => {
+        try {
+            const DTO = await service.getOrderByID(
+                req.params.orderId,
+                req.user.uid,
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    getOrderByIdAdmin: async (req, res, next) => {
+        try {
+            const DTO = await service.getOrderByID(
+                req.params.orderId,
+                req.user.uid,
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
 };

@@ -25,7 +25,7 @@ exports.verifyToken = async (req, res, next) => {
                 break;
             case 'admin':
             case 'staff':
-                user = await db.staff_account.findOne({
+                user = await db.account.findOne({
                     where: {
                         uid: decodeToken.user_id,
                     },

@@ -340,7 +340,8 @@ module.exports = {
                     orderid: order.uid,
                     itemid: item.itemid,
                     quantity: item.quantity,
-                    sales_price: item.old_price || item.price,
+                    old_price: item.old_price || item.price,
+                    new_price: item.new_price || item.price,
                 });
                 const itemObj = await db.item.findOne({
                     where: {

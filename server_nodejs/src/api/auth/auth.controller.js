@@ -51,6 +51,21 @@ module.exports = {
             next(error);
         }
     },
+    loginAdmin: async (req, res, next) => {
+        try {
+            const DTO = await service.loginAdmin(req.body);
+            res.cookie('token', DTO.token, {
+                sameSite: 'none',
+                secure: true,
+                httpOnly: true,
+                maxAge: 3600000 * 24,
+            });
+            delete DTO.token;
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
     logout: async (req, res, next) => {
         try {
             res.clearCookie('token');
