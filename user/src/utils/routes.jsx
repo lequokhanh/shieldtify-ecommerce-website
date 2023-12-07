@@ -10,6 +10,8 @@ import Product from '../containers/Products'
 import ProductDetails from '../containers/ProductDetails'
 import Checkout from '../containers/CheckOut'
 import CheckOutComplete from '../containers/CheckOutComplete'
+import TrackOrders from '../containers/TrackOrders'
+import UserProfile from '../containers/UserProfile'
 
 const routes = [
     {
@@ -62,15 +64,24 @@ const routes = [
                 children: [
                     {
                         path: '',
-                        element: <Checkout/>,
-                        name: 'checkout-complete'
+                        element: <Checkout />,
+                        name: 'checkout-complete',
                     },
                     {
                         path: '/checkout/complete',
-                        element: <CheckOutComplete/>,
-                        name: 'checkout-complete'
-                    }
-                ]
+                        element: <CheckOutComplete />,
+                        name: 'checkout-complete',
+                    },
+                ],
+            },
+            {
+                path: '/track-orders',
+                element: <TrackOrders />,
+                name: 'track-orders',
+            },
+            {
+                path: '/profile',
+                element: <UserProfile />,
             },
             {
                 path: '*',

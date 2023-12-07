@@ -2,7 +2,6 @@ import axios from 'axios'
 import validator from 'validator'
 
 axios.defaults.baseURL = 'http://localhost:3000/api'
-
 // axios.interceptors.response.use(
 //     (res) => {
 //     if (res.status === 200) {
@@ -149,35 +148,68 @@ export function applyDiscountCode(code) {
     return axiosCookie.get(`/cart/discount?code=${code}`)
 }
 
-
 export function getAddresses() {
-    return axiosCookie.get(`/user/address`);
+    return axiosCookie.get(`/user/address`)
 }
 export function createAddress(add) {
-    console.log(add);
-    return axiosCookie.post(`/user/address`,{
+    console.log(add)
+    return axiosCookie.post(`/user/address`, {
         address: add.address,
         city: add.city,
         province: add.province,
         phone_number: add.phone_number,
-        is_default: add.is_default
+        is_default: add.is_default,
     })
 }
 
-export function checkOut({code,payment_method,receive_method,shipping_addressid}){
-    if(!code){
-        return axiosCookie.post(`/cart/checkout`,{
+export function checkOut({
+    code,
+    payment_method,
+    receive_method,
+    shipping_addressid,
+}) {
+    if (!code) {
+        return axiosCookie.post(`/cart/checkout`, {
             payment_method,
             receive_method,
-            shipping_addressid
+            shipping_addressid,
         })
     }
-    return axiosCookie.post(`/cart/checkout`,{
+    return axiosCookie.post(`/cart/checkout`, {
         code,
         payment_method,
         receive_method,
-        shipping_addressid
+        shipping_addressid,
     })
+}
+
+export function updateAddress(add) {
+    return axiosCookie.put(`/user/address/${add.uid}`, {
+        address: add.address,
+        city: add.city,
+        province: add.province,
+        phone_number: add.phone_number,
+        is_default: add.is_default,
+    })
+}
+
+export function deleteAddress(addID) {
+    return axiosCookie.delete(`/user/address/${addID}`)
+}
+
+export function updateProfile(profile) {
+    return axiosCookie.put('/user/profile/client', {
+        display_name: profile.display_name,
+        username: profile.username,
+    })
+}
+
+export function getOrders() {
+    return axiosCookie.get('/user/order/client')
+}
+
+export function getOrderByID(id) {
+    return axiosCookie.get(`/user/order/client/${id}`)
 }
 
 // export function updateCart (cart) {

@@ -17,7 +17,12 @@ import { CheckOutContext } from '../../context/checkout.context'
 import { useNavigate } from 'react-router-dom'
 
 const CheckOutConfirmModal = ({ isOpen, onClose }) => {
-    const { callCheckOut, isCreateAddressOpen, setIsCheckOutClicked, beingSelected } = useContext(CheckOutContext)
+    const {
+        callCheckOut,
+        isCreateAddressOpen,
+        setIsCheckOutClicked,
+        beingSelected,
+    } = useContext(CheckOutContext)
     const toast = useToast()
     const navigate = useNavigate()
     return (
@@ -80,7 +85,7 @@ const CheckOutConfirmModal = ({ isOpen, onClose }) => {
                             fontWeight="400"
                             as={router.Link}
                             onClick={async () => {
-                                if (isCreateAddressOpen ) {
+                                if (isCreateAddressOpen) {
                                     toast({
                                         title: 'Please select an address',
                                         status: 'error',
@@ -96,10 +101,9 @@ const CheckOutConfirmModal = ({ isOpen, onClose }) => {
                                         isClosable: true,
                                     })
                                     onClose()
-                                }
-                                else {
+                                } else {
                                     callCheckOut()
-                                    setIsCheckOutClicked(true);
+                                    setIsCheckOutClicked(true)
                                     navigate('/checkout/complete')
                                 }
                             }}
