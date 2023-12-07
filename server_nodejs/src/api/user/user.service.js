@@ -413,9 +413,11 @@ module.exports = {
         try {
             const orders = await db.sequelize.query(
                 `
-                SELECT od.uid, od.clientid, od.payment_method, od.receive_method,  od.order_date, od.order_status
+                SELECT od.uid, od.clientid, od.payment_method, od.receive_method, od.order_date, od.order_status, ROUND(SUM(oi.new_price * oi.quantity),2) as total
                 FROM orders od
-                WHERE od.clientid = '${clientid}'`,
+                    LEFT JOIN order_items oi ON od.uid = oi.orderid
+                WHERE od.clientid = '${clientid}'
+                GROUP BY od.uid`,
                 {
                     type: db.sequelize.QueryTypes.SELECT,
                 },
