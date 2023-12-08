@@ -309,4 +309,69 @@ module.exports = {
             throw new AppError(error.statusCode, error.message);
         }
     },
+    addImagesToProduct: async (itemid, { imgs }) => {
+        try {
+            const item = await db.item.findByPk(itemid);
+            if (!item) throw new AppError(404, 'Product not found');
+            for (const img of imgs) {
+                await db.item_img.create({
+                    uid: v4(),
+                    itemid,
+                    link: img.link,
+                    is_primary: img.is_primary,
+                });
+            }
+            return {
+                statusCode: 200,
+                message: 'Add images to product successfully',
+            };
+        } catch (error) {
+            throw new AppError(error.statusCode, error.message);
+        }
+    },
+    deleteImageFromProduct: async (itemid, uid) => {
+        try {
+            const item = await db.item.findByPk(itemid);
+            if (!item) throw new AppError(404, 'Product not found');
+            const img = await db.item_img.findByPk(uid);
+            if (img.itemid !== itemid)
+                throw new AppError(400, 'Image not belong to product');
+            if (img.is_primary)
+                throw new AppError(
+                    400,
+                    'Choose another primary image first to delete this image',
+                );
+            await img.destroy();
+            return {
+                statusCode: 200,
+                message: 'Delete image from product successfully',
+            };
+        } catch (error) {
+            throw new AppError(error.statusCode, error.message);
+        }
+    },
+    setDefaultImage: async (itemid, uid) => {
+        try {
+            const item = await db.item.findByPk(itemid);
+            if (!item) throw new AppError(404, 'Product not found');
+            const img = await db.item_img.findByPk(uid);
+            if (img.itemid !== itemid)
+                throw new AppError(400, 'Image not belong to product');
+            const primaryImg = await db.item_img.findOne({
+                where: { itemid, is_primary: true },
+            });
+            if (primaryImg) {
+                primaryImg.is_primary = false;
+                await primaryImg.save();
+            }
+            img.is_primary = true;
+            await img.save();
+            return {
+                statusCode: 200,
+                message: 'Set primary image successfully',
+            };
+        } catch (error) {
+            throw new AppError(error.statusCode, error.message);
+        }
+    },
 };

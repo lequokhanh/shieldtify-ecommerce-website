@@ -16,6 +16,18 @@ router.post(
     checkPermission('client'),
     controller.createAddress,
 );
+router.put(
+    '/address/:addressId',
+    verifyToken,
+    checkPermission('client'),
+    controller.updateAddress,
+);
+router.delete(
+    '/address/:addressId',
+    verifyToken,
+    checkPermission('client'),
+    controller.deleteAddressClient,
+);
 router.get(
     '/client/admin',
     verifyToken,
@@ -69,18 +81,6 @@ router.put(
     verifyToken,
     checkPermission('client'),
     controller.updateProfileClient,
-);
-router.put(
-    '/address/:addressId',
-    verifyToken,
-    checkPermission('client'),
-    controller.updateAddress,
-);
-router.delete(
-    '/address/:addressId',
-    verifyToken,
-    checkPermission('client'),
-    controller.deleteAddressClient,
 );
 router.get(
     '/order/client',

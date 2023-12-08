@@ -100,4 +100,37 @@ module.exports = {
             next(error);
         }
     },
+    addImagesToProduct: async (req, res, next) => {
+        try {
+            const DTO = await service.addImagesToProduct(
+                req.params.productid,
+                req.body,
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    deleteImageFromProduct: async (req, res, next) => {
+        try {
+            const DTO = await service.deleteProduct(
+                req.params.productid,
+                req.query.imgid,
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    setDefaultImage: async (req, res, next) => {
+        try {
+            const DTO = await service.setDefaultImage(
+                req.params.productid,
+                req.query.imgid,
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
 };
