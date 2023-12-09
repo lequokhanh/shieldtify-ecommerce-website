@@ -1,5 +1,6 @@
 const { AppError } = require('../../common/errors/AppError');
 const db = require('../../models');
+const uuid = require('uuid');
 
 module.exports = {
     getAllProduct: async (keyword, page, sort, priceRange, brandsFilter) => {
@@ -230,7 +231,7 @@ module.exports = {
     }) => {
         try {
             const item = await db.item.create({
-                uid: v4(),
+                uid: uuid.v4(),
                 categoryid,
                 brandid,
                 name,
@@ -315,7 +316,7 @@ module.exports = {
             if (!item) throw new AppError(404, 'Product not found');
             for (const img of imgs) {
                 await db.item_img.create({
-                    uid: v4(),
+                    uid: uuid.v4(),
                     itemid,
                     link: img.link,
                     is_primary: img.is_primary,
