@@ -111,6 +111,7 @@ const Product = () => {
         keyword,
         totalPages,
         currentPage,
+        navigate,
     ])
     const handleSorted = (category) => {
         setIsSortedBy(category)

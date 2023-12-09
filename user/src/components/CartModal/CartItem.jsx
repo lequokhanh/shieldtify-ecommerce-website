@@ -6,7 +6,6 @@ import { updateCart } from '../../utils/api'
 import { useContext } from 'react'
 import { CartContext } from '../../context/cart.context'
 import { useToast } from '@chakra-ui/react'
-import { useNavigate } from 'react-router-dom'
 import * as router from 'react-router-dom'
 const CartItem = ({ item, type, onClose }) => {
     const toast = useToast
@@ -22,7 +21,6 @@ const CartItem = ({ item, type, onClose }) => {
         setDiscountedCode,
     } = useContext(CartContext)
     const [itemQuantity, setItemQuantity] = useState(item.quantity)
-    const navigate = useNavigate()
     const decreaseCartQuantity = async () => {
         await updateCart({
             item: item.itemid,
