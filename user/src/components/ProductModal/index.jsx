@@ -17,9 +17,6 @@ import {
 import { useState } from 'react'
 
 const ProductModal = ({ isOpen, onClose }) => {
-    const [modalContentStyle, setModalContentStyle] = useState({
-        borderRadius: '15px',
-    })
     const [isSecondModalOpen, setIsSecondModalOpen] = useState(false)
     const [selectedProducts, setSelectedProducts] = useState([])
     const [currentCategoryRedir, setCurrentCategoryRedir] = useState('')
@@ -30,11 +27,9 @@ const ProductModal = ({ isOpen, onClose }) => {
                 setIsSecondModalOpen(true)
                 setCurrentCategoryRedir(category)
             })
-            setModalContentStyle({ borderRadius: '15px 0px 0px 15px' })
         } else {
             setIsSecondModalOpen(false)
             setCurrentCategoryRedir('')
-            setModalContentStyle({ borderRadius: '15px' })
         }
     }
     return (
@@ -53,7 +48,7 @@ const ProductModal = ({ isOpen, onClose }) => {
                 left="1%"
                 maxW="480px"
                 h="800px"
-                style={modalContentStyle}
+                borderRadius=" 10px 0 0 10px"
             >
                 <ModalCloseButton
                     variant="custom"
@@ -75,7 +70,6 @@ const ProductModal = ({ isOpen, onClose }) => {
                             <Grid
                                 gridTemplateColumns="repeat(3,1fr)"
                                 gap="10px"
-
                             >
                                 {productCategories.map((category) => (
                                     <Flex
@@ -105,7 +99,10 @@ const ProductModal = ({ isOpen, onClose }) => {
                                             background: 'shieldtify.grey.300',
                                         }}
                                     >
-                                        <Image  src={category.image} objectFit="contain" />
+                                        <Image
+                                            src={category.image}
+                                            objectFit="contain"
+                                        />
                                         <Text
                                             fontSize="1rem"
                                             fontWeight="600"
@@ -153,14 +150,18 @@ const ProductModal = ({ isOpen, onClose }) => {
                         </Flex>
                     </Flex>
 
-                    {isSecondModalOpen && currentCategoryRedir != '' && (
-                        <Box>
-                            <SecondModal
-                                selectedProducts={selectedProducts}
-                                currentCategoryRedir={currentCategoryRedir}
-                            />
-                        </Box>
-                    )}
+                    <Box>
+                        <SecondModal
+                            isOpen={isSecondModalOpen && currentCategoryRedir}
+                            selectedProducts={selectedProducts}
+                            currentCategoryRedir={currentCategoryRedir}
+                            onClose={() => {
+                                setIsSecondModalOpen(false)
+                                setCurrentCategoryRedir('')
+                                onClose()
+                            }}
+                        />
+                    </Box>
                 </Flex>
             </ModalContent>
         </Modal>

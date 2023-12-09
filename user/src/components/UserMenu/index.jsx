@@ -54,10 +54,7 @@ const UserMenu = () => {
                             Manage profile
                         </Text>
                     </Flex>
-                    <Flex
-                        gap="10px"
-                        onClick={() => (window.location.href = `/track-orders`)}
-                    >
+                    <Flex gap="10px" onClick={() => navigate(`/track-orders`)}>
                         <Image src={order} />
                         <Text
                             _hover={{
