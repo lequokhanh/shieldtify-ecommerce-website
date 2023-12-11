@@ -82,7 +82,7 @@ module.exports = {
     getAllCategory: async () => {
         try {
             const categories = await db.item_category.findAll({
-                attributes: ['uid', 'name'],
+                attributes: ['uid', 'name', 'description'],
             });
             return {
                 statusCode: 200,
@@ -200,10 +200,14 @@ module.exports = {
                     {
                         model: db.item_img,
                         as: 'item_img',
-                        attributes: ['link', 'is_primary'],
+                        attributes: ['uid', 'link', 'is_primary'],
                     },
                     {
                         model: db.brand,
+                        attributes: ['name'],
+                    },
+                    {
+                        model: db.item_category,
                         attributes: ['name'],
                     },
                 ],

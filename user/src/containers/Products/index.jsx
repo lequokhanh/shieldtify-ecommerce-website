@@ -10,6 +10,7 @@ import {
     PopoverContent,
     PopoverArrow,
     Skeleton,
+    SkeletonText,
 } from '@chakra-ui/react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { getAllProductByCategoryOrKeyword } from '../../utils/api'
@@ -343,7 +344,29 @@ const Product = () => {
                     No products found
                 </Text>
             ) : (
-                <Skeleton height="400px" />
+                <Box paddingX="50px">
+                    <Grid
+                        gridTemplateColumns="repeat(4,1fr)"
+                        gap="50px"
+                        justifyContent="center"
+                    >
+                        {[...Array(16)].map((_, index) => (
+                            <Flex
+                                key={index}
+                                flexDir="column"
+                                gap="20px"
+                                justifyContent="space-between"
+                            >
+                                <Skeleton
+                                    height="400px"
+                                    width="400px"
+                                    borderRadius="15px"
+                                />
+                                <SkeletonText height="10px" width="400px" />
+                            </Flex>
+                        ))}
+                    </Grid>
+                </Box>
             )}
             <Flex justifyContent="center" mb="50px">
                 <Pagination
