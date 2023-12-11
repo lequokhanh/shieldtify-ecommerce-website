@@ -18,6 +18,7 @@ import { getAllProductByCategoryOrKeyword } from '../../utils/api'
 import { useState } from 'react'
 import * as router from 'react-router-dom'
 const SearchModal = ({ isOpen, onClose }) => {
+    const navigate = router.useNavigate()
     const [search, setSearch] = useState('')
     const [filteredProducts, setFilteredProducts] = useState([])
     const [isSearching, setIsSearching] = useState(false)
@@ -32,13 +33,16 @@ const SearchModal = ({ isOpen, onClose }) => {
         } else {
             setIsSearching(false)
             setFilteredProducts([])
+            setSearch('')
         }
     }
     const handleSearchChange = (e) => {
         setSearch(e.target.value)
     }
     const redirect = () => {
-        window.location.href = `/products?keyword=${search}`
+        navigate(`/products?keyword=${search}`)
+        onClose()
+        handleSearch('')
     }
     return (
         <Modal

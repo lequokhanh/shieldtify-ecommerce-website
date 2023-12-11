@@ -1,7 +1,7 @@
 import axios from 'axios'
 import validator from 'validator'
 
-axios.defaults.baseURL = 'https://n6mptpfb-3000.asse.devtunnels.ms/api'
+axios.defaults.baseURL = 'http://localhost:3000/api'
 // axios.interceptors.response.use(
 //     (res) => {
 //     if (res.status === 200) {
