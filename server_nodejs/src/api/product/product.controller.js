@@ -113,7 +113,7 @@ module.exports = {
     },
     deleteImageFromProduct: async (req, res, next) => {
         try {
-            const DTO = await service.deleteProduct(
+            const DTO = await service.deleteImageFromProduct(
                 req.params.productid,
                 req.query.imgid,
             );
