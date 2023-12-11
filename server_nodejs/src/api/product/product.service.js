@@ -302,7 +302,7 @@ module.exports = {
     createBrand: async ({ name }) => {
         try {
             const brand = await db.brand.create({
-                uid: v4(),
+                uid: uuid.v4(),
                 name,
             });
             return {
