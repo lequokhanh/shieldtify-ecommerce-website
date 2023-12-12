@@ -51,7 +51,7 @@ module.exports = {
     },
     updateClient: async (req, res, next) => {
         try {
-            const DTO = await service.updateClient(req.param.userId, req.body);
+            const DTO = await service.updateClient(req.params.userId, req.body);
             res.status(DTO.statusCode).json(DTO);
         } catch (error) {
             next(error);
@@ -59,7 +59,10 @@ module.exports = {
     },
     updateAddress: async (req, res, next) => {
         try {
-            const DTO = await service.updateAddress(req.param.userId, req.body);
+            const DTO = await service.updateAddress(
+                req.params.userId,
+                req.body,
+            );
             res.status(DTO.statusCode).json(DTO);
         } catch (error) {
             next(error);
@@ -68,7 +71,7 @@ module.exports = {
     deleteAddressAdmin: async (req, res, next) => {
         try {
             const DTO = await service.deleteAddress(
-                req.param.clientid,
+                req.params.clientid,
                 req.query.uid,
             );
             res.status(DTO.statusCode).json(DTO);
