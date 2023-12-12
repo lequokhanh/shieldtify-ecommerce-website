@@ -264,7 +264,7 @@ module.exports = {
                             },
                         },
                         {
-                            email: {
+                            display_name: {
                                 [db.Sequelize.Op.like]: `%${keyword}%`,
                             },
                         },
@@ -275,7 +275,7 @@ module.exports = {
                         },
                     ],
                 },
-                attributes: ['uid', 'username', 'email', 'role'],
+                attributes: ['uid', 'username', 'display_name', 'role'],
                 limit,
                 offset,
             });
@@ -288,7 +288,7 @@ module.exports = {
             throw new AppError(error.statusCode, error.message);
         }
     },
-    updateAccount: async (userRole, uid, { username, email, role }) => {
+    updateAccount: async (userRole, uid, { username, display_name, role }) => {
         try {
             const account = await db.account.findOne({
                 where: {
@@ -319,16 +319,8 @@ module.exports = {
                 }
                 account.username = username;
             }
-            if (email) {
-                const checkEmail = await db.account.findOne({
-                    where: {
-                        email,
-                    },
-                });
-                if (checkEmail) {
-                    throw new AppError(400, 'Email is already taken');
-                }
-                account.email = email;
+            if (display_name) {
+                account.display_name = display_name;
             }
             if (role) {
                 account.role = role;
