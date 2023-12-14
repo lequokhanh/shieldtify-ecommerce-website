@@ -379,4 +379,20 @@ module.exports = {
             throw new AppError(error.statusCode, error.message);
         }
     },
+    createCategory: async ({ name, description }) => {
+        try {
+            const category = await db.item_category.create({
+                uid: uuid.v4(),
+                name,
+                description,
+            });
+            return {
+                statusCode: 200,
+                message: 'Create category successfully',
+                data: category,
+            };
+        } catch (error) {
+            throw new AppError(error.statusCode, error.message);
+        }
+    }
 };

@@ -12,7 +12,7 @@ import { CheckOutContext } from '../../context/checkout.context'
 
 const CheckOut = () => {
     const { cartItems, isOrderConfirmed } = useContext(CartContext);
-    const { setAddresses, setSelectedAddress } = useContext(CheckOutContext);
+    const { setAddresses, setSelectedAddress,isInStorePickUp } = useContext(CheckOutContext);
     const navigate = useNavigate();
     useEffect(() => {
         if(!isOrderConfirmed ){
@@ -28,7 +28,7 @@ const CheckOut = () => {
             })
         }
         fetchData()
-    },[]);
+    },[isInStorePickUp]);
     return (
         <Flex alignItems="center">
             <Flex
@@ -57,7 +57,7 @@ const CheckOut = () => {
                     <Flex flexDir="column" gap="30px">
                         <Card1 items={cartItems} />
                         <Card2 />
-                        <Card3 />
+                        {!isInStorePickUp && <Card3 />}
                     </Flex>
                     <OrderInfo />
                 </HStack>

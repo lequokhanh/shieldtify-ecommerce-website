@@ -317,14 +317,16 @@ module.exports = {
                         throw new AppError(err.statusCode, err.message);
                     });
             } else cart = (await module.exports.getCart(clientid)).data.cart;
-            const address = await db.client_address.findOne({
-                where: {
-                    uid: shipping_addressid,
-                },
-            });
-            if (!address) throw new AppError(404, 'Address not found');
-            if (address.clientid !== clientid)
-                throw new AppError(400, 'Address is not belong to client');
+            if (shipping_addressid) {
+                const address = await db.client_address.findOne({
+                    where: {
+                        uid: shipping_addressid,
+                    },
+                });
+                if (!address) throw new AppError(404, 'Address not found');
+                if (address.clientid !== clientid)
+                    throw new AppError(400, 'Address is not belong to client');
+            }
             const order = await db.order.create({
                 uid: v4(),
                 clientid,

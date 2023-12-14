@@ -23,7 +23,7 @@ module.exports = (sequelize, Sequelize) => {
             },
             shipping_addressid: {
                 type: Sequelize.UUID,
-                allowNull: false,
+                allowNull: true,
             },
             order_date: {
                 type: Sequelize.DATE,

@@ -94,4 +94,16 @@ router.get(
     checkPermission('client'),
     controller.getOrderByIdClient,
 );
+router.get(
+    '/order/admin',
+    verifyToken,
+    checkPermission('admin', 'superadmin'),
+    controller.getAllOrders,
+);
+router.get(
+    '/order/admin/:orderId',
+    verifyToken,
+    checkPermission('admin', 'superadmin'),
+    controller.getOrderByIdAdmin,
+);
 module.exports = router;
