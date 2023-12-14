@@ -5,14 +5,29 @@ import Card1 from './Card1'
 import Card2 from './Card2'
 import Card3 from './Card3'
 import OrderInfo from './OrderInfo'
+import { useNavigate } from 'react-router-dom'
+import { getAddresses } from '../../utils/api'
+import { CheckOutContext } from '../../context/checkout.context'
+
 
 const CheckOut = () => {
-    const { cartItems, isOrderConfirmed } = useContext(CartContext)
+    const { cartItems, isOrderConfirmed } = useContext(CartContext);
+    const { setAddresses, setSelectedAddress } = useContext(CheckOutContext);
+    const navigate = useNavigate();
     useEffect(() => {
         if(!isOrderConfirmed ){
-            window.location.href = '/404'
+            navigate('/404');
         }
-
+        async function fetchData() {
+            await getAddresses().then((res) => {
+                setAddresses(res.data.data)
+                const defaultAddress = res.data.data.find(
+                    (address) => address.is_default === true
+                )
+                setSelectedAddress(defaultAddress)
+            })
+        }
+        fetchData()
     },[]);
     return (
         <Flex alignItems="center">

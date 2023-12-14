@@ -349,7 +349,6 @@ const OrderDetailModal = ({ isOpen, onClose, order }) => {
                                             Order status
                                         </FormLabel>
                                         <Input
-                                            placeholder="Order ID"
                                             value={orderDetail.order_status}
                                             isReadOnly
                                             padding={'24px 12px'}
