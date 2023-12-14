@@ -1,5 +1,4 @@
-import { createContext, useState, useEffect } from 'react'
-import { getAddresses } from '../utils/api'
+import { createContext, useState } from 'react'
 import { checkOut } from '../utils/api'
 import { useContext } from 'react'
 import { CartContext } from './cart.context'
@@ -89,18 +88,6 @@ export const CheckOutProvider = ({ children }) => {
             setIsCreateAddressOpen(false)
         }
     }
-    useEffect(() => {
-        async function fetchData() {
-            await getAddresses().then((res) => {
-                setAddresses(res.data.data)
-                const defaultAddress = res.data.data.find(
-                    (address) => address.is_default === true
-                )
-                setSelectedAddress(defaultAddress)
-            })
-        }
-        fetchData()
-    }, [])
     const callCheckOut = async () => {
         setOrderList(cartItems)
         setOrderTotal(cartTotal)
