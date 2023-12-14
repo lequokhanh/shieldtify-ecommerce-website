@@ -103,7 +103,7 @@ router.get(
 router.get(
     '/order/admin/:orderId',
     verifyToken,
-    checkPermission('admin', 'superadmin'),
+    checkPermission('admin', 'superadmin', 'staff'),
     controller.getOrderByIdAdmin,
 );
 module.exports = router;
