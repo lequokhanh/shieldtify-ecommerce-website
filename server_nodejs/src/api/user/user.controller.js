@@ -178,8 +178,8 @@ module.exports = {
     getOrderByIdAdmin: async (req, res, next) => {
         try {
             const DTO = await service.getOrderByID(
-                req.params.orderId,
-                req.user.uid,
+                req.query.orderId,
+                req.params.userId,
             );
             res.status(DTO.statusCode).json(DTO);
         } catch (error) {

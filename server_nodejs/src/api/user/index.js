@@ -17,6 +17,18 @@ router.post(
     controller.createAddress,
 );
 router.put(
+    '/address/admin/:userId',
+    verifyToken,
+    checkPermission('admin', 'superadmin'),
+    controller.updateAddressAdmin,
+);
+router.delete(
+    '/address/admin/:userId',
+    verifyToken,
+    checkPermission('admin', 'superadmin'),
+    controller.deleteAddressAdmin,
+);
+router.put(
     '/address/:addressId',
     verifyToken,
     checkPermission('client'),
@@ -46,18 +58,7 @@ router.put(
     checkPermission('admin', 'superadmin'),
     controller.updateClient,
 );
-router.put(
-    '/address/admin/:userId',
-    verifyToken,
-    checkPermission('admin', 'superadmin'),
-    controller.updateAddress,
-);
-router.delete(
-    '/address/admin/:userId',
-    verifyToken,
-    checkPermission('admin', 'superadmin'),
-    controller.deleteAddressAdmin,
-);
+
 router.get(
     '/staff',
     verifyToken,
@@ -101,7 +102,7 @@ router.get(
     controller.getAllOrders,
 );
 router.get(
-    '/order/admin/:orderId',
+    '/order/admin/:userId',
     verifyToken,
     checkPermission('admin', 'superadmin', 'staff'),
     controller.getOrderByIdAdmin,

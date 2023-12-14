@@ -427,12 +427,12 @@ module.exports = {
             throw new AppError(error.statusCode, error.message);
         }
     },
-    getOrderByID: async (uid) => {
+    getOrderByID: async (uid, clientid) => {
         try {
-            //calculate total price with old price and new price
             const order = await db.order.findOne({
                 where: {
                     uid,
+                    clientid,
                 },
                 attributes: [
                     'uid',
@@ -471,6 +471,9 @@ module.exports = {
                     },
                 ],
             });
+            if (!order) {
+                throw new AppError(404, 'Order not found');
+            }
             let old_total = 0;
             let new_total = 0;
             for (item of order.dataValues.order_item) {
