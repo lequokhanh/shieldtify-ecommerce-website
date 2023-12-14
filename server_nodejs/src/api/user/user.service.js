@@ -370,7 +370,7 @@ module.exports = {
             const offset = (page - 1) * limit;
             const orders = await db.sequelize.query(
                 `
-                SELECT od.uid, od.clientid, od.payment_method, od.receive_method,  od.order_date, od.order_status, ca.display_name, sum(oi.new_price * oi.quantity) as total
+                SELECT od.uid, od.clientid, od.payment_method, od.receive_method,  od.order_date, od.order_status, ca.display_name, round(sum(oi.new_price * oi.quantity), 2) as total
                 FROM orders od
                     LEFT JOIN client_accounts ca ON od.clientid = ca.uid
                     LEFT JOIN order_items oi ON od.uid = oi.orderid
