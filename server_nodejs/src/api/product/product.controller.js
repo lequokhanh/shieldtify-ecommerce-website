@@ -133,4 +133,12 @@ module.exports = {
             next(error);
         }
     },
+    createCategory: async (req, res, next) => {
+        try {
+            const DTO = await service.createCategory(req.body);
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
 };

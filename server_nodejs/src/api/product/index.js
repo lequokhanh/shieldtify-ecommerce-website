@@ -11,6 +11,12 @@ router.post(
     controller.createProduct,
 );
 router.get('/category', controller.getAllCategory);
+router.post(
+    '/category',
+    verifyToken,
+    checkPermission('admin', 'superadmin'),
+    controller.createCategory,
+);
 router.get('/category/:category', controller.getAllProductByCategory);
 router.get(
     '/brand',
