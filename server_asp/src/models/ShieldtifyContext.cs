@@ -406,6 +406,7 @@ public partial class ShieldtifyContext : DbContext
 
             entity.HasOne(d => d.ShippingAddress).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.ShippingAddressid)
+                .OnDelete(DeleteBehavior.SetNull)
                 .HasConstraintName("orders_ibfk_2");
 
             entity.HasOne(d => d.SupportedByNavigation).WithMany(p => p.Orders)
@@ -427,8 +428,9 @@ public partial class ShieldtifyContext : DbContext
             entity.Property(e => e.CreatedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("created_at");
+            entity.Property(e => e.NewPrice).HasColumnName("new_price");
+            entity.Property(e => e.OldPrice).HasColumnName("old_price");
             entity.Property(e => e.Quantity).HasColumnName("quantity");
-            entity.Property(e => e.SalesPrice).HasColumnName("sales_price");
             entity.Property(e => e.UpdatedAt)
                 .HasColumnType("datetime")
                 .HasColumnName("updated_at");

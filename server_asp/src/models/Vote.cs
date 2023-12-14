@@ -15,7 +15,6 @@ public partial class Vote
 
     public DateTime UpdatedAt { get; set; }
 
-
     public virtual ClientAccount Client { get; set; } = null!;
 
     public virtual Post Post { get; set; } = null!;

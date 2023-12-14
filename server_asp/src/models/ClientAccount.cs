@@ -21,7 +21,6 @@ public partial class ClientAccount
 
     public DateTime UpdatedAt { get; set; }
 
-
     public virtual ICollection<CartItem> CartItems { get; set; } = new List<CartItem>();
 
     public virtual ICollection<ClientAddress> ClientAddresses { get; set; } = new List<ClientAddress>();

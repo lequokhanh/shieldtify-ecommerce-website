@@ -13,7 +13,7 @@ public partial class Order
 
     public string ReceiveMethod { get; set; } = null!;
 
-    public Guid ShippingAddressid { get; set; }
+    public Guid? ShippingAddressid { get; set; }
 
     public DateTime OrderDate { get; set; }
 
@@ -33,7 +33,7 @@ public partial class Order
 
     public virtual Promotion? PromotionCodeNavigation { get; set; }
 
-    public virtual ClientAddress ShippingAddress { get; set; } = null!;
+    public virtual ClientAddress? ShippingAddress { get; set; }
 
     public virtual Account? SupportedByNavigation { get; set; }
 }
