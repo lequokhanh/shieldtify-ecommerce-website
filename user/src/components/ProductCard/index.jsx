@@ -26,17 +26,21 @@ const ProductCard = ({ product }) => {
                 onMouseEnter={() => HoverProduct(product.uid)}
                 onMouseLeave={UnhoverProduct}
                 zIndex="0"
-                as={router.Link}
-                to={`/product/${product.uid}`}
             >
                 <Box position="relative" width="100%" height="100%">
-                    <Image
-                        src={product.primary_img ? product.primary_img : no_img}
-                        alt="product-image"
-                        w="400px"
-                        h="400px"
-                        objectFit="contain"
-                    />
+                    <Flex as={router.Link} to={`/product/${product.uid}`}>
+                        <Image
+                            src={
+                                product.primary_img
+                                    ? product.primary_img
+                                    : no_img
+                            }
+                            alt="product-image"
+                            w="400px"
+                            h="400px"
+                            objectFit="contain"
+                        />
+                    </Flex>
                     {hoveredProductId === product.uid ? (
                         <Button
                             variant="addToCart"
@@ -53,7 +57,13 @@ const ProductCard = ({ product }) => {
                         </Button>
                     ) : null}
                 </Box>
-                <Text fontSize="1.5rem" fontWeight="600" lineHeight="30px">
+                <Text
+                    fontSize="1.5rem"
+                    fontWeight="600"
+                    lineHeight="30px"
+                    as={router.Link}
+                    to={`/product/${product.uid}`}
+                >
                     {product.name}
                 </Text>
             </Flex>

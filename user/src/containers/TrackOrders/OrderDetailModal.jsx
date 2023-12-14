@@ -16,6 +16,7 @@ import {
     Box,
     Divider,
     Spacer,
+    Text,
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { getOrderByID } from '../../utils/api.js'
@@ -29,7 +30,7 @@ const OrderDetailModal = ({ isOpen, onClose, order }) => {
             })
         }
         fetchData()
-    }, [])
+    }, [order])
     return (
         <>
             {orderDetail && (
@@ -123,118 +124,120 @@ const OrderDetailModal = ({ isOpen, onClose, order }) => {
                                             bg="#F3F4F6"
                                         />
                                     </FormControl>
-                                    <Flex flexDir={'column'} gap={'7px'}>
-                                        <Box
-                                            fontSize={'14px'}
-                                            fontFamily={'Inter'}
-                                            fontWeight={'800'}
-                                            color={'#424856'}
-                                        >
-                                            Recipient information
-                                        </Box>
-                                        <Box
-                                            border="1px dashed"
-                                            borderRadius={'12px'}
-                                            padding={'16px'}
-                                        >
-                                            <FormControl>
-                                                <FormLabel
-                                                    fontSize={'14px'}
-                                                    fontFamily={'Inter'}
-                                                    fontWeight={'800'}
-                                                    color={'#424856'}
-                                                    mb={'5px'}
-                                                >
-                                                    Address
-                                                </FormLabel>
-                                                <Input
-                                                    placeholder="Receive address"
-                                                    value={
-                                                        orderDetail
-                                                            .shipping_address
-                                                            .address
-                                                    }
-                                                    isReadOnly
-                                                    padding={'24px 12px'}
-                                                    fontSize={'14px'}
-                                                    fontWeight={'400'}
-                                                    bg="#F3F4F6"
-                                                />
-                                            </FormControl>
-                                            <FormControl>
-                                                <FormLabel
-                                                    fontSize={'14px'}
-                                                    fontFamily={'Inter'}
-                                                    fontWeight={'800'}
-                                                    color={'#424856'}
-                                                    mb={'5px'}
-                                                >
-                                                    City
-                                                </FormLabel>
-                                                <Input
-                                                    placeholder="Receive address"
-                                                    value={
-                                                        orderDetail
-                                                            .shipping_address
-                                                            .city
-                                                    }
-                                                    isReadOnly
-                                                    padding={'24px 12px'}
-                                                    fontSize={'14px'}
-                                                    fontWeight={'400'}
-                                                    bg="#F3F4F6"
-                                                />
-                                            </FormControl>
-                                            <FormControl>
-                                                <FormLabel
-                                                    fontSize={'14px'}
-                                                    fontFamily={'Inter'}
-                                                    fontWeight={'800'}
-                                                    color={'#424856'}
-                                                    mb={'5px'}
-                                                >
-                                                    Province
-                                                </FormLabel>
-                                                <Input
-                                                    placeholder="Receive address"
-                                                    value={
-                                                        orderDetail
-                                                            .shipping_address
-                                                            .province
-                                                    }
-                                                    isReadOnly
-                                                    padding={'24px 12px'}
-                                                    fontSize={'14px'}
-                                                    fontWeight={'400'}
-                                                    bg="#F3F4F6"
-                                                />
-                                            </FormControl>
-                                            <FormControl>
-                                                <FormLabel
-                                                    fontSize={'14px'}
-                                                    fontFamily={'Inter'}
-                                                    fontWeight={'800'}
-                                                    color={'#424856'}
-                                                    mb={'5px'}
-                                                >
-                                                    Phone number
-                                                </FormLabel>
-                                                <Input
-                                                    placeholder="Receive address"
-                                                    value={
-                                                        orderDetail
-                                                            .shipping_address
-                                                            .phone_number
-                                                    }
-                                                    isReadOnly
-                                                    padding={'24px 12px'}
-                                                    fontSize={'14px'}
-                                                    fontWeight={'400'}
-                                                    bg="#F3F4F6"
-                                                />
-                                            </FormControl>
-                                        </Box>
-                                    </Flex>
+                                    {orderDetail.shipping_address !== null && (
+                                        <Flex flexDir={'column'} gap={'7px'}>
+                                            <Box
+                                                fontSize={'14px'}
+                                                fontFamily={'Inter'}
+                                                fontWeight={'800'}
+                                                color={'#424856'}
+                                            >
+                                                Recipient information
+                                            </Box>
+                                            <Box
+                                                border="1px dashed"
+                                                borderRadius={'12px'}
+                                                padding={'16px'}
+                                            >
+                                                <FormControl>
+                                                    <FormLabel
+                                                        fontSize={'14px'}
+                                                        fontFamily={'Inter'}
+                                                        fontWeight={'800'}
+                                                        color={'#424856'}
+                                                        mb={'5px'}
+                                                    >
+                                                        Address
+                                                    </FormLabel>
+                                                    <Input
+                                                        placeholder="Receive address"
+                                                        value={
+                                                            orderDetail
+                                                                .shipping_address
+                                                                .address
+                                                        }
+                                                        isReadOnly
+                                                        padding={'24px 12px'}
+                                                        fontSize={'14px'}
+                                                        fontWeight={'400'}
+                                                        bg="#F3F4F6"
+                                                    />
+                                                </FormControl>
+                                                <FormControl>
+                                                    <FormLabel
+                                                        fontSize={'14px'}
+                                                        fontFamily={'Inter'}
+                                                        fontWeight={'800'}
+                                                        color={'#424856'}
+                                                        mb={'5px'}
+                                                    >
+                                                        City
+                                                    </FormLabel>
+                                                    <Input
+                                                        placeholder="Receive address"
+                                                        value={
+                                                            orderDetail
+                                                                .shipping_address
+                                                                .city
+                                                        }
+                                                        isReadOnly
+                                                        padding={'24px 12px'}
+                                                        fontSize={'14px'}
+                                                        fontWeight={'400'}
+                                                        bg="#F3F4F6"
+                                                    />
+                                                </FormControl>
+                                                <FormControl>
+                                                    <FormLabel
+                                                        fontSize={'14px'}
+                                                        fontFamily={'Inter'}
+                                                        fontWeight={'800'}
+                                                        color={'#424856'}
+                                                        mb={'5px'}
+                                                    >
+                                                        Province
+                                                    </FormLabel>
+                                                    <Input
+                                                        placeholder="Receive address"
+                                                        value={
+                                                            orderDetail
+                                                                .shipping_address
+                                                                .province
+                                                        }
+                                                        isReadOnly
+                                                        padding={'24px 12px'}
+                                                        fontSize={'14px'}
+                                                        fontWeight={'400'}
+                                                        bg="#F3F4F6"
+                                                    />
+                                                </FormControl>
+                                                <FormControl>
+                                                    <FormLabel
+                                                        fontSize={'14px'}
+                                                        fontFamily={'Inter'}
+                                                        fontWeight={'800'}
+                                                        color={'#424856'}
+                                                        mb={'5px'}
+                                                    >
+                                                        Phone number
+                                                    </FormLabel>
+                                                    <Input
+                                                        placeholder="Receive address"
+                                                        value={
+                                                            orderDetail
+                                                                .shipping_address
+                                                                .phone_number
+                                                        }
+                                                        isReadOnly
+                                                        padding={'24px 12px'}
+                                                        fontSize={'14px'}
+                                                        fontWeight={'400'}
+                                                        bg="#F3F4F6"
+                                                    />
+                                                </FormControl>
+                                            </Box>
+                                        </Flex>
+                                    )}
                                     <Flex flexDir={'column'} gap={'7px'}>
                                         <Box
                                             fontSize={'18px'}
@@ -427,21 +430,22 @@ const OrderDetailModal = ({ isOpen, onClose, order }) => {
                                                                     }
                                                                 </Box>
                                                             </Box>
-                                                            <Box>
-                                                                <Box
+                                                            <Box w="290px">
+                                                                <Text
                                                                     fontSize={
                                                                         '14px'
                                                                     }
                                                                     fontWeight={
                                                                         '700'
                                                                     }
+                                                                    isTruncated
                                                                 >
                                                                     {
                                                                         item
                                                                             .item
                                                                             .name
                                                                     }
-                                                                </Box>
+                                                                </Text>
                                                                 <Flex
                                                                     gap={'10px'}
                                                                 >

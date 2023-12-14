@@ -27,6 +27,7 @@ const CheckOutComplete = () => {
         orderId,
         orderTotal,
         isCheckOutClicked,
+        isInStorePickUp,
     } = useContext(CheckOutContext)
     const currentDate = new Date().toLocaleDateString('en-UK')
     useEffect(() => {
@@ -76,22 +77,37 @@ const CheckOutComplete = () => {
                                 fontFamily="Inter, sans-serif"
                                 gap="22px"
                             >
-                                {checkOutCompletedCategories.map((add) => (
-                                    <Flex key={add.id} gap="12px">
-                                        <Image
-                                            src={add.img}
-                                            alt={add.name}
-                                            w="24px"
-                                            h="24px"
-                                        />
-                                        <Text color="#9095A1" fontWeight="400">
-                                            {add.name}
-                                        </Text>
-                                    </Flex>
-                                ))}
+                                {checkOutCompletedCategories.map((add) => {
+                                    if (
+                                        isInStorePickUp &&
+                                        add.name === 'Address'
+                                    )
+                                        return null
+                                    return (
+                                        <Flex key={add.id} gap="12px">
+                                            <Image
+                                                src={add.img}
+                                                alt={add.name}
+                                                w="24px"
+                                                h="24px"
+                                            />
+                                            <Text
+                                                color="#9095A1"
+                                                fontWeight="400"
+                                            >
+                                                {add.name}
+                                            </Text>
+                                        </Flex>
+                                    )
+                                })}
                             </Flex>
                         </Flex>
-                        <Flex flexDir="column" gap="22px" textAlign="right">
+                        <Flex
+                            flexDir="column"
+                            gap="22px"
+                            textAlign="right"
+                            w="188px"
+                        >
                             <Text color="shieldtify.checkout" fontWeight="700">
                                 {currentDate}
                             </Text>
@@ -104,37 +120,43 @@ const CheckOutComplete = () => {
                             <Text color="shieldtify.checkout" fontWeight="700">
                                 {deliveryOptions}
                             </Text>
-                            <Flex flexDir="column" w="188px" textAlign="right">
-                                <Text
-                                    fontSize="0.875rem"
-                                    fontWeight="400"
-                                    color="shieldtify.checkout"
-                                    isTruncated
+                            {!isInStorePickUp && (
+                                <Flex
+                                    flexDir="column"
+                                    w="188px"
+                                    textAlign="right"
                                 >
-                                    {selectedAddress.address}
-                                </Text>
-                                <Text
-                                    fontSize="0.875rem"
-                                    fontWeight="400"
-                                    color="shieldtify.checkout"
-                                >
-                                    {selectedAddress.city}
-                                </Text>
-                                <Text
-                                    fontSize="0.875rem"
-                                    fontWeight="400"
-                                    color="shieldtify.checkout"
-                                >
-                                    {selectedAddress.province}
-                                </Text>
-                                <Text
-                                    fontSize="0.875rem"
-                                    fontWeight="400"
-                                    color="shieldtify.checkout"
-                                >
-                                    {selectedAddress.phone_number}
-                                </Text>
-                            </Flex>
+                                    <Text
+                                        fontSize="0.875rem"
+                                        fontWeight="400"
+                                        color="shieldtify.checkout"
+                                        isTruncated
+                                    >
+                                        {selectedAddress.address}
+                                    </Text>
+                                    <Text
+                                        fontSize="0.875rem"
+                                        fontWeight="400"
+                                        color="shieldtify.checkout"
+                                    >
+                                        {selectedAddress.city}
+                                    </Text>
+                                    <Text
+                                        fontSize="0.875rem"
+                                        fontWeight="400"
+                                        color="shieldtify.checkout"
+                                    >
+                                        {selectedAddress.province}
+                                    </Text>
+                                    <Text
+                                        fontSize="0.875rem"
+                                        fontWeight="400"
+                                        color="shieldtify.checkout"
+                                    >
+                                        {selectedAddress.phone_number}
+                                    </Text>
+                                </Flex>
+                            )}
                         </Flex>
                     </HStack>
                     <Divider w="full" />

@@ -20,6 +20,7 @@ const CheckOutConfirmModal = ({ isOpen, onClose }) => {
     const {
         callCheckOut,
         isCreateAddressOpen,
+        isInStorePickUp,
         setIsCheckOutClicked,
         beingSelected,
     } = useContext(CheckOutContext)
@@ -85,7 +86,7 @@ const CheckOutConfirmModal = ({ isOpen, onClose }) => {
                             fontWeight="400"
                             as={router.Link}
                             onClick={async () => {
-                                if (isCreateAddressOpen) {
+                                if (!isInStorePickUp && isCreateAddressOpen) {
                                     toast({
                                         title: 'Please select an address',
                                         status: 'error',
@@ -93,7 +94,10 @@ const CheckOutConfirmModal = ({ isOpen, onClose }) => {
                                         isClosable: true,
                                     })
                                     onClose()
-                                } else if (beingSelected === '') {
+                                } else if (
+                                    !isInStorePickUp &&
+                                    beingSelected === ''
+                                ) {
                                     toast({
                                         title: 'No address found in your account',
                                         status: 'error',
@@ -103,8 +107,19 @@ const CheckOutConfirmModal = ({ isOpen, onClose }) => {
                                     onClose()
                                 } else {
                                     callCheckOut()
-                                    setIsCheckOutClicked(true)
-                                    navigate('/checkout/complete')
+                                        .then(() => {
+                                            setIsCheckOutClicked(true)
+                                            navigate('/checkout/complete')
+                                        })
+                                        .catch((err) => {
+                                            toast({
+                                                title: 'Something went wrong',
+                                                message: err.message,
+                                                status: 'error',
+                                                duration: 3000,
+                                                isClosable: true,
+                                            })
+                                        })
                                 }
                             }}
                         >

@@ -29,6 +29,8 @@ export const CheckOutContext = createContext({
     setIsCreateAddressOpen: () => {},
     isCheckOutClicked: false,
     setIsCheckOutClicked: () => {},
+    isInStorePickUp: false,
+    setIsInStorePickUp: () => {},
 })
 
 export const CheckOutProvider = ({ children }) => {
@@ -42,7 +44,8 @@ export const CheckOutProvider = ({ children }) => {
     const [orderTotal, setOrderTotal] = useState(0)
     const [addressStyle, setAddressStyle] = useState(true)
     const [isCreateAddressOpen, setIsCreateAddressOpen] = useState(false)
-    const [ isCheckOutClicked, setIsCheckOutClicked ] = useState(false);
+    const [isCheckOutClicked, setIsCheckOutClicked] = useState(false)
+    const [isInStorePickUp, setIsInStorePickUp] = useState(false)
     const {
         discountedCode,
         setCartCount,
@@ -57,7 +60,7 @@ export const CheckOutProvider = ({ children }) => {
             const defaultIndex = addresses.findIndex(
                 (address) => address.is_default
             )
-            console.log(defaultIndex);
+            console.log(defaultIndex)
 
             if (defaultIndex !== -1) {
                 // Create a copy of the addresses array to avoid mutating state directly
@@ -73,7 +76,7 @@ export const CheckOutProvider = ({ children }) => {
                 setBeingSelected(value)
                 setSelectedAddress(value)
                 setIsCreateAddressOpen(false)
-            }else{
+            } else {
                 setAddresses([value])
                 setBeingSelected(value)
                 setSelectedAddress(value)
@@ -109,18 +112,14 @@ export const CheckOutProvider = ({ children }) => {
             code: discountedCode,
             payment_method: paymentMethod,
             receive_method: deliveryOptions,
-            shipping_addressid: selectedAddress.uid,
+            shipping_addressid: !isInStorePickUp ? selectedAddress.uid : null,
+        }).then((res) => {
+            setOrderId(res.data.data.uid)
+            setCartItems([])
+            setCartCount(0)
+            setDiscountedPrice(0)
+            setCartTotal(0)
         })
-            .then((res) => {
-                setOrderId(res.data.data.uid)
-                setCartItems([])
-                setCartCount(0)
-                setDiscountedPrice(0)
-                setCartTotal(0)
-            })
-            .catch((err) => {
-                console.log(err)
-            })
     }
 
     const value = {
@@ -148,6 +147,8 @@ export const CheckOutProvider = ({ children }) => {
         setIsCreateAddressOpen,
         isCheckOutClicked,
         setIsCheckOutClicked,
+        isInStorePickUp,
+        setIsInStorePickUp,
     }
 
     return (

@@ -11,18 +11,17 @@ const Pagination = ({ currentPage, totalPages, onChange }) => {
         // const pageNumbers = Array.from({ length: totalPages }, (_, index) => index + 1);
 
         const displayedPages = []
-        if (currentPage !== 1)
-            displayedPages.push(
-                <Button
-                    key="prev"
-                    as={Link}
-                    colorScheme="blue"
-                    disabled={currentPage === 1}
-                    onClick={() => handlePageClick(currentPage - 1)}
-                >
-                    <Image src={prev} alt="prev" />
-                </Button>
-            )
+        // if (currentPage !== 1)
+        displayedPages.push(
+            <Button
+                key="prev"
+                colorScheme="blue"
+                isDisabled={currentPage === 1}
+                onClick={() => handlePageClick(currentPage - 1)}
+            >
+                <Image src={prev} alt="prev" />
+            </Button>
+        )
 
         // Always display the first two pages
         if (currentPage > 2) {
@@ -109,18 +108,17 @@ const Pagination = ({ currentPage, totalPages, onChange }) => {
         }
 
         // Display the next button
-        if (currentPage !== totalPages)
-            displayedPages.push(
-                <Button
-                    key="next"
-                    as={Link}
-                    colorScheme="blue"
-                    disabled={currentPage === totalPages}
-                    onClick={() => handlePageClick(currentPage + 1)}
-                >
-                    <Image src={next} alt="next" />
-                </Button>
-            )
+        // if (currentPage !== totalPages)
+        displayedPages.push(
+            <Button
+                key="next"
+                colorScheme="blue"
+                isDisabled={currentPage === totalPages}
+                onClick={() => handlePageClick(currentPage + 1)}
+            >
+                <Image src={next} alt="next" />
+            </Button>
+        )
 
         return displayedPages
     }
