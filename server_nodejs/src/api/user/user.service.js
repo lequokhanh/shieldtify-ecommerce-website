@@ -1,6 +1,7 @@
 const db = require('../../models');
 const { AppError } = require('../../common/errors/AppError');
 const { v4 } = require('uuid');
+const bcrypt = require('bcrypt');
 module.exports = {
     getAddresses: async (uid) => {
         try {
@@ -95,7 +96,6 @@ module.exports = {
                 data: clients,
             };
         } catch (error) {
-            console.log(error);
             throw new AppError(error.statusCode, error.message);
         }
     },
@@ -354,7 +354,9 @@ module.exports = {
                     'You are not allowed to update this account',
                 );
             }
-            account.password = '123456';
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash('123456', salt);
+            account.password = hashedPassword;
             await account.save();
             return {
                 statusCode: 200,

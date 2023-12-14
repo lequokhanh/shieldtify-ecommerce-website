@@ -57,17 +57,6 @@ module.exports = {
             next(error);
         }
     },
-    updateAddress: async (req, res, next) => {
-        try {
-            const DTO = await service.updateAddress(
-                req.params.userId,
-                req.body,
-            );
-            res.status(DTO.statusCode).json(DTO);
-        } catch (error) {
-            next(error);
-        }
-    },
     deleteAddressAdmin: async (req, res, next) => {
         try {
             const DTO = await service.deleteAddress(
@@ -126,6 +115,18 @@ module.exports = {
             const DTO = await service.updateAddress(
                 req.user.uid,
                 req.params.addressId,
+                req.body,
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    updateAddressAdmin: async (req, res, next) => {
+        try {
+            const DTO = await service.updateAddress(
+                req.params.userId,
+                req.query.addressId,
                 req.body,
             );
             res.status(DTO.statusCode).json(DTO);
