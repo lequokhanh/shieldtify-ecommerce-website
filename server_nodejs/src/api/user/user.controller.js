@@ -60,8 +60,8 @@ module.exports = {
     deleteAddressAdmin: async (req, res, next) => {
         try {
             const DTO = await service.deleteAddress(
-                req.params.clientid,
-                req.query.uid,
+                req.params.userId,
+                req.query.addressId,
             );
             res.status(DTO.statusCode).json(DTO);
         } catch (error) {
