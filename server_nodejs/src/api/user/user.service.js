@@ -493,4 +493,41 @@ module.exports = {
             throw new AppError(error.statusCode, error.message);
         }
     },
+    createStaff: async (userRole, { username, display_name, role }) => {
+        try {
+            const checkUsername = await db.account.findOne({
+                where: {
+                    username,
+                },
+            });
+            if (checkUsername) {
+                throw new AppError(400, 'Username is already taken');
+            }
+            if (role != 'admin' && role != 'staff') {
+                throw new AppError(400, 'Role is invalid');
+            }
+            if (userRole !== 'superadmin' && role === 'admin') {
+                throw new AppError(
+                    403,
+                    'You are not allowed to create admin account',
+                );
+            }
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash('123456', salt);
+            const newAccount = await db.account.create({
+                uid: v4(),
+                username,
+                password: hashedPassword,
+                display_name,
+                role,
+            });
+            return {
+                statusCode: 200,
+                message: 'Create staff successfully',
+                data: newAccount,
+            };
+        } catch (error) {
+            throw new AppError(error.statusCode, error.message);
+        }
+    },
 };

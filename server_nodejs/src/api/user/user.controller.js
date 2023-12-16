@@ -186,4 +186,12 @@ module.exports = {
             next(error);
         }
     },
+    createStaff: async (req, res, next) => {
+        try {
+            const DTO = await service.createStaff(req.user.role, req.body);
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
 };

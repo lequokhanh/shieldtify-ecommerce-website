@@ -65,6 +65,12 @@ router.get(
     checkPermission('admin', 'superadmin'),
     controller.getAccounts,
 );
+router.post(
+    '/staff',
+    verifyToken,
+    checkPermission('admin', 'superadmin'),
+    controller.createStaff,
+);
 router.put(
     '/staff/:id',
     verifyToken,
@@ -107,4 +113,5 @@ router.get(
     checkPermission('admin', 'superadmin', 'staff'),
     controller.getOrderByIdAdmin,
 );
+
 module.exports = router;
