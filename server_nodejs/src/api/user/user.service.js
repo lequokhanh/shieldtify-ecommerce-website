@@ -441,8 +441,14 @@ module.exports = {
                     'receive_method',
                     'order_date',
                     'order_status',
+                    'promotion_code',
                 ],
                 include: [
+                    {
+                        model: db.account,
+                        as: 'supported_by',
+                        attributes: ['display_name'],
+                    },
                     {
                         model: db.client_account,
                         as: 'client',
@@ -525,6 +531,46 @@ module.exports = {
                 statusCode: 200,
                 message: 'Create staff successfully',
                 data: newAccount,
+            };
+        } catch (error) {
+            throw new AppError(error.statusCode, error.message);
+        }
+    },
+    getOrdersByStatus: async (page = 1, keyword = '', status) => {
+        try {
+            const limit = 10;
+            const offset = (page - 1) * limit;
+            const orders = await db.sequelize.query(
+                `
+                SELECT od.uid, od.clientid, od.payment_method, od.receive_method,  od.order_date, od.order_status, ca.display_name, round(sum(oi.new_price * oi.quantity), 2) as total
+                FROM orders od
+                    LEFT JOIN client_accounts ca ON od.clientid = ca.uid
+                    LEFT JOIN order_items oi ON od.uid = oi.orderid
+                WHERE od.order_status LIKE '%${keyword}%' AND LOWER(od.order_status) = LOWER('${status}')
+                GROUP BY od.uid
+                LIMIT ${limit} OFFSET ${offset}`,
+                {
+                    type: db.sequelize.QueryTypes.SELECT,
+                },
+            );
+            const count = await db.sequelize.query(
+                `
+                SELECT order_status, COUNT(distinct orders.uid) as count, ROUND(SUM(oi.new_price * oi.quantity),2) as total
+                FROM orders
+                    LEFT JOIN order_items oi ON orders.uid = oi.orderid
+                WHERE order_status = '${status}'
+                GROUP BY order_status`,
+                {
+                    type: db.sequelize.QueryTypes.SELECT,
+                },
+            );
+            return {
+                statusCode: 200,
+                message: 'Get orders successfully',
+                data: {
+                    orders,
+                    count,
+                },
             };
         } catch (error) {
             throw new AppError(error.statusCode, error.message);

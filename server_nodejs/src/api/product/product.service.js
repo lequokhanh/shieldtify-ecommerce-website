@@ -394,5 +394,5 @@ module.exports = {
         } catch (error) {
             throw new AppError(error.statusCode, error.message);
         }
-    }
+    },
 };

@@ -194,4 +194,16 @@ module.exports = {
             next(error);
         }
     },
+    getOrdersByStatus: async (req, res, next) => {
+        try {
+            const DTO = await service.getOrdersByStatus(
+                req.query.status,
+                req.query.page,
+                req.query.keyword,
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
 };

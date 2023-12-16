@@ -104,8 +104,14 @@ router.get(
 router.get(
     '/order/admin',
     verifyToken,
-    checkPermission('admin', 'superadmin'),
+    checkPermission('admin', 'superadmin', 'staff'),
     controller.getAllOrders,
+);
+router.get(
+    '/order/admin/status/:status',
+    verifyToken,
+    checkPermission('admin', 'superadmin', 'staff'),
+    controller.getOrdersByStatus,
 );
 router.get(
     '/order/admin/:userId',
