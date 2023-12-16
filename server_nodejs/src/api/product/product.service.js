@@ -395,4 +395,22 @@ module.exports = {
             throw new AppError(error.statusCode, error.message);
         }
     },
+    updateCategory: async (uid, { name, description }) => {
+        try {
+            const category = await db.item_category.findByPk(uid);
+            if (!category) throw new AppError(404, 'Category not found');
+            category.name = name ? name : category.name;
+            category.description = description
+                ? description
+                : category.description;
+            await category.save();
+            return {
+                statusCode: 200,
+                message: 'Update category successfully',
+                data: category,
+            };
+        } catch (error) {
+            throw new AppError(error.statusCode, error.message);
+        }
+    },
 };

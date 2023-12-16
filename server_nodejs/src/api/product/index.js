@@ -17,6 +17,12 @@ router.post(
     checkPermission('admin', 'superadmin'),
     controller.createCategory,
 );
+router.put(
+    '/category/:categoryid',
+    verifyToken,
+    checkPermission('admin', 'superadmin'),
+    controller.updateCategory,
+);
 router.get('/category/:category', controller.getAllProductByCategory);
 router.get(
     '/brand',

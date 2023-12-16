@@ -141,4 +141,15 @@ module.exports = {
             next(error);
         }
     },
+    updateCategory: async (req, res, next) => {
+        try {
+            const DTO = await service.updateCategory(
+                req.params.categoryid,
+                req.body,
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
 };
