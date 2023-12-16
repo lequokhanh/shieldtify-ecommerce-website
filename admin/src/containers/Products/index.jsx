@@ -208,33 +208,30 @@ const Products = () => {
                             </Box>
                             <Box display={!isOnProducts && "none"}>
 
-                                <Popover onClose={() => setUnsubmittedCheckedBrands([])}>
-                                    {({ onClose }) => (
-                                        <>
-                                            <PopoverTrigger>
-                                                <HStack 
-                                                padding="7px 12px" 
-                                                border="1px solid #444444"
-                                                borderRadius="12px" 
-                                                as="button"
-                                                gap="5px"
-                                                _hover={{cursor:"pointer"}}
-                                                >
-                                                    <Text fontSize="0.875rem" color="#444444" fontWeight="400">
-                                                        Brand
-                                                    </Text>
-                                                    <ChevronDownIcon boxSize="4" color="#444444"/>
-                                                </HStack>
-                                            </PopoverTrigger>
-                                            <PopoverContent>
-                                                <BrandsPopoverContent 
-                                                close={onClose}
-                                                unsubmittedCheckedBrands={unsubmittedCheckedBrands}
-                                                setUnsubmittedCheckedBrands={setUnsubmittedCheckedBrands}
-                                                />
-                                            </PopoverContent>
-                                        </>
-                                    )}
+                                <Popover>
+                                    <>
+                                        <PopoverTrigger>
+                                            <HStack 
+                                            padding="7px 12px" 
+                                            border="1px solid #444444"
+                                            borderRadius="12px" 
+                                            as="button"
+                                            gap="5px"
+                                            _hover={{cursor:"pointer"}}
+                                            >
+                                                <Text fontSize="0.875rem" color="#444444" fontWeight="400">
+                                                    Brand
+                                                </Text>
+                                                <ChevronDownIcon boxSize="4" color="#444444"/>
+                                            </HStack>
+                                        </PopoverTrigger>
+                                        <PopoverContent>
+                                            <BrandsPopoverContent 
+                                            unsubmittedCheckedBrands={unsubmittedCheckedBrands}
+                                            setUnsubmittedCheckedBrands={setUnsubmittedCheckedBrands}
+                                            />
+                                        </PopoverContent>
+                                    </>
                                 </Popover>        
                             </Box>
                             <Popover placement="bottom-start" >

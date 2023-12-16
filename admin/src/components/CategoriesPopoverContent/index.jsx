@@ -3,19 +3,25 @@ import {
     RadioGroup,
     Flex,
     Radio,
-    Button,
 }   from "@chakra-ui/react";
 import { useContext } from "react";
 import { ProductsContext } from "../../context/products.context";
 
 const CategoriesPopoverContent = ({close,selectedCategory,setSelectedCategory}) => {
     const { setCurrentCategories, categories, setCurrentPage, setCurrentBrands} = useContext(ProductsContext);
+    const handleCheckboxChange = (value) => {
+        setSelectedCategory(value);
+        setCurrentCategories(value);
+        setCurrentPage(1);
+        setCurrentBrands([]);
+        close();
+    }
     return (
         <>
             <PopoverArrow/>
             <RadioGroup
             value={selectedCategory}
-            onChange={setSelectedCategory}
+            onChange={handleCheckboxChange}
             >
                 <Flex flexDir="column" gap="12px" padding="31px 23px 19px 22px">
                 {
@@ -34,18 +40,6 @@ const CategoriesPopoverContent = ({close,selectedCategory,setSelectedCategory}) 
                         </Radio>
                     ))
                 }
-                    <Button 
-                    variant="submit" 
-                    colorScheme="blackAlpha"
-                    onClick={() => {
-                        setCurrentCategories(selectedCategory);
-                        setCurrentPage(1);
-                        setCurrentBrands([]);
-                        close();
-                    }}
-                    >
-                        Submit
-                    </Button>
                 </Flex>
             </RadioGroup>
         </>

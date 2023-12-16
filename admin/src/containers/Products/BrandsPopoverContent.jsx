@@ -9,14 +9,12 @@ import {
 import { useContext } from "react";
 import { ProductsContext } from "../../context/products.context";
 
-const BrandsPopoverContent = ({close,unsubmittedCheckedBrands,setUnsubmittedCheckedBrands}) => {
+const BrandsPopoverContent = ({unsubmittedCheckedBrands,setUnsubmittedCheckedBrands}) => {
     const { brands, setCurrentBrands } = useContext(ProductsContext); 
 
     const handleCheckBoxChange = (value) => {
         setUnsubmittedCheckedBrands(value);
-    }
-    const submitBrandsSearch = (brands) => {
-        setCurrentBrands(brands);
+        setCurrentBrands(value);
     }
     return (
         <>
@@ -47,21 +45,6 @@ const BrandsPopoverContent = ({close,unsubmittedCheckedBrands,setUnsubmittedChec
                             ))
                         }
                         </CheckboxGroup>
-                    </Flex>
-                    <Flex justifyContent="center">
-                        <Button
-                        mt="10px"
-                        bgColor="#2D2D2D"
-                        borderRadius="25px"
-                        paddingX="50px"
-                        colorScheme="blackAlpha"
-                        onClick={() => {
-                            submitBrandsSearch(unsubmittedCheckedBrands);
-                            close();
-                        }}
-                        >
-                            Submit
-                        </Button>                        
                     </Flex>
                 </FormControl>
             </Flex>
