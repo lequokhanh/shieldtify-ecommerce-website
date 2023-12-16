@@ -288,7 +288,12 @@ module.exports = {
             throw new AppError(error.statusCode, error.message);
         }
     },
-    updateAccount: async (userRole, uid, { username, display_name, role }) => {
+    updateAccount: async (
+        userRole,
+        userID,
+        uid,
+        { username, display_name, role },
+    ) => {
         try {
             const account = await db.account.findOne({
                 where: {
@@ -298,15 +303,20 @@ module.exports = {
             if (!account) {
                 throw new AppError(404, 'Account not found');
             }
-            if (
-                (account.dataValues.role === 'admin' &&
-                    userRole !== 'superadmin') ||
-                account.dataValues.role === 'superadmin'
-            ) {
-                throw new AppError(
-                    403,
-                    'You are not allowed to update this account',
-                );
+            if (uid !== userID) {
+                if (
+                    (account.dataValues.role === 'admin' &&
+                        userRole !== 'superadmin') ||
+                    account.dataValues.role === 'superadmin'
+                ) {
+                    throw new AppError(
+                        403,
+                        'You are not allowed to update this account',
+                    );
+                }
+            }
+            if (role && role !== 'admin' && role !== 'staff') {
+                throw new AppError(400, 'Role is not allowed to update');
             }
             if (username) {
                 const checkUsername = await db.account.findOne({
@@ -571,6 +581,46 @@ module.exports = {
                     orders,
                     count,
                 },
+            };
+        } catch (error) {
+            throw new AppError(error.statusCode, error.message);
+        }
+    },
+    updateOrder: async (uid, { order_status, supported_by }) => {
+        try {
+            const order = await db.order.findOne({
+                where: {
+                    uid,
+                },
+            });
+            if (!order) {
+                throw new AppError(404, 'Order not found');
+            }
+            if (order_status) {
+                order.order_status = order_status;
+            }
+            if (supported_by) {
+                const staff = await db.account.findOne({
+                    where: {
+                        uid: supported_by,
+                    },
+                });
+                if (!staff) {
+                    throw new AppError(404, 'Staff not found');
+                }
+                if (staff.role !== 'staff') {
+                    throw new AppError(
+                        400,
+                        'You are not allowed to update this order',
+                    );
+                }
+                order.supported_by = supported_by;
+            }
+            await order.save();
+            return {
+                statusCode: 200,
+                message: 'Update order successfully',
+                data: order,
             };
         } catch (error) {
             throw new AppError(error.statusCode, error.message);

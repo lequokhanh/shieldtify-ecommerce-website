@@ -83,6 +83,7 @@ module.exports = {
         try {
             const DTO = await service.updateAccount(
                 req.user.role,
+                req.user.uid,
                 req.params.id,
                 req.body,
             );
