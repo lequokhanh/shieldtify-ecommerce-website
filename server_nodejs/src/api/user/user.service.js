@@ -446,7 +446,7 @@ module.exports = {
                 include: [
                     {
                         model: db.account,
-                        as: 'supported_by',
+                        as: 'staff',
                         attributes: ['display_name'],
                     },
                     {

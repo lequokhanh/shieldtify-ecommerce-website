@@ -62,7 +62,7 @@ module.exports = (sequelize, Sequelize) => {
         });
         Order.belongsTo(models.account, {
             foreignKey: 'supported_by',
-            as: 'supported_by',
+            as: 'staff',
         });
         Order.hasMany(models.order_item, {
             foreignKey: 'orderid',
