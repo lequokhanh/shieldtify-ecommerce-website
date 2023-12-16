@@ -13,13 +13,22 @@ import {
 import {Form, Field, Formik} from 'formik';
 import * as router from "react-router-dom";
 import { useNavigate } from 'react-router-dom';
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import { login } from '../../utils/api';
 import { AuthContext } from '../../context/auth.context';
 
 const SignIn = () => {
     const navigate = useNavigate();
-    const { setIsLoggedIn, isLoggedIn } = useContext(AuthContext);
+    const { setIsLoggedIn, isLoggedIn, currentUser } = useContext(AuthContext);
+    
+    useEffect(() => {
+        async function navigateManage() {
+            if(isLoggedIn && currentUser){
+                navigate('/manage/dashboard');
+            }
+        }
+        navigateManage();
+    },[isLoggedIn, currentUser])
     return(
         <Flex justifyContent="center">
             <Box>
@@ -46,17 +55,17 @@ const SignIn = () => {
                         <Formik 
                             initialValues={{loginCred: '', password: ''}} 
                             onSubmit={async (values, actions) => {
-                                try {
-                                    await login({
-                                        loginCred: values.loginCred,
-                                        password: values.password
-                                    })
-                                    setIsLoggedIn(true);        
-                                    navigate('/manage/dashboard');
-                                    
-                                } catch (error) {
+                                await login({
+                                    loginCred: values.loginCred,
+                                    password: values.password
+                                }).then(()=> {
+                                    setIsLoggedIn(true);
+                                })
+                                .catch (error => {
+                                    console.log(error);
                                     actions.setFieldError('loginCred', error.response.data.message);
-                                }
+                                }) 
+                                
                                 actions.setSubmitting(false);
                             }}
                         >
@@ -134,23 +143,6 @@ const SignIn = () => {
                                         >
                                             Login
                                         </Button>
-                                        <Box alignItems="center" textAlign="center" bgColor="#E8E8E8" borderRadius="10px" padding="18px 57px">
-                                            <Text fontSize="0.875rem" fontWeight="300">New to Shieldtify?</Text>
-                                            <Text 
-                                            lineHeight="30px" 
-                                            fontWeight="bold" 
-                                            color='#000' 
-                                            as={router.Link} 
-                                            to="/sign-up"
-                                            _hover={
-                                                {
-                                                    cursor: "pointer",
-                                                    textDecorationLine: "underline"
-                                                }
-                                            }>
-                                            Join with us now
-                                            </Text>
-                                        </Box>
                                     </Flex>
                                 </Flex>
                             </Form>

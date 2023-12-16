@@ -13,14 +13,14 @@ const getInitialLogInState = () => {
     return isLoggedIn ? JSON.parse(isLoggedIn) : false 
 }
 
-const getInitialUserState = () => {
-    const currentUser = localStorage.getItem("currentUser");
-    return currentUser ? JSON.parse(currentUser) : null
-}
+// const getInitialUserState = () => {
+//     // const currentUser = localStorage.getItem("currentUser");
+//     return currentUser ? JSON.parse(currentUser) : null
+// }
 
 export const AuthProvider = ({children}) => {
     const [isLoggedIn, setIsLoggedIn] = useState(getInitialLogInState);
-    const [currentUser, setCurrentUser] = useState(getInitialUserState);
+    const [currentUser, setCurrentUser] = useState(null);
     const value = {
         isLoggedIn,
         setIsLoggedIn,
@@ -30,20 +30,20 @@ export const AuthProvider = ({children}) => {
 
     useEffect( () => {
         const intervalId = setInterval(() => {
-            getUser().catch(() => {
-                setIsLoggedIn(false);
-            }); 
-        }, 60000);
+            if(isLoggedIn){
+                getUser().catch(() => {
+                    setIsLoggedIn(false);
+                }); 
+            }
+        }, 6000);
         return () => clearInterval(intervalId);
-    }, []);
-
+    }, [isLoggedIn]);
     useEffect (() => {
         localStorage.setItem("isLoggedIn", JSON.stringify(isLoggedIn))
         if(isLoggedIn===true){
             getUser().then((res) => {
                 if(res.data.data.role === "staff" || res.data.data.role === "superadmin" || res.data.data.role === "admin"){   
                     setCurrentUser(res.data.data);
-                    localStorage.setItem("currentUser", JSON.stringify(res.data.data));
                 }else{
                     setIsLoggedIn(false);
                 }
@@ -51,7 +51,8 @@ export const AuthProvider = ({children}) => {
                 setIsLoggedIn(false);
             })
         }else {
-            localStorage.setItem("currentUser",null);
+            // localStorage.setItem("currentUser",null);
+            setCurrentUser(null);
         }       
     }, [isLoggedIn]);
 

@@ -11,18 +11,18 @@ import EditProducts from "../containers/EditProducts";
 import NotFound from "../components/NotFound";
 import {
     PrivateRoute,
-    DenyManageRoute
+    DenyManageRoute,
 } from './accessControl';
 import EditUsers from "../containers/EditUsers";
 
 const routes = [
     {
         path: '/',
-        element: <Root />,
+        element: <Root/>,
         children: [
             {
                 path: '/sign-in',
-                element: <SignIn />,
+                element: <SignIn/>,
                 name: 'sign-up',
             },
             {

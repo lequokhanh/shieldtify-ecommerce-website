@@ -13,7 +13,7 @@ import { AuthContext } from "../../context/auth.context";
 import * as router from 'react-router-dom';
 
 
-const EditPopOverContent = ({id,handleDeleteClick,type,role}) => {
+const EditPopOverContent = ({id,handleDeleteClick,type,role,staff}) => {
     const { setIsEditOpen } = useContext(UsersContext);
     const navigate = router.useNavigate();
     const toast = useToast();
@@ -31,7 +31,10 @@ const EditPopOverContent = ({id,handleDeleteClick,type,role}) => {
                 }}
                 onClick={() => {
                     if(type==="staff"){
-                        if((currentUser && currentUser.role !== "superadmin") && (role ==="superadmin" || role ==="admin")){
+                        if(staff.uid === currentUser.uid){
+                            setIsEditOpen(true);
+                        }
+                        else if(((currentUser && currentUser.role !== "superadmin") && (role ==="superadmin" || role ==="admin"))){
                             toast({
                                 title: "You don't have permission to edit this user",
                                 status: "error",

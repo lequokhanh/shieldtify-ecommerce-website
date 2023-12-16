@@ -4,7 +4,6 @@ import {
 import Dante from "dante3/package/esm";
 const empty = `<p class="graf graf--p"></p>`;
 const ProductDescription = ({product, setCurrentDescription}) => {
-    console.log(product.description);
     return(
         <Flex 
         flexDir="column" 

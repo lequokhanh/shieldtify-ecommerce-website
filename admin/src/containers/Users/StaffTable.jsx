@@ -1,4 +1,5 @@
 import { 
+    Box,
     Flex, 
     HStack, 
     Image, 
@@ -13,7 +14,7 @@ import {
     Th, 
     Thead, 
     Tr } from "@chakra-ui/react";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import pen from '../../assets/users/pen.svg';
 import { UsersContext } from "../../context/users.context";
 import EditPopOverContent from "./EditPopOverContent";
@@ -22,6 +23,8 @@ import EditStaffModal from "./EditStaffModal";
 
 const StaffTable = () => {
     const { staffs } = useContext(UsersContext);
+    const [selectedStaff, setSelectedStaff] = useState(null);
+    const [isPopoverOpen, setIsPopoverOpen] = useState(false);
     return (
         <>
             <TableContainer borderRadius='12px' border="1px solid #F3F4F6" mt="18px">
@@ -60,17 +63,24 @@ const StaffTable = () => {
                                             <Text color="shieldtify.checkout" fontWeight="400"> 
                                                 {staff.role}
                                             </Text>
-                                            <Popover>
+                                            <Popover placement="bottom-start">
                                                 <PopoverTrigger>
-                                                    <Flex as="button" _hover={{cursor:"pointer"}}>
+                                                    <Box 
+                                                    as="button"
+                                                    onClick={()=> {
+                                                        setSelectedStaff(staff);
+                                                    }}
+                                                    _hover={{
+                                                        cursor: "pointer"
+                                                    }}
+                                                    >
                                                         <Image src={pen} alt="pen"/>
-                                                    </Flex>
+                                                    </Box>
                                                 </PopoverTrigger>
                                                 <PopoverContent>
-                                                    <EditPopOverContent type="staff" role={staff.role}/>
+                                                    <EditPopOverContent type="staff" role={staff.role} staff={staff}/>
                                                 </PopoverContent>
                                             </Popover>
-                                            <EditStaffModal staff={staff}/>
                                         </Flex>
                                     </Td>
                                 </Tr>
@@ -79,6 +89,7 @@ const StaffTable = () => {
                     </Tbody>
                 </Table>
             </TableContainer>
+            <EditStaffModal staff={selectedStaff}/>
         </>
     )
 }

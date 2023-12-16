@@ -8,10 +8,7 @@ import {
     deleteImageFromProduct,
     updateProductForStaff,
 } from "../utils/api";
-import { useContext } from "react";
-import { AuthContext } from "./auth.context";
 import { updateProduct } from "../utils/api";
-import { useToast } from "@chakra-ui/react";
 
 export const ProductsContext = createContext({
     isOnProducts: false,

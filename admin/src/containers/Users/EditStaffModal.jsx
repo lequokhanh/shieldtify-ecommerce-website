@@ -20,6 +20,7 @@ import { UsersContext } from "../../context/users.context";
 import { updateStaffAcount } from "../../utils/api";
 
 const EditStaffModal = ({staff}) => {
+    console.log(staff);
     const {isEditOpen, setIsEditOpen,resetStaffPwd} = useContext(UsersContext);
     return (
         <Modal
@@ -51,13 +52,13 @@ const EditStaffModal = ({staff}) => {
                 >
                     <Formik
                     initialValues={{
-                    username: staff.username ,
-                    displayname: staff.display_name,
-                    role: staff.role ,
+                    username: staff && staff.username || '',
+                    displayname: staff && staff.display_name || '',
+                    role: staff && staff.role || '' ,
                     }}
                     onSubmit={async (values, actions) => {
                         await updateStaffAcount({
-                            id: staff.id,
+                            id: staff.uid,
                             username: values.username,
                             display_name: values.displayname,
                             role: staff.role
