@@ -23,6 +23,9 @@ import SpecificationModal from '../../components/SpecificationModal'
 import { CartContext } from '../../context/cart.context'
 import './style.css'
 import no_img from '../../assets/no_img.svg'
+import Dante from "dante3/package/esm";
+
+
 
 const PreviewSpecs = (product) => {
     const { addItemToCart } = useContext(CartContext)
@@ -301,7 +304,7 @@ const ProductDetails = () => {
                             p={'50px'}
                             borderRadius={'10px'}
                         >
-                            <Text>Comming soon...</Text>
+                            <Dante readOnly={true} content={product.description}/>
                         </Box>
                     </Flex>
                 </Flex>
