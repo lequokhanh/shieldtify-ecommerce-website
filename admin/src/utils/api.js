@@ -218,6 +218,21 @@ export function updateCategory({name,description,uid}){
 }
 
 export function updateStaffAcount({id,username,display_name,role}) {
+    if(!username && !display_name){
+        return axiosCookie.put(`/user/staff/${id}`, {
+            role,
+        })
+    }else if(!username){
+        return axiosCookie.put(`/user/staff/${id}`, {
+            display_name,
+            role,
+        })
+    }else if(!display_name){
+        return axiosCookie.put(`/user/staff/${id}`, {
+            username,
+            role,
+        })
+    }
     return axiosCookie.put(`/user/staff/${id}`, {
         username,
         display_name,
@@ -243,4 +258,8 @@ export function cancelOrders({checkedOrdersId}){
     return axiosCookie.put(`user/order/admin/cancel`,{
         id: checkedOrdersId
     })
+}
+
+export function getOrderByStatus({status}){
+    return axiosCookie.get(`/user/order/admin/status/${status}`);
 }

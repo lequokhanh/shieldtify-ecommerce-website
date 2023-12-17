@@ -40,7 +40,6 @@ const Users = () => {
         setIsOnClient(false);
     }
     useEffect(() => {
-
         async function fetchData() {
             if(!isOnClient){
                 await getAllStaffs({page:currentPage,keyword:searchValue}).then(res => {

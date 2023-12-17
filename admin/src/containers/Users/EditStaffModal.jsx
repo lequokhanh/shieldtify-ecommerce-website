@@ -12,7 +12,8 @@ import {
     ModalHeader, 
     ModalOverlay, 
     Radio, 
-    RadioGroup
+    RadioGroup,
+    useToast
 } from "@chakra-ui/react";
 import { Field, Form, Formik } from "formik";
 import { useContext } from "react";
@@ -20,7 +21,7 @@ import { UsersContext } from "../../context/users.context";
 import { updateStaffAcount } from "../../utils/api";
 
 const EditStaffModal = ({staff}) => {
-    console.log(staff);
+    const toast = useToast();
     const {isEditOpen, setIsEditOpen,resetStaffPwd} = useContext(UsersContext);
     return (
         <Modal
@@ -59,9 +60,17 @@ const EditStaffModal = ({staff}) => {
                     onSubmit={async (values, actions) => {
                         await updateStaffAcount({
                             id: staff.uid,
-                            username: values.username,
-                            display_name: values.displayname,
+                            username: (values.username === staff.username) ? null : values.username,
+                            display_name: (values.displayname === staff.display_name) ? null : values.displayname,
                             role: staff.role
+                        }).then(() => {
+                            toast({
+                                title: "Staff account updated.",
+                                description: "We've updated the staff account for you.",
+                                status: "success",
+                                duration: 9000,
+                                isClosable: true,
+                            })
                         }).catch(err => {
                             actions.setFieldError('username', err.response.data.message);
                         })
@@ -156,7 +165,7 @@ const EditStaffModal = ({staff}) => {
                                 fontWeight="600" 
                                 colorScheme="facebook" 
                                 py="16px"
-                                onClick={() => resetStaffPwd(staff.id)}
+                                onClick={() => resetStaffPwd(staff.uid)}
                                 >
                                     Reset password
                                 </Button>

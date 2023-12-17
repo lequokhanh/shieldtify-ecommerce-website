@@ -24,7 +24,6 @@ import EditStaffModal from "./EditStaffModal";
 const StaffTable = () => {
     const { staffs } = useContext(UsersContext);
     const [selectedStaff, setSelectedStaff] = useState(null);
-    const [isPopoverOpen, setIsPopoverOpen] = useState(false);
     return (
         <>
             <TableContainer borderRadius='12px' border="1px solid #F3F4F6" mt="18px">

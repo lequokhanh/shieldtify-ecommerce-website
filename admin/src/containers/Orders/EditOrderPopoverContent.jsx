@@ -1,6 +1,6 @@
 import { Button, Flex, FormControl, FormLabel, Input, PopoverArrow, Text } from "@chakra-ui/react";
 
-const EditOrderPopoverContent = ({ product }) => {
+const EditOrderPopoverContent = ({ setOrder, order, unsubmittedProduct, setUnsubmittedProduct }) => {
     return(
         <>
             <PopoverArrow/>
@@ -27,42 +27,27 @@ const EditOrderPopoverContent = ({ product }) => {
                                     _hover={{
                                         cursor: 'pointer',
                                     }}
-                                    // onClick={decreaseCartQuantity}
+                                    onClick={() => {
+                                        if(unsubmittedProduct.quantity === 0) return;
+                                        setUnsubmittedProduct({
+                                            ...unsubmittedProduct,
+                                            quantity: unsubmittedProduct.quantity - 1,
+                                        })
+                                    }}
                                 >
                                     -
                                 </Text>
                                 <Input
                                 type="number"
                                 paddingX="5px"
-                                defaultValue={product.quantity}
-                                // value={itemQuantity}
+                                value={unsubmittedProduct.quantity}
+                                onChange={(e) => {
+                                    setUnsubmittedProduct({
+                                        ...unsubmittedProduct,
+                                        quantity: parseInt(e.target.value),
+                                    })
+                                }}
                                 textAlign="center"
-                                // onChange={async (e) => {
-                                //     if (e.target.value === '') {
-                                //         setItemQuantity(1)
-                                //     } else {
-                                //         await updateCart({
-                                //             item: item.itemid,
-                                //             quantity: e.target.value,
-                                //         })
-                                //             .then((res) => {
-                                //                 setItemQuantity(
-                                //                     res.data.data.cart[0].quantity
-                                //                 )
-                                //                 setCartItems(res.data.data.cart)
-                                //                 setOutOfStockItems(
-                                //                     res.data.data.out_of_stock
-                                //                 )
-                                //                 setCartTotal(res.data.data.total)
-                                //                 setDiscountedPrice(0)
-                                //                 setIsValueInvalid(false)
-                                //             })
-                                //             .catch(() => {
-                                //                 setIsValueInvalid(true)
-                                //             })
-                                //     }
-                                // }}
-                                // isInvalid={isValueInvalid}
                                 w="50px"
                                 border="none"
                                 variant="unstyled"
@@ -74,7 +59,12 @@ const EditOrderPopoverContent = ({ product }) => {
                                     _hover={{
                                         cursor: 'pointer',
                                     }}
-                                    // onClick={increaseCartQuantity}
+                                    onClick={() => {
+                                        setUnsubmittedProduct({
+                                            ...unsubmittedProduct,
+                                            quantity: unsubmittedProduct.quantity + 1,
+                                        })
+                                    }}
                                 >
                                     +
                                 </Text>
@@ -95,7 +85,13 @@ const EditOrderPopoverContent = ({ product }) => {
                                 justifyContent="flex-end"
                             >
                                 <Input
-                                defaultValue={product.new_price}
+                                value={unsubmittedProduct.new_price}
+                                onChange={(e) => {
+                                    setUnsubmittedProduct({
+                                        ...unsubmittedProduct,
+                                        new_price: e.target.value,
+                                    })
+                                }}
                                 id="price"
                                 w="85.36px"
                                 h="32px"
@@ -115,6 +111,18 @@ const EditOrderPopoverContent = ({ product }) => {
                 bgColor="#2D2D2D"
                 borderRadius="25px"
                 fontWeight="600"
+                onClick={() => {
+                    const newItems = order.order_item.map((p) => {
+                            if (p.itemid === unsubmittedProduct.itemid) {
+                                return unsubmittedProduct;
+                            }
+                            return p;
+                    });
+                    setOrder({
+                        ...order,
+                        order_item: newItems    
+                    });
+                }}
                 >
                     Submit
                 </Button>
