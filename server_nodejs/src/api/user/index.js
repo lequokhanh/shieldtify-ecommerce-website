@@ -119,5 +119,17 @@ router.get(
     checkPermission('admin', 'superadmin', 'staff'),
     controller.getOrderByIdAdmin,
 );
+router.put(
+    '/order/admin/process/:orderId',
+    verifyToken,
+    checkPermission('admin', 'superadmin', 'staff'),
+    controller.processOrders,
+);
+router.put(
+    '/order/admin/:orderId',
+    verifyToken,
+    checkPermission('admin', 'superadmin', 'staff'),
+    controller.updateOrder,
+);
 
 module.exports = router;

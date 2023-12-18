@@ -2,6 +2,7 @@ const db = require('../../models');
 const { AppError } = require('../../common/errors/AppError');
 const { v4 } = require('uuid');
 const bcrypt = require('bcrypt');
+const order = require('../../models/order');
 module.exports = {
     getAddresses: async (uid) => {
         try {
@@ -586,7 +587,11 @@ module.exports = {
             throw new AppError(error.statusCode, error.message);
         }
     },
-    updateOrder: async (uid, { order_status, supported_by }) => {
+    updateOrder: async (
+        staffid,
+        uid,
+        { order_status, products, addressid },
+    ) => {
         try {
             const order = await db.order.findOne({
                 where: {
@@ -597,30 +602,164 @@ module.exports = {
                 throw new AppError(404, 'Order not found');
             }
             if (order_status) {
-                order.order_status = order_status;
+                if (
+                    order.order_status === 'Initiated' ||
+                    order.order_status === 'Processing'
+                ) {
+                    if (
+                        order_status === 'Processing' ||
+                        order_status === 'Succeed' ||
+                        order_status === 'Canceled'
+                    )
+                        order.order_status = order_status;
+                } else if (
+                    order.order_status === 'Succeed' ||
+                    order.order_status === 'Canceled'
+                ) {
+                    throw new AppError(400, 'Order is final state already');
+                }
             }
-            if (supported_by) {
-                const staff = await db.account.findOne({
+            if (addressid) {
+                const address = await db.client_address.findOne({
                     where: {
-                        uid: supported_by,
+                        uid: addressid,
                     },
                 });
-                if (!staff) {
-                    throw new AppError(404, 'Staff not found');
+                if (!address) {
+                    throw new AppError(404, 'Address not found');
                 }
-                if (staff.role !== 'staff') {
-                    throw new AppError(
-                        400,
-                        'You are not allowed to update this order',
-                    );
-                }
-                order.supported_by = supported_by;
+                order.shipping_addressid = addressid;
             }
+            let orderItems = [];
+            if (products) {
+                for (let product of products) {
+                    const orderItem = await db.order_item.findOne({
+                        where: {
+                            orderid: uid,
+                            itemid: product.itemid,
+                        },
+                    });
+                    if (!orderItem) {
+                        throw new AppError(404, 'Order item not found');
+                    }
+                    if (product.quantity) {
+                        if (product.quantity <= 0) {
+                            throw new AppError(
+                                400,
+                                'Quantity must be greater than 0',
+                            );
+                        }
+                    }
+                    if (product.new_price) {
+                        if (product.new_price <= 0) {
+                            throw new AppError(
+                                400,
+                                'New price must be greater than 0',
+                            );
+                        }
+                    }
+                    orderItems.push(product);
+                    await orderItem.save();
+                }
+            }
+            for (let item of orderItems) {
+                const orderItem = await db.order_item.findOne({
+                    where: {
+                        orderid: uid,
+                        itemid: item.itemid,
+                    },
+                });
+                orderItem.quantity = item.quantity || orderItem.quantity;
+                orderItem.new_price = item.new_price || orderItem.new_price;
+                await orderItem.save();
+            }
+            order.supported_by = staffid;
             await order.save();
             return {
                 statusCode: 200,
                 message: 'Update order successfully',
                 data: order,
+            };
+        } catch (error) {
+            throw new AppError(error.statusCode, error.message);
+        }
+    },
+    processOrders: async (staffid, { orders }, type = 1) => {
+        try {
+            let errors = [];
+            if (type === 1) {
+                // Process order
+                for (order of orders) {
+                    const orderToUpdate = await db.order.findOne({
+                        where: {
+                            uid: order.uid,
+                        },
+                    });
+                    if (!orderToUpdate) {
+                        throw new AppError(404, 'Order not found');
+                    }
+                    if (orderToUpdate.order_status === 'Initiated')
+                        orderToUpdate.order_status = 'Processing';
+                    else if (orderToUpdate.order_status === 'Processing')
+                        orderToUpdate.order_status = 'Succeed';
+                    else if (
+                        orderToUpdate.order_status === 'Succeed' ||
+                        orderToUpdate.order_status === 'Canceled'
+                    )
+                        errors.push({
+                            uid: orderToUpdate.uid,
+                            message: 'Order is final state already',
+                        });
+                    else
+                        errors.push({
+                            uid: orderToUpdate.uid,
+                            message: 'Order is not in correct state',
+                        });
+                    orderToUpdate.supported_by = staffid;
+                    await orderToUpdate.save();
+                }
+            } else if (type === 0) {
+                // Cancel order
+                for (order of orders) {
+                    const orderToUpdate = await db.order.findOne({
+                        where: {
+                            uid: order.uid,
+                        },
+                    });
+                    if (!orderToUpdate) {
+                        throw new AppError(404, 'Order not found');
+                    }
+                    if (
+                        orderToUpdate.order_status === 'Initiated' ||
+                        orderToUpdate.order_status === 'Processing'
+                    )
+                        orderToUpdate.order_status = 'Canceled';
+                    else if (
+                        orderToUpdate.order_status === 'Succeed' ||
+                        orderToUpdate.order_status === 'Canceled'
+                    )
+                        errors.push({
+                            uid: orderToUpdate.uid,
+                            message: 'Order is not in correct state',
+                        });
+                    else
+                        errors.push({
+                            uid: orderToUpdate.uid,
+                            message: 'Order is final state already',
+                        });
+                    await orderToUpdate.save();
+                }
+            }
+            return {
+                statusCode: 200,
+                message: type
+                    ? errors.length === 0
+                        ? 'Process orders successfully'
+                        : 'Process orders with errors'
+                    : errors.length === 0
+                    ? 'Cancel orders successfully'
+                    : 'Cancel orders with errors',
+                data: errors,
             };
         } catch (error) {
             throw new AppError(error.statusCode, error.message);

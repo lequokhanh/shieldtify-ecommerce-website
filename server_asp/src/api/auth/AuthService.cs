@@ -180,6 +180,38 @@ namespace shieldtify.api.auth
                 throw;
             }
         }
+        public static APIRes loginAdmin(string username, string password)
+        {
+            try
+            {
+                using var dbContext = new ShieldtifyContext();
+                var user = dbContext.Accounts.Where(i => i.Username == username).FirstOrDefault();
+                if (user == null)
+                    return new APIRes(400, "Username or password is incorrect");
+                if (!BC.Verify(password, user.Password))
+                    return new APIRes(400, "Username or password is incorrect");
+                // generate jwt token
+                var tokenHandler = new JwtSecurityTokenHandler();
+                var key = Encoding.ASCII.GetBytes("45b3ecf11da3223addf73ea73912512701ce29d5171451f084ab1ddae1064ea85c5209ba69c190cf8223f58fd771e5a0aaff922be094f7cb101f4aac1c1a1986");
+                var tokenDescriptor = new SecurityTokenDescriptor
+                {
+                    Subject = new ClaimsIdentity(new Claim[]
+                    {
+                        new Claim("user_id", user.Uid.ToString()),
+                        new Claim("role", "admin")
+                    }),
+                    Expires = DateTime.UtcNow.AddMinutes(30),
+                    SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key),
+                        SecurityAlgorithms.HmacSha512Signature),
+                };
+                var token = tokenHandler.CreateToken(tokenDescriptor);
+                return new APIRes(200, "Login successfully", tokenHandler.WriteToken(token));
+            }
+            catch (System.Exception)
+            {
+                throw;
+            }
+        }
         public static APIRes sendEmailResetPassword(string email)
         {
             try

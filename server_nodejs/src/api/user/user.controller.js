@@ -207,4 +207,28 @@ module.exports = {
             next(error);
         }
     },
+    updateOrder: async (req, res, next) => {
+        try {
+            const DTO = await service.updateOrder(
+                req.user.uid,
+                req.params.orderId,
+                req.body,
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    processOrders: async (req, res, next) => {
+        try {
+            const DTO = await service.processOrders(
+                req.user.uid,
+                res.query.type,
+                req.body,
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
 };

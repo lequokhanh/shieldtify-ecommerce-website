@@ -192,6 +192,7 @@ namespace shieldtify.api.user
                 {
                     var DTO = UserService.updateAccount(
                         context.Items["Role"] as string,
+                        (context.Items["User"] as Account).Uid.ToString(),
                         id,
                         body
                     );
@@ -393,6 +394,89 @@ namespace shieldtify.api.user
                 throw;
             }
         }
+        [Tags("User -> Admin")]
+        public static APIRes createStaff([FromBody] CreateStaffBody body, HttpContext context)
+        {
+            try
+            {
+                return Middleware.MiddlewareAuthorize(() =>
+                {
+                    var DTO = UserService.createStaff(
+                        context.Items["Role"] as string,
+                        body
+                    );
+                    context.Response.StatusCode = DTO.statusCode;
+                    return DTO;
+                }, context, new List<string> { "superadmin", "admin" });
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        [Tags("User -> Admin")]
+        public static APIRes getOrdersByStatus([FromQuery] string status, [FromQuery] string page, string keyword, HttpContext context)
+        {
+            try
+            {
+                return Middleware.MiddlewareAuthorize(() =>
+                {
+                    var DTO = UserService.getOrdersByStatus(
+                        status,
+                        int.Parse(page),
+                        keyword
+                    );
+                    context.Response.StatusCode = DTO.statusCode;
+                    return DTO;
+                }, context, new List<string> { "superadmin", "admin", "staff" });
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        [Tags("User -> Admin")]
+        public static APIRes updateOrder([FromRoute] string orderId, [FromBody] UpdateOrderBody body, HttpContext context)
+        {
+            try
+            {
+                return Middleware.MiddlewareAuthorize(() =>
+                {
+                    var DTO = UserService.updateOrder(
+                        (context.Items["User"] as Account).Uid.ToString(),
+                        orderId,
+                        body
+                    );
+                    context.Response.StatusCode = DTO.statusCode;
+                    return DTO;
+                }, context, new List<string> { "superadmin", "admin", "staff" });
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        [Tags("User -> Admin")]
+        public static APIRes processOrders([FromQuery] string type, [FromBody] List<UpdateOrderBody> orders, HttpContext context)
+        {
+            try
+            {
+                return Middleware.MiddlewareAuthorize(() =>
+                {
+                    var DTO = UserService.processOrders(
+                        (context.Items["User"] as Account).Uid.ToString(),
+                        orders,
+                        int.Parse(type)
+                    );
+                    context.Response.StatusCode = DTO.statusCode;
+                    return DTO;
+                }, context, new List<string> { "superadmin", "admin", "staff" });
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 
     public class CreateAddressBody
@@ -415,5 +499,28 @@ namespace shieldtify.api.user
         public string? username { get; set; }
         public string? display_name { get; set; }
         public string? role { get; set; }
+    }
+
+    public class UpdateOrderBody
+    {
+        public string uid { get; set; }
+        public string? order_status { get; set; }
+        public string? shipping_addressid { get; set; }
+
+        public List<OrderItemBody>? products { get; set; }
+    }
+
+    public class OrderItemBody
+    {
+        public string itemid { get; set; }
+        public int? quantity { get; set; }
+        public float? new_price { get; set; }
+    }
+
+    public class CreateStaffBody
+    {
+        public string username { get; set; }
+        public string display_name { get; set; }
+        public string role { get; set; }
     }
 }

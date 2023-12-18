@@ -268,15 +268,15 @@ module.exports = {
         try {
             const item = await db.item.findByPk(uid);
             if (!item) throw new AppError(404, 'Product not found');
-            item.categoryid = categoryid ? categoryid : item.categoryid;
-            item.brandid = brandid ? brandid : item.brandid;
-            item.name = name ? name : item.name;
-            item.specification = specification
-                ? specification
-                : item.specification;
-            item.description = description ? description : item.description;
-            item.price = price ? price : item.price;
-            item.stock_qty = stock_qty ? stock_qty : item.stock_qty;
+            item.categoryid = categoryid != null ? categoryid : item.categoryid;
+            item.brandid = brandid != null ? brandid : item.brandid;
+            item.name = name != null ? name : item.name;
+            item.specification =
+                specification != null ? specification : item.specification;
+            item.description =
+                description != null ? description : item.description;
+            item.price = price != null ? price : item.price;
+            item.stock_qty = stock_qty != null ? stock_qty : item.stock_qty;
             await item.save();
             return {
                 statusCode: 200,
