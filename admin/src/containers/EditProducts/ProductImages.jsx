@@ -222,20 +222,25 @@ const ProductsImages = ({
                         position="relative"
                     >
                         <Image
-                            src={img.link}
-                            alt="product image"
-                            w="80px"
-                            h="80px"
-                            objectFit="contain"
+                        src={img.link}
+                        alt="product image"
+                        w="80px"
+                        h="80px"
+                        objectFit="contain"
                         />
                         <Image
-                            bgColor="#FFFFFF"
-                            src={ticked}
-                            alt="ticked"
-                            position="absolute"
-                            top="-2"
-                            right="-2"
-                            display={selectedImage === img ? "block" : "none"}
+                        bgColor="#FFFFFF"
+                        src={ticked}
+                        alt="ticked"
+                        position="absolute"
+                        top="-2"
+                        right="-2"
+                        display={
+                        ((selectedImage === img) && (currentUser && (currentUser.role === "admin" || currentUser.role === "superadmin"))) 
+                        ? 
+                        "block" 
+                        : "none"
+                        }
                         />
                     </Flex>
                 ))}

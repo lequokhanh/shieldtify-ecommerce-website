@@ -65,11 +65,6 @@ const EditProducts = () => {
     const { currentUser } = useContext(AuthContext);
     const navigate = useNavigate();
     const toast = useToast();
-    const handleSelectedItemsChange = (selectedItems) => {
-        if (selectedItems) {
-            setCurrentBrand(selectedItems);
-        }
-    };
 
     useEffect(() => {
         async function fetchData(){
@@ -378,9 +373,9 @@ const EditProducts = () => {
                                 placeholder='Start typing...'
                                 selectedItems={currentBrand}
                                 isReadOnly={currentUser && currentUser.role === "staff"}
-                                onSelectedItemsChange={(changes) =>
-                                    handleSelectedItemsChange(changes.selectedItems)
-                                }
+                                onChange={(changes) =>{
+                                    setCurrentBrand(changes);
+                                }}
                                 creatable
                                 >
                                     <AutoCompleteInput

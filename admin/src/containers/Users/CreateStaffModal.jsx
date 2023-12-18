@@ -12,7 +12,8 @@ import {
     ModalHeader, 
     ModalOverlay, 
     Radio, 
-    RadioGroup
+    RadioGroup,
+    useToast
 } from "@chakra-ui/react";
 import { Field, Form, Formik } from "formik";
 import { useContext } from "react";
@@ -20,7 +21,8 @@ import { UsersContext } from "../../context/users.context";
 import { createStaffAccount } from "../../utils/api";
 
 const CreateStaffModal = () => {
-    const {isCreateOpen, setIsCreateOpen} = useContext(UsersContext);
+    const {isCreateOpen, setIsCreateOpen, staffs, setStaffs} = useContext(UsersContext);
+    const toast = useToast();
     return (
         <Modal
         isOpen={isCreateOpen}
@@ -56,19 +58,30 @@ const CreateStaffModal = () => {
                     role:'',
                     }}
                     onSubmit={async (values, actions) => {
-                        if(values.role === ''){
-                            actions.setFieldError('role', 'Please select a role');
-                        }
-                        if(values.username === ''){
-                            actions.setFieldError('username', 'Please enter a username');
-                        }
                         if(values.displayname === ''){
                             actions.setFieldError('displayname', 'Please enter a display name');
+                            return;
                         }
                         await createStaffAccount({
                             username: values.username,
                             display_name: values.displayname,
                             role: values.role
+                        }).then((res) => {
+                            toast({
+                                title: "Staff account created successfully",
+                                status: "success",
+                                duration: 3000,
+                                isClosable: true,
+                            })
+                            setStaffs([...staffs,res.data.data]);
+                            setIsCreateOpen(false);
+                        }).catch((err) => {
+                            if(err.response.data.message === "Username is already taken"){
+                                actions.setFieldError('username', err.response.data.message);
+                            }
+                            if(err.response.data.message === "Role is invalid"){
+                                actions.setFieldError('role', err.response.data.message);
+                            }
                         })
                         actions.setSubmitting(false);
                     }}

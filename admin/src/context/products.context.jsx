@@ -62,7 +62,23 @@ export const ProductsProvider = ({children}) => {
         await updateProductForStaff(product);
     }
 
-    const callUpdateProduct = async ({product}) => {
+    const callUpdateProduct = async ({product},type) => {
+        if(type==="disable"){
+            await updateProduct(product).catch(err => console.log(err)).then((res) =>{
+                let brand = allBrands.find((item) => item.uid === res.data.data.brandid).name;
+                const newProduct = {
+                    uid: res.data.data.uid,
+                    name: res.data.data.name,
+                    price: res.data.data.price,
+                    stock_qty: res.data.data.stock_qty,
+                    brand: brand,
+                }
+                console.log(newProduct);
+                const updatedProducts = products.map(p => p.uid === newProduct.uid ? newProduct : p);
+                setProducts(updatedProducts);
+            });
+            return;
+        }
         const brand = allBrands.find((item) => item.name  === product.brand) || null;
         if(brand){
             product.brandid = brand.uid;

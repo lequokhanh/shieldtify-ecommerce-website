@@ -77,7 +77,7 @@ const OrdersTable = ({orders,checkedOrders,setCheckedOrders}) => {
                 </Thead>
                 <Tbody>
                     {
-                        orders.map((order, index) => (
+                        orders.length > 0 && orders.map((order, index) => (
                             <Tr key={index} bg={(index % 2) ? "#F3F4F6" : "#FFFFFF"} fontFamily="Inter">
                                 <Td>
                                     <Checkbox

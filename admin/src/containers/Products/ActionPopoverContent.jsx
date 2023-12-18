@@ -8,9 +8,12 @@ import {
 import edit from "../../assets/Products/Edit.svg"
 import { useNavigate } from "react-router-dom"
 import { NotAllowedIcon } from "@chakra-ui/icons"
+import { useContext } from "react"
+import { AuthContext } from "../../context/auth.context"
 
 const ActionPopoverContent = ({handleDeleteClick,checkedCategories,checkedProducts,isOnProducts,setIsCategoryEditOpen,setEditType}) => {
     const navigate = useNavigate();
+    const { currentUser } = useContext(AuthContext);
     const toast = useToast();
     return (
         <>
@@ -52,7 +55,8 @@ const ActionPopoverContent = ({handleDeleteClick,checkedCategories,checkedProduc
                     )
                 }
                 {
-                    isOnProducts && (
+                    (isOnProducts && (currentUser && currentUser.role) && (currentUser.role === "admin" || currentUser.role === "superadmin")) && (
+
                         <HStack 
                         gap="8px"
                         padding="8px 50px 8px 16px"
@@ -73,7 +77,7 @@ const ActionPopoverContent = ({handleDeleteClick,checkedCategories,checkedProduc
                                 })
                                 return;
                             }
-                            handleDeleteClick();
+                            handleDeleteClick(checkedProducts[0]);
                         }}
                         >
                             <NotAllowedIcon boxSize={6}/>

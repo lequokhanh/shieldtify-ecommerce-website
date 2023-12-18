@@ -20,7 +20,7 @@ import InfoActionPopoverContent from "./InfoActionPopoverContent";
 import OrdersTable from "./OrdersTable";
 import Pagination from "../../components/Pagination";
 import OrderModal from "./OrderModal";
-import { getAllOrders, getOrderByClientId } from "../../utils/api";
+import { getAllOrders, getOrderByClientId, getOrderByStatus, getUserById } from "../../utils/api";
 import { AuthContext } from "../../context/auth.context";
 
 const Orders = () => {
@@ -30,17 +30,25 @@ const Orders = () => {
     const [filteredOrder, setFileteredOrder] = useState("All orders");
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [selectedOrderInfo, setSelectedOrderInfo] = useState({});
-    const [orders, setOrders] = useState([]); // [
-    const [checkedOrders, setCheckedOrders] = useState([]); // [
+    const [selectedAddress, setSelectedAddress] = useState({}); 
+    const [orders, setOrders] = useState([]); 
+    const [checkedOrders, setCheckedOrders] = useState([]); 
+    const [currentUserAddresses, setCurrentUserAddresses] = useState([]); 
     const { isLoggedIn } = useContext(AuthContext);
     const handleFilterClick = (filter) => {
+        setSearchValue(""); 
         setFileteredOrder(filter);
     }
-    // useEffect(async () => {
-    //     if(filteredOrder === "All orders"){
-    //         await getAllOrders()
-    //     }else
-    // },[filteredOrder]);
+    useEffect(() => {
+        async function fetchData(){
+            if(filteredOrder !== "All orders"){
+                await getOrderByStatus({status:filteredOrder}).then((res) => {
+                    setOrders(res.data.data);
+                });
+            }
+        }
+        fetchData();
+    },[filteredOrder]);
     const [allOrdersStat, setAllOrdersStat] = useState({
         orderNum: "0",
         info: "0",
@@ -142,14 +150,21 @@ const Orders = () => {
                 })
             })
         }
-        if(isLoggedIn){
+        if(searchValue!==""){
+            setFileteredOrder("All orders");
+        }
+        if(isLoggedIn && filteredOrder === "All orders"){
             fetchData();
         }
-    },[currentPage,isLoggedIn,searchValue])
+    },[currentPage,isLoggedIn,searchValue,filteredOrder])
     const handleEditClick =  async ({userId,orderId}) => {
         await getOrderByClientId({userId,orderId}).then((res) => {
             setSelectedOrderInfo(res.data.data);
+            setSelectedAddress(res.data.data.shipping_address);
             setIsEditModalOpen(true);
+        })
+        await getUserById({id:userId}).then((res) => {
+            setCurrentUserAddresses(res.data.data.addresses);
         })
     }
     return (
@@ -193,7 +208,15 @@ const Orders = () => {
             <Flex justifyContent="flex-end">
                 <Pagination totalPages={totalPages} currentPage={currentPage} setCurrentPage={setCurrentPage}/>
             </Flex>
-            <OrderModal isOpen={isEditModalOpen} onClose={() => setIsEditModalOpen(false)} order={selectedOrderInfo}/>
+            <OrderModal 
+            isOpen={isEditModalOpen} 
+            onClose={() => setIsEditModalOpen(false)} 
+            order={selectedOrderInfo}
+            selectedAddress={selectedAddress}
+            setSelectedAddress={setSelectedAddress}
+            setOrder={setSelectedOrderInfo}
+            currentUserAddresses={currentUserAddresses}
+            />
         </Flex>        
     )
 };

@@ -40,7 +40,7 @@ const Products = () => {
     const [checkedProducts, setCheckedProducts] = useState([]);
     const [editType, setEditType] = useState("");
     const { isLoggedIn } = useContext(AuthContext);
-    const { isOpen, onClose, onOpen } = useDisclosure();
+    const { isOpen, onClose } = useDisclosure();
     const [unsubmittedCheckedBrands, setUnsubmittedCheckedBrands] = useState([]);
 
     const { 
@@ -62,7 +62,8 @@ const Products = () => {
         setTotalProductsInCategory,
         setTotalPages,
         setBrands,
-        totalProductsInCategory
+        totalProductsInCategory,
+        callUpdateProduct,
     } = useContext(ProductsContext);
     useEffect(() => {
         async function fetchData(){
@@ -95,8 +96,13 @@ const Products = () => {
             fetchData();
         }  
     },[currentPage,currentCategories,isLoggedIn,currentBrands,searchValue]);
-    const handleDeleteClick = () => {
-        onOpen();
+    const handleDeleteClick = (productID) => {
+        callUpdateProduct({
+            product : {
+                productID,
+                stock_qty: 0
+            }
+        }, "disable")
     }
     const handleProductsClick = () => {
         setIsOnProducts(true);

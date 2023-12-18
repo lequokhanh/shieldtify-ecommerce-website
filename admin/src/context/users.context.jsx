@@ -35,8 +35,9 @@ export const UsersProvider = ({children}) => {
     const [isEditOpen, setIsEditOpen] = useState(false);
     const [isCreateOpen, setIsCreateOpen] = useState(false);
     const toast = useToast();
-    const resetStaffPwd = async (id) => {
-        await resetStaffPassword(id).then(() => {
+    const resetStaffPwd = async (uid) => {
+        console.log(uid);
+        await resetStaffPassword({uid}).then(() => {
             toast({
                 title: "Reset password successfully",
                 status: "success",
