@@ -66,14 +66,18 @@ const OrderModal = ({isOpen, onClose, order, setOrder, currentUserAddresses, sel
                     orderStatus: order.order_status || '',
                 }}
                 onSubmit={ async (values) => {
+                    const products = order.order_item.map((product) => {
+                        const { old_price, item, ...rest } = product;
+                        return rest;
+                    });
                     await updateOrder({
                         orderId: order.uid,
                         newOrder: { 
                             payment_method: values.paymentMethod,
                             receive_method: values.receiveMethod,
                             order_status: values.orderStatus,
-                            products: order.order_item,
-                            addressid: selectedAddress && selectedAddress.uid, 
+                            products: products,
+                            shipping_addressid: selectedAddress && selectedAddress.uid, 
                         }
                     }).then(() => {
                         toast({
@@ -84,7 +88,6 @@ const OrderModal = ({isOpen, onClose, order, setOrder, currentUserAddresses, sel
                         });
                         fetchData();
                     }).catch((err) => {
-                        console.log(err);
                         toast({
                             title: "Order updated failed",
                             description: err.response.data.message,   
@@ -543,9 +546,7 @@ const OrderModal = ({isOpen, onClose, order, setOrder, currentUserAddresses, sel
                                             </FormLabel>
                                             <Input
                                             placeholder="Supported by"
-                                            // value={new Date(
-                                            //     orderDetail.order_date
-                                            // ).toLocaleDateString('en-UK')}
+                                            value={order && order.staff && order.staff.display_name}
                                             isReadOnly
                                             padding={'24px 12px'}
                                             fontSize={'14px'}

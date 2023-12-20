@@ -230,7 +230,6 @@ const Products = () => {
                                 </Popover>
                             </Box>
                             <Box display={!isOnProducts && "none"}>
-
                                 <Popover>
                                     <>
                                         <PopoverTrigger>
