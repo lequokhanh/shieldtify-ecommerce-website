@@ -49,7 +49,9 @@ namespace shieldtify.api.product
                     uid = i.Uid,
                     name = i.Name,
                     price = i.Price,
-                    primary_img = i.ItemImgs.Where(im => im.IsPrimary).Select(im => im.Link).FirstOrDefault()
+                    primary_img = i.ItemImgs.Where(im => im.IsPrimary).Select(im => im.Link).FirstOrDefault(),
+                    stock_qty = i.StockQty,
+                    brand = i.Brand.Name
                 }).Skip((page - 1) * 16).Take(16).ToList();
                 // round up max price
                 var maxPrice = (int)Math.Ceiling(dbContext.Items.Where(i => i.Name.ToLower().Contains(keyword.ToLower())).Max(i => i.Price));
@@ -179,7 +181,9 @@ namespace shieldtify.api.product
                             link = im.Link,
                             is_primary = im.IsPrimary
                         }).ToList(),
-                        brand = new { name = i.Brand.Name }
+                        brand = new { name = i.Brand.Name },
+                        item_category = new { name = i.Category.Name },
+                        stock_qty = i.StockQty
                     })
                     .FirstOrDefault();
                 if (item == null)
