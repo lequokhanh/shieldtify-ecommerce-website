@@ -126,7 +126,7 @@ const EditStaffModal = ({staff,fetchData}) => {
                                     )}
                                 </Field>
                                 {
-                                    currentUser && (currentUser.uid !== staff.uid) && (
+                                    currentUser && staff && (currentUser.uid !== staff.uid) && (
                                         <Field name="role" type="radio">
                                             {({field}) => (
                                                 <FormControl>
