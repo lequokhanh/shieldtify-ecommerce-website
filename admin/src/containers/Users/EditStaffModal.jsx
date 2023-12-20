@@ -18,9 +18,11 @@ import {
 import { Field, Form, Formik } from "formik";
 import { useContext } from "react";
 import { UsersContext } from "../../context/users.context";
+import { AuthContext } from "../../context/auth.context";
 import { updateStaffAcount } from "../../utils/api";
 
-const EditStaffModal = ({staff}) => {
+const EditStaffModal = ({staff,fetchData}) => {
+    const { currentUser } = useContext(AuthContext);
     const toast = useToast();
     const {isEditOpen, setIsEditOpen,resetStaffPwd} = useContext(UsersContext);
     return (
@@ -62,7 +64,7 @@ const EditStaffModal = ({staff}) => {
                             id: staff.uid,
                             username: (values.username === staff.username) ? null : values.username,
                             display_name: (values.displayname === staff.display_name) ? null : values.displayname,
-                            role: staff.role
+                            role: values.role
                         }).then(() => {
                             toast({
                                 title: "Staff account updated.",
@@ -71,6 +73,8 @@ const EditStaffModal = ({staff}) => {
                                 duration: 9000,
                                 isClosable: true,
                             })
+                            fetchData();
+                            fetch
                         }).catch(err => {
                             actions.setFieldError('username', err.response.data.message);
                         })
@@ -121,43 +125,47 @@ const EditStaffModal = ({staff}) => {
                                         </FormControl>
                                     )}
                                 </Field>
-                                <Field name="role" type="radio">
-                                    {({field}) => (
-                                        <FormControl>
-                                            <FormLabel
-                                            fontWeight="700"
-                                            fontSize="0.875rem"
-                                            color="#424856" 
-                                            >
-                                                Role
-                                            </FormLabel>
-                                            <RadioGroup 
-                                            defaultValue={staff.role}
-                                            >
-                                                <HStack gap="33px" pl="10px">
-                                                    <Radio 
-                                                    {...field} 
-                                                    value="staff"
-                                                    colorScheme="blackAlpha"
-                                                    borderColor="#D9D9D9"
-                                                    box-shadow="0px 3px 5px 0px rgba(46, 46, 66, 0.08)"
+                                {
+                                    currentUser && staff && (currentUser.uid !== staff.uid) && (
+                                        <Field name="role" type="radio">
+                                            {({field}) => (
+                                                <FormControl>
+                                                    <FormLabel
+                                                    fontWeight="700"
+                                                    fontSize="0.875rem"
+                                                    color="#424856" 
                                                     >
-                                                        Staff
-                                                        </Radio>
-                                                    <Radio 
-                                                    {...field} 
-                                                    value="admin"
-                                                    colorScheme="blackAlpha"
-                                                    borderColor="#D9D9D9"
-                                                    box-shadow="0px 3px 5px 0px rgba(46, 46, 66, 0.08)"
+                                                        Role
+                                                    </FormLabel>
+                                                    <RadioGroup 
+                                                    defaultValue={staff.role}
                                                     >
-                                                        Admin
-                                                    </Radio>
-                                                </HStack>
-                                            </RadioGroup>
-                                        </FormControl>
-                                    )}
-                                </Field>
+                                                        <HStack gap="33px" pl="10px">
+                                                            <Radio 
+                                                            {...field} 
+                                                            value="staff"
+                                                            colorScheme="blackAlpha"
+                                                            borderColor="#D9D9D9"
+                                                            box-shadow="0px 3px 5px 0px rgba(46, 46, 66, 0.08)"
+                                                            >
+                                                                Staff
+                                                                </Radio>
+                                                            <Radio 
+                                                            {...field} 
+                                                            value="admin"
+                                                            colorScheme="blackAlpha"
+                                                            borderColor="#D9D9D9"
+                                                            box-shadow="0px 3px 5px 0px rgba(46, 46, 66, 0.08)"
+                                                            >
+                                                                Admin
+                                                            </Radio>
+                                                        </HStack>
+                                                    </RadioGroup>
+                                                </FormControl>
+                                            )}
+                                        </Field>
+                                    )
+                                }
                                 <Button 
                                 borderRadius="25px" 
                                 bg="shieldtify.200" 

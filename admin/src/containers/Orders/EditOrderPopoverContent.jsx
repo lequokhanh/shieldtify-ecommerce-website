@@ -42,6 +42,11 @@ const EditOrderPopoverContent = ({ setOrder, order, unsubmittedProduct, setUnsub
                                 paddingX="5px"
                                 value={unsubmittedProduct.quantity}
                                 onChange={(e) => {
+                                    // setOrder({
+                                    //     ...order,
+                                    //     old_total: order.new_total,
+                                    //     new_total: order.new_total -
+                                    // })
                                     setUnsubmittedProduct({
                                         ...unsubmittedProduct,
                                         quantity: parseInt(e.target.value),
@@ -87,10 +92,11 @@ const EditOrderPopoverContent = ({ setOrder, order, unsubmittedProduct, setUnsub
                                 <Input
                                 value={unsubmittedProduct.new_price}
                                 onChange={(e) => {
+                                    const newPrice = parseFloat(e.target.value);
                                     setUnsubmittedProduct({
                                         ...unsubmittedProduct,
-                                        new_price: e.target.value,
-                                    })
+                                        new_price: newPrice,
+                                    });
                                 }}
                                 id="price"
                                 w="85.36px"
@@ -112,15 +118,26 @@ const EditOrderPopoverContent = ({ setOrder, order, unsubmittedProduct, setUnsub
                 borderRadius="25px"
                 fontWeight="600"
                 onClick={() => {
+                    let newTotal = 0;
+                    order.order_item.forEach((item) => {
+                        if (item.itemid === unsubmittedProduct.itemid) {
+                            newTotal += parseInt(unsubmittedProduct.quantity) * parseFloat(unsubmittedProduct.new_price).toFixed(2);
+                        } else {
+                            newTotal += parseFloat((item.quantity * item.new_price).toFixed(2));
+                            console.log(item.quantity,item.price);
+                        }
+                    });
+                    console.log(unsubmittedProduct);
                     const newItems = order.order_item.map((p) => {
-                            if (p.itemid === unsubmittedProduct.itemid) {
-                                return unsubmittedProduct;
-                            }
-                            return p;
+                        if (p.itemid === unsubmittedProduct.itemid) {
+                            return unsubmittedProduct;
+                        }
+                        return p;
                     });
                     setOrder({
                         ...order,
-                        order_item: newItems    
+                        order_item: newItems,
+                        new_total: parseFloat(newTotal.toFixed(2)) || 0,
                     });
                 }}
                 >

@@ -8,7 +8,7 @@ import {
 import processorder from "../../assets/Orders/processorder.svg";
 import cancelorder from "../../assets/Orders/cancelorder.svg";
 import editorder from "../../assets/Orders/editorder.svg";
-import { cancelOrders, processOrders } from "../../utils/api";
+import { processOrders } from "../../utils/api";
 
 const InfoActionPopoverContent = ({handleEditClick,checkedOrders}) => {
     const toast = useToast();
@@ -36,7 +36,11 @@ const InfoActionPopoverContent = ({handleEditClick,checkedOrders}) => {
             return;
         }
         const ordersIDs = checkedOrders.map((order) => order.orderId);
-        await cancelOrders(ordersIDs);
+        console.log(ordersIDs);
+        await processOrders({
+            checkedOrdersIds: ordersIDs,
+            type: 0
+        })
     }
     return(
         <Flex 

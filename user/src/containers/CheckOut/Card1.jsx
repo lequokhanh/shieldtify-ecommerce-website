@@ -6,6 +6,7 @@ import {
     Table,
     TableContainer,
     Tbody,
+    Thead,
     Td,
     Text,
     Th,
@@ -36,6 +37,7 @@ const Card1 = ({items}) => {
                 </HStack>      
                     <TableContainer>
                         <Table variant="unstyled">
+                            <Thead>
                                 <Tr >
                                     <Th
                                     color="#9095A1"
@@ -66,6 +68,7 @@ const Card1 = ({items}) => {
                                         Total
                                     </Th>
                                 </Tr>
+                            </Thead>
                                 <Tbody
                                 fontFamily="Inter, sans-serif"
                                 >

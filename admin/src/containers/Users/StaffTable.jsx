@@ -21,7 +21,7 @@ import EditPopOverContent from "./EditPopOverContent";
 import EditStaffModal from "./EditStaffModal";
 
 
-const StaffTable = () => {
+const StaffTable = ({fetchData}) => {
     const { staffs } = useContext(UsersContext);
     const [selectedStaff, setSelectedStaff] = useState(null);
     return (
@@ -88,7 +88,7 @@ const StaffTable = () => {
                     </Tbody>
                 </Table>
             </TableContainer>
-            <EditStaffModal staff={selectedStaff}/>
+            <EditStaffModal staff={selectedStaff} fetchData={fetchData}/>
         </>
     )
 }

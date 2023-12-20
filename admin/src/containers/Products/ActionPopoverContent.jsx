@@ -29,6 +29,15 @@ const ActionPopoverContent = ({handleDeleteClick,checkedCategories,checkedProduc
                             borderRadius: "9px"
                         }}
                         onClick={() => {
+                            if(currentUser && currentUser.role && currentUser.role !== "superadmin" && currentUser.role !== "admin" && !isOnProducts){
+                                toast({
+                                    title: "You don't have permission to edit categories",
+                                    status: "error",
+                                    duration: 3000,
+                                    isClosable: true,
+                                });
+                                return;
+                            }
                             if ((isOnProducts && checkedProducts.length === 0) || (!isOnProducts && checkedCategories.length === 0)) {
                                 toast({
                                     title: 'Error',

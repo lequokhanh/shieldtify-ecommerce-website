@@ -14,21 +14,24 @@ import {
     ModalHeader, 
     ModalOverlay, 
     Popover, 
-    PopoverArrow, 
+    // PopoverArrow, 
     PopoverContent, 
     PopoverTrigger, 
     Radio, 
     RadioGroup,
     Spacer,
     Text,
-    VStack, 
+    VStack,
+    useToast, 
 } from "@chakra-ui/react"
 import { Field, Form, Formik } from "formik"
 import ProductListCard from "./ProductsListCard"
 import { ChevronDownIcon } from "@chakra-ui/icons"
 import AddressPopoverContent from "./AddressPopoverContent"
+import { updateOrder } from "../../utils/api"
 
-const OrderModal = ({isOpen, onClose, order, setOrder, currentUserAddresses,selectedAddress, setSelectedAddress}) => {
+const OrderModal = ({isOpen, onClose, order, setOrder, currentUserAddresses, selectedAddress, setSelectedAddress, fetchData}) => {
+    const toast = useToast();
     return (
     <Modal 
     isOpen={isOpen} 
@@ -59,12 +62,37 @@ const OrderModal = ({isOpen, onClose, order, setOrder, currentUserAddresses,sele
                 <Formik
                 initialValues={{
                     paymentMethod: order.payment_method || '',
-                    deliveryMethod: order.receive_method || '',
-                    orderAddress: '',
-                    orderStatus: order.status || '',
+                    receiveMethod: order.receive_method || '',
+                    orderStatus: order.order_status || '',
                 }}
-                onSubmit={(values) => {
-                    
+                onSubmit={ async (values) => {
+                    await updateOrder({
+                        orderId: order.uid,
+                        newOrder: { 
+                            payment_method: values.paymentMethod,
+                            receive_method: values.receiveMethod,
+                            order_status: values.orderStatus,
+                            products: order.order_item,
+                            addressid: selectedAddress && selectedAddress.uid, 
+                        }
+                    }).then(() => {
+                        toast({
+                            title: "Order updated successfully",
+                            status: "success",
+                            duration: 3000,
+                            isClosable: true,
+                        });
+                        fetchData();
+                    }).catch((err) => {
+                        console.log(err);
+                        toast({
+                            title: "Order updated failed",
+                            description: err.response.data.message,   
+                            status: "error",
+                            duration: 3000,
+                            isClosable: true,
+                        });
+                    })
                 }}
                 >
                     <Form>
@@ -126,9 +154,9 @@ const OrderModal = ({isOpen, onClose, order, setOrder, currentUserAddresses,sele
                                             </FormControl>
                                         )}
                                     </Field>
-                                    <Field name="deliveryMethod" type="radio">
+                                    <Field name="receiveMethod" type="radio">
                                         {({field,form}) => (
-                                            <FormControl isInvalid={form.errors.deliveryMethod && form.touched.deliveryMethod}>
+                                            <FormControl isInvalid={form.errors.receiveMethod && form.touched.receiveMethod}>
                                                 <Flex flexDir="column" gap="8px">
                                                     <FormLabel fontSize="0.875rem" fontWeight="700" color="#424856">
                                                         Delivery method
@@ -181,152 +209,157 @@ const OrderModal = ({isOpen, onClose, order, setOrder, currentUserAddresses,sele
                                             />
                                         </Flex>
                                     </FormControl>
-                                    <FormControl>
-                                        <Flex flexDir="column" gap="15px">
-                                            <FormLabel
-                                            fontSize={'14px'}
-                                            fontFamily={'Inter'}
-                                            fontWeight={'700'}
-                                            color={'#424856'}
-                                            mb={'5px'}
-                                            >
-                                            Recipient information
-                                            </FormLabel>
-                                            <Box
-                                            border="1px dashed"
-                                            borderRadius={'12px'}
-                                            padding={'16px'}
-                                            >
+                                    {
+                                        order && order.receive_method !== "In-store" && (
+
+                                            <FormControl>
                                                 <Flex flexDir="column" gap="15px">
-                                                    <HStack justifyContent="space-between">
-                                                        <Text fontWeight="700" fontSize="0.875rem" color="#424856">
-                                                            Selected address
-                                                        </Text>
-                                                        <Popover>
-                                                            {({onClose}) => (
-                                                            <>
-                                                                <PopoverTrigger>
-                                                                    <HStack 
-                                                                    padding="7px 12px" 
-                                                                    border="1px solid #444444"
-                                                                    borderRadius="12px" 
-                                                                    as="button"
-                                                                    gap="5px"
-                                                                    type="button"
-                                                                    w="140px"
-                                                                    justifyContent="space-between"
-                                                                    _hover={{cursor:"pointer"}}
-                                                                    >   
-                                                                        <Text fontSize="0.875rem" color="#444444" fontWeight="400" isTruncated>
-                                                                            {selectedAddress && selectedAddress.address}
-                                                                        </Text>
-                                                                        <ChevronDownIcon boxSize="4" color="#444444"/>
-                                                                    </HStack>
-                                                                </PopoverTrigger>
-                                                                <PopoverContent>
-                                                                    <AddressPopoverContent
-                                                                    currentUserAddresses={currentUserAddresses}
-                                                                    selectedAddress={selectedAddress}
-                                                                    setSelectedAddress={setSelectedAddress}
-                                                                    setOrder={setOrder}
-                                                                    onClose={onClose}
-                                                                    />
-                                                                </PopoverContent>
-                                                            </>)}
-                                                        </Popover>
-                                                    </HStack>
-                                                    <FormControl>
-                                                        <FormLabel
-                                                            fontSize={'14px'}
-                                                            fontFamily={'Inter'}
-                                                            fontWeight={'800'}
-                                                            color={'#424856'}
-                                                            mb={'5px'}
-                                                        >
-                                                            Address
-                                                        </FormLabel>
-                                                        <Input
-                                                            placeholder="Receive address"
-                                                            value={
-                                                                selectedAddress && selectedAddress.address
-                                                            }
-                                                            isReadOnly
-                                                            padding={'24px 12px'}
-                                                            fontSize={'14px'}
-                                                            fontWeight={'400'}
-                                                            bg="#F3F4F6"
-                                                        />
-                                                    </FormControl>
-                                                    <FormControl>
-                                                        <FormLabel
-                                                            fontSize={'14px'}
-                                                            fontFamily={'Inter'}
-                                                            fontWeight={'800'}
-                                                            color={'#424856'}
-                                                            mb={'5px'}
-                                                        >
-                                                            City
-                                                        </FormLabel>
-                                                        <Input
-                                                            placeholder="Address city"
-                                                            value={
-                                                                selectedAddress && selectedAddress.city
-                                                            }
-                                                            isReadOnly
-                                                            padding={'24px 12px'}
-                                                            fontSize={'14px'}
-                                                            fontWeight={'400'}
-                                                            bg="#F3F4F6"
-                                                        />
-                                                    </FormControl>
-                                                    <FormControl>
-                                                        <FormLabel
-                                                            fontSize={'14px'}
-                                                            fontFamily={'Inter'}
-                                                            fontWeight={'800'}
-                                                            color={'#424856'}
-                                                            mb={'5px'}
-                                                        >
-                                                            Province
-                                                        </FormLabel>
-                                                        <Input
-                                                            placeholder="Address province"
-                                                            value = {
-                                                                selectedAddress && selectedAddress.province
-                                                            }
-                                                            isReadOnly
-                                                            padding={'24px 12px'}
-                                                            fontSize={'14px'}
-                                                            fontWeight={'400'}
-                                                            bg="#F3F4F6"
-                                                        />
-                                                    </FormControl>
-                                                    <FormControl>
-                                                        <FormLabel
-                                                            fontSize={'14px'}
-                                                            fontFamily={'Inter'}
-                                                            fontWeight={'800'}
-                                                            color={'#424856'}
-                                                            mb={'5px'}
-                                                        >
-                                                            Phone number
-                                                        </FormLabel>
-                                                        <Input
-                                                            placeholder="Phone number"
-                                                            value= {
-                                                                selectedAddress && selectedAddress.phone_number
-                                                            }
-                                                            isReadOnly
-                                                            padding={'24px 12px'}
-                                                            fontSize={'14px'}
-                                                            fontWeight={'400'}
-                                                            bg="#F3F4F6"
-                                                        />
-                                                    </FormControl>
+                                                    <FormLabel
+                                                    fontSize={'14px'}
+                                                    fontFamily={'Inter'}
+                                                    fontWeight={'700'}
+                                                    color={'#424856'}
+                                                    mb={'5px'}
+                                                    >
+                                                    Recipient information
+                                                    </FormLabel>
+                                                    <Box
+                                                    border="1px dashed"
+                                                    borderRadius={'12px'}
+                                                    padding={'16px'}
+                                                    >
+                                                        <Flex flexDir="column" gap="15px">
+                                                            <HStack justifyContent="space-between">
+                                                                <Text fontWeight="700" fontSize="0.875rem" color="#424856">
+                                                                    Selected address
+                                                                </Text>
+                                                                <Popover>
+                                                                    {({onClose}) => (
+                                                                    <>
+                                                                        <PopoverTrigger>
+                                                                            <HStack 
+                                                                            padding="7px 12px" 
+                                                                            border="1px solid #444444"
+                                                                            borderRadius="12px" 
+                                                                            as="button"
+                                                                            gap="5px"
+                                                                            type="button"
+                                                                            w="140px"
+                                                                            justifyContent="space-between"
+                                                                            _hover={{cursor:"pointer"}}
+                                                                            >   
+                                                                                <Text fontSize="0.875rem" color="#444444" fontWeight="400" isTruncated>
+                                                                                    {selectedAddress && selectedAddress.address}
+                                                                                </Text>
+                                                                                <ChevronDownIcon boxSize="4" color="#444444"/>
+                                                                            </HStack>
+                                                                        </PopoverTrigger>
+                                                                        <PopoverContent>
+                                                                            <AddressPopoverContent
+                                                                            currentUserAddresses={currentUserAddresses}
+                                                                            selectedAddress={selectedAddress}
+                                                                            setSelectedAddress={setSelectedAddress}
+                                                                            setOrder={setOrder}
+                                                                            onClose={onClose}
+                                                                            />
+                                                                        </PopoverContent>
+                                                                    </>)}
+                                                                </Popover>
+                                                            </HStack>
+                                                            <FormControl>
+                                                                <FormLabel
+                                                                    fontSize={'14px'}
+                                                                    fontFamily={'Inter'}
+                                                                    fontWeight={'800'}
+                                                                    color={'#424856'}
+                                                                    mb={'5px'}
+                                                                >
+                                                                    Address
+                                                                </FormLabel>
+                                                                <Input
+                                                                    placeholder="Receive address"
+                                                                    value={
+                                                                        selectedAddress && selectedAddress.address
+                                                                    }
+                                                                    isReadOnly
+                                                                    padding={'24px 12px'}
+                                                                    fontSize={'14px'}
+                                                                    fontWeight={'400'}
+                                                                    bg="#F3F4F6"
+                                                                />
+                                                            </FormControl>
+                                                            <FormControl>
+                                                                <FormLabel
+                                                                    fontSize={'14px'}
+                                                                    fontFamily={'Inter'}
+                                                                    fontWeight={'800'}
+                                                                    color={'#424856'}
+                                                                    mb={'5px'}
+                                                                >
+                                                                    City
+                                                                </FormLabel>
+                                                                <Input
+                                                                    placeholder="Address city"
+                                                                    value={
+                                                                        selectedAddress && selectedAddress.city
+                                                                    }
+                                                                    isReadOnly
+                                                                    padding={'24px 12px'}
+                                                                    fontSize={'14px'}
+                                                                    fontWeight={'400'}
+                                                                    bg="#F3F4F6"
+                                                                />
+                                                            </FormControl>
+                                                            <FormControl>
+                                                                <FormLabel
+                                                                    fontSize={'14px'}
+                                                                    fontFamily={'Inter'}
+                                                                    fontWeight={'800'}
+                                                                    color={'#424856'}
+                                                                    mb={'5px'}
+                                                                >
+                                                                    Province
+                                                                </FormLabel>
+                                                                <Input
+                                                                    placeholder="Address province"
+                                                                    value = {
+                                                                        selectedAddress && selectedAddress.province
+                                                                    }
+                                                                    isReadOnly
+                                                                    padding={'24px 12px'}
+                                                                    fontSize={'14px'}
+                                                                    fontWeight={'400'}
+                                                                    bg="#F3F4F6"
+                                                                />
+                                                            </FormControl>
+                                                            <FormControl>
+                                                                <FormLabel
+                                                                    fontSize={'14px'}
+                                                                    fontFamily={'Inter'}
+                                                                    fontWeight={'800'}
+                                                                    color={'#424856'}
+                                                                    mb={'5px'}
+                                                                >
+                                                                    Phone number
+                                                                </FormLabel>
+                                                                <Input
+                                                                    placeholder="Phone number"
+                                                                    value= {
+                                                                        selectedAddress && selectedAddress.phone_number
+                                                                    }
+                                                                    isReadOnly
+                                                                    padding={'24px 12px'}
+                                                                    fontSize={'14px'}
+                                                                    fontWeight={'400'}
+                                                                    bg="#F3F4F6"
+                                                                />
+                                                            </FormControl>
+                                                        </Flex>
+                                                </Box>
                                                 </Flex>
-                                        </Box>
-                                        </Flex>
-                                    </FormControl>
+                                            </FormControl>
+                                        )
+                                    }
                                     <Flex flexDir={'column'} gap={'7px'}>
                                         <Box
                                             fontSize={'18px'}
@@ -357,7 +390,7 @@ const OrderModal = ({isOpen, onClose, order, setOrder, currentUserAddresses,sele
                                                     fontSize={'16px'}
                                                     fontWeight={'700'}
                                                 >
-                                                    {order.old_total}
+                                                    {order.old_total >= order.new_total ? order.old_total : order.new_total}
                                                     {'$'}
                                                 </Box>
                                             </Flex>
@@ -376,14 +409,11 @@ const OrderModal = ({isOpen, onClose, order, setOrder, currentUserAddresses,sele
                                                     fontSize={'16px'}
                                                     fontWeight={'700'}
                                                 >
-                                                    {order.old_total -
-                                                        order.new_total ===
-                                                    0
+                                                    {
+                                                    (order.old_total <= order.new_total)
                                                         ? ''
-                                                        : '-'}
-                                                    {order.old_total -
-                                                        order.new_total}
-                                                    {'$'}
+                                                        : `- ${parseFloat((order.old_total - order.new_total).toFixed(2))}$`
+                                                    }
                                                 </Box>
                                             </Flex>
                                             <Divider />
@@ -466,12 +496,12 @@ const OrderModal = ({isOpen, onClose, order, setOrder, currentUserAddresses,sele
                                                             </Radio>
                                                             <Radio
                                                             {...field} 
-                                                            value="Succeeded"
+                                                            value="Succeed"
                                                             colorScheme="blackAlpha"
                                                             borderColor="#D9D9D9"
                                                             box-shadow="0px 3px 5px 0px rgba(46, 46, 66, 0.08)"                                                            
                                                             >
-                                                                Succeeded
+                                                                Succeed
                                                             </Radio>
                                                         </Grid>
                                                     </RadioGroup>
@@ -492,9 +522,6 @@ const OrderModal = ({isOpen, onClose, order, setOrder, currentUserAddresses,sele
                                             </FormLabel>
                                             <Input
                                             placeholder="Promotion Code"
-                                            // value={new Date(
-                                            //     orderDetail.order_date
-                                            // ).toLocaleDateString('en-UK')}
                                             isReadOnly
                                             padding={'24px 12px'}
                                             fontSize={'14px'}

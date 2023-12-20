@@ -10,6 +10,7 @@ import {
     Divider,
     Box,
     useDisclosure,
+    useToast,
 } from "@chakra-ui/react";
 import CategoryCreateModal from "./CategoryCreateModal";
 import { getALlCategories,getALlBrands,getAllProductByCategory } from "../../utils/api";
@@ -42,7 +43,7 @@ const Products = () => {
     const { isLoggedIn } = useContext(AuthContext);
     const { isOpen, onClose } = useDisclosure();
     const [unsubmittedCheckedBrands, setUnsubmittedCheckedBrands] = useState([]);
-
+    const toast = useToast();
     const { 
         totalProducts, 
         currentPage, 
@@ -102,7 +103,23 @@ const Products = () => {
                 productID,
                 stock_qty: 0
             }
-        }, "disable")
+        }, "disable").then(() => {
+            toast({
+                title: "Product has been disabled.",
+                status: "success",
+                duration: 9000,
+                isClosable: true,
+            }).catch((err) => {
+                toast({
+                    title: "Error",
+                    description: err.response.data.message,
+                    status: "error",
+                    duration: 9000,
+                    isClosable: true,
+                })
+            
+            })
+        });
     }
     const handleProductsClick = () => {
         setIsOnProducts(true);

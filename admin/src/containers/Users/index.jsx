@@ -39,25 +39,25 @@ const Users = () => {
     const handleStaffClick = () => {
         setIsOnClient(false);
     }
-    useEffect(() => {
-        async function fetchData() {
-            if(!isOnClient){
-                await getAllStaffs({page:currentPage,keyword:searchValue}).then(res => {
-                    
-                    setStaffs(res.data.data.rows);
-                    setTotalPages(Math.ceil(res.data.data.count / 10));
-                    setTotalUsers(res.data.data.count);
-                    
-                })
-            }else{
-                await getAllClients({page:currentPage,keyword:searchValue}).then(res => {
-                    setClients(res.data.data.rows);
-                    setTotalPages(Math.ceil(res.data.data.count / 10));
-                    setTotalUsers(res.data.data.count);
-                })
-            }
+    async function fetchData() {
+        if(!isOnClient){
+            await getAllStaffs({page:currentPage,keyword:searchValue}).then(res => {
+                
+                setStaffs(res.data.data.rows);
+                setTotalPages(Math.ceil(res.data.data.count / 10));
+                setTotalUsers(res.data.data.count);
+                
+            })
+        }else{
+            await getAllClients({page:currentPage,keyword:searchValue}).then(res => {
+                setClients(res.data.data.rows);
+                setTotalPages(Math.ceil(res.data.data.count / 10));
+                setTotalUsers(res.data.data.count);
+            })
         }
-    fetchData();
+    }
+    useEffect(() => {
+        fetchData();
     },[isOnClient,currentPage,searchValue]);
     useEffect(() => {
         setCurrentPage(1);
@@ -145,7 +145,7 @@ const Users = () => {
                     <ClientTable/>
                 </Box>
                 <Box display={isOnClient && "none"} w="full">
-                    <StaffTable/>
+                    <StaffTable fetchData={fetchData}/>
                 </Box>
             </Flex>
             <Flex justifyContent="flex-end">

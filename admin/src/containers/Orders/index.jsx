@@ -69,87 +69,95 @@ const Orders = () => {
         orderNum: "0",
         info: "0",
     });
-    useEffect(() => {
-        async function fetchData(){
-            await getAllOrders({page:currentPage,keyword:searchValue}).then((res) => {
-                setOrders(res.data.data.orders);
-                let totalOrder = res.data.data.count.reduce((total, item) => {
-                    if (item.order_status !== "canceled"){
-                        return total + item.count;
-                    }
-                },0);
-                let totalIncome = res.data.data.count.reduce((total, item) => total + item.total, 0);
-                let totalSucceededOrder = res.data.data.count.reduce((total, item) => {
-                    if (item.order_status === "succeeded") {
-                        return total + item.count;
-                    }
-                    return total;
-                }, 0);
-                let totalSucceededIncome = res.data.data.count.reduce((total, item) => {
-                    if (item.order_status === "succeeded") {
-                        return total + item.total;
-                    }
-                    return total;
-                },0);
-                let totalProcessingOrder = res.data.data.count.reduce((total, item) => {
-                    if (item.order_status === "processing") {
-                        return total + item.count;
-                    }
-                    return total;
-                }, 0);
-                let totalProcessingIncome = res.data.data.count.reduce((total, item) => {
-                    if (item.order_status === "processing") {
-                        return total + item.total;
-                    }
-                    return total;
-                },0);
-                let totalCanceledOrder = res.data.data.count.reduce((total, item) => {
-                    if (item.order_status === "canceled") {
-                        return total + item.count;
-                    }
-                    return total;
-                }, 0);
-                let totalCanceledIncome = res.data.data.count.reduce((total, item) => {
-                    if (item.order_status === "canceled") {
-                        return total + item.total;
-                    }
-                    return total;
-                },0);
-                let totalInitiatedOrder = res.data.data.count.reduce((total, item) => {
-                    if (item.order_status === "initiated") {
-                        return total + item.count;
-                    }
-                    return total;
-                }, 0);
-                let totalInitiatedIncome = res.data.data.count.reduce((total, item) => {
-                    if (item.order_status === "initiated") {
-                        return total + item.total;
-                    }
-                    return total;
-                },0);
-                setAllOrdersStat({
-                    orderNum:`${totalOrder}`,
-                    info:`${totalIncome}`,
-                })
-                setTotalPages(Math.ceil(totalOrder / 10));
-                setSucceededOrdersStat({
-                    orderNum: `${totalSucceededOrder}`,
-                    info:`${totalSucceededIncome}`,
-                })
-                setProcessingOrdersStat({
-                    orderNum:`${totalProcessingOrder}`,
-                    info:`${totalProcessingIncome}`,
-                })
-                setCanceledOrdersStat({
-                    orderNum:`${totalCanceledOrder}`,
-                    info:`${totalCanceledIncome}`,
-                })
-                setInitiatedOrdersStat({
-                    orderNum:`${totalInitiatedOrder}`,
-                    info:`${totalInitiatedIncome}`,
-                })
+    async function fetchData(){
+        await getAllOrders({page:currentPage,keyword:searchValue}).then((res) => {
+            setOrders(res.data.data.orders);
+            let totalOrder = res.data.data.count.reduce((total, item) => {
+                if (item.order_status !== "Canceled") {
+                    return parseInt(total) + parseInt(item.count);
+                }
+                return total;
+            }, 0);
+            let totalIncome = res.data.data.count.reduce((total, item) => {
+                if(item.order_status !== "Canceled"){
+                    console.log(total,item.total);
+                    return parseInt(total) + parseInt(item.total);
+                }
+                return total;
+            }, 0);
+            let totalSucceededOrder = res.data.data.count.reduce((total, item) => {
+                if (item.order_status === "Succeed") {
+                    return total + item.count;
+                }
+                return total;
+            }, 0);
+            let totalSucceededIncome = res.data.data.count.reduce((total, item) => {
+                if (item.order_status === "Succeed") {
+                    return total + item.total;
+                }
+                return total;
+            },0);
+
+            let totalProcessingOrder = res.data.data.count.reduce((total, item) => {
+                if (item.order_status === "Processing") {
+                    return total + item.count;
+                }
+                return total;
+            }, 0);
+            let totalProcessingIncome = res.data.data.count.reduce((total, item) => {
+                if (item.order_status === "Processing") {
+                    return total + item.total;
+                }
+                return total;
+            },0);
+            let totalCanceledOrder = res.data.data.count.reduce((total, item) => {
+                if (item.order_status === "Canceled") {
+                    return total + item.count;
+                }
+                return total;
+            }, 0);
+            let totalCanceledIncome = res.data.data.count.reduce((total, item) => {
+                if (item.order_status === "Canceled") {
+                    return total + item.total;
+                }
+                return total;
+            },0);
+            let totalInitiatedOrder = res.data.data.count.reduce((total, item) => {
+                if (item.order_status === "Initiated") {
+                    return total + item.count;
+                }
+                return total;
+            }, 0);
+            let totalInitiatedIncome = res.data.data.count.reduce((total, item) => {
+                if (item.order_status === "Initiated") {
+                    return total + item.total;
+                }
+                return total;
+            },0);
+            setAllOrdersStat({
+                orderNum:`${totalOrder}`,
+                info:`${totalIncome}`,
             })
-        }
+            setTotalPages(Math.ceil(totalOrder / 10));
+            setSucceededOrdersStat({
+                orderNum: `${totalSucceededOrder}`,
+                info:`${totalSucceededIncome}`,
+            })
+            setProcessingOrdersStat({
+                orderNum:`${totalProcessingOrder}`,
+                info:`${totalProcessingIncome}`,
+            })
+            setCanceledOrdersStat({
+                orderNum:`${totalCanceledOrder}`,
+                info:`${totalCanceledIncome}`,
+            })
+            setInitiatedOrdersStat({
+                orderNum:`${totalInitiatedOrder}`,
+                info:`${totalInitiatedIncome}`,
+            })
+        })
+    }
+    useEffect(() => {
         if(searchValue!==""){
             setFileteredOrder("All orders");
         }
@@ -177,7 +185,7 @@ const Orders = () => {
             </Flex>
             <HStack gap="24px">
                 <InfoCard filteredOrder={filteredOrder} handleFilterClick={handleFilterClick} name="All orders" info={`$${allOrdersStat.info}`} icon={apps}  bgColor="shieldtify.grey.400" iconColor="#444444" order={allOrdersStat.orderNum} orderColor="#444444" type="order"/>
-                <InfoCard filteredOrder={filteredOrder} handleFilterClick={handleFilterClick} name="Succeeded" info={`$${succeededOrdersStat.info}`} icon={succeeded} bgColor="#EEFDF3" iconColor="#1DD75B" order={succeededOrdersStat.orderNum} orderColor="#117B34" type="order"/>
+                <InfoCard filteredOrder={filteredOrder} handleFilterClick={handleFilterClick} name="Succeed" info={`$${succeededOrdersStat.info}`} icon={succeeded} bgColor="#EEFDF3" iconColor="#1DD75B" order={succeededOrdersStat.orderNum} orderColor="#117B34" type="order"/>
                 <InfoCard filteredOrder={filteredOrder} handleFilterClick={handleFilterClick} name="Processing" info={`$${processingOrdersStat.info}`} icon={processing} bgColor="#FEF9EE" iconColor="#D29211" order={processingOrdersStat.orderNum} orderColor="#98690C" type="order"/>
                 <InfoCard filteredOrder={filteredOrder} handleFilterClick={handleFilterClick} name="Canceled" info={`$${canceledOrdersStat.info}`} icon={canceled} bgColor="#FDF2F2" iconColor="#DE3B40" order={canceledOrdersStat.orderNum} orderColor="#DE3B40" type="order"/>
                 <InfoCard filteredOrder={filteredOrder} handleFilterClick={handleFilterClick} name="Initiated" info={`$${initiatedOrdersStat.info}`} icon={initiated} bgColor="#F3F4F6" iconColor="#9095A1" order={initiatedOrdersStat.orderNum} orderColor="#565D6D" type="order"/>
@@ -212,10 +220,11 @@ const Orders = () => {
             isOpen={isEditModalOpen} 
             onClose={() => setIsEditModalOpen(false)} 
             order={selectedOrderInfo}
+            setOrder={setSelectedOrderInfo}
             selectedAddress={selectedAddress}
             setSelectedAddress={setSelectedAddress}
-            setOrder={setSelectedOrderInfo}
             currentUserAddresses={currentUserAddresses}
+            fetchData={fetchData}
             />
         </Flex>        
     )
