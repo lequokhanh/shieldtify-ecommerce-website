@@ -250,15 +250,13 @@ export function createStaffAccount({username,role,display_name}){
 
 export function processOrders({checkedOrdersIds,type}){
     console.log(checkedOrdersIds);
-    return axiosCookie.put(`user/order/admin/process/a?type=${type}`,{
-        order: [
-            ...checkedOrdersIds
-        ]
-    });
+    return axiosCookie.put(`user/order/admin/process?type=${type}`,[
+        ...checkedOrdersIds
+    ]);
 }
 
-export function getOrderByStatus({status}){
-    return axiosCookie.get(`/user/order/admin/status/${status}`);
+export function getOrderByStatus({status,page,keyword}){
+    return axiosCookie.get(`/user/order/admin/status?status=${status}&page=${page}&keyword=${keyword}`);
 }
 
 export function updateOrder({orderId,newOrder}){

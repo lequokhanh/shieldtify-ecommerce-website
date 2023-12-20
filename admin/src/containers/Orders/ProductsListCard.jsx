@@ -23,6 +23,8 @@ const ProductListCard = ({product,openEdit, setOrder, order}) => {
         setOrder({
             ...order,
             order_item: order.order_item.filter(prod => prod.itemid !== product.itemid),
+            new_total: parseFloat((order.new_total - product.new_price*product.quantity).toFixed(2)),   
+            old_total: parseFloat((order.new_total - product.new_price*product.quantity).toFixed(2)),
         })
     }
     return(

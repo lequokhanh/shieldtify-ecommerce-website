@@ -127,7 +127,6 @@ const EditOrderPopoverContent = ({ setOrder, order, unsubmittedProduct, setUnsub
                             console.log(item.quantity,item.price);
                         }
                     });
-                    console.log(unsubmittedProduct);
                     const newItems = order.order_item.map((p) => {
                         if (p.itemid === unsubmittedProduct.itemid) {
                             return unsubmittedProduct;
