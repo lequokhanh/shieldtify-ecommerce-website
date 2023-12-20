@@ -223,8 +223,8 @@ module.exports = {
         try {
             const DTO = await service.processOrders(
                 req.user.uid,
-                res.query.type,
                 req.body,
+                res.query.type,
             );
             res.status(DTO.statusCode).json(DTO);
         } catch (error) {

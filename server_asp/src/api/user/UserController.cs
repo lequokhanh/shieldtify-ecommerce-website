@@ -87,15 +87,15 @@ namespace shieldtify.api.user
             }
         }
         [Tags("User -> Admin")]
-        public static APIRes getClients([FromQuery] string page, string keyword, HttpContext context)
+        public static APIRes getClients([FromQuery] string? page, string? keyword, HttpContext context)
         {
             try
             {
                 return Middleware.MiddlewareAuthorize(() =>
                 {
                     var DTO = UserService.getClients(
-                        int.Parse(page),
-                        keyword
+                        int.Parse(page ?? "1"),
+                        keyword ?? ""
                     );
                     context.Response.StatusCode = DTO.statusCode;
                     return DTO;
@@ -163,15 +163,15 @@ namespace shieldtify.api.user
         }
 
         [Tags("User -> Admin")]
-        public static APIRes getAccounts([FromQuery] string page, string keyword, HttpContext context)
+        public static APIRes getAccounts([FromQuery] string? page, string? keyword, HttpContext context)
         {
             try
             {
                 return Middleware.MiddlewareAuthorize(() =>
                 {
                     var DTO = UserService.getAccounts(
-                        int.Parse(page),
-                        keyword
+                        int.Parse(page ?? "1"),
+                        keyword ?? ""
                     );
                     context.Response.StatusCode = DTO.statusCode;
                     return DTO;
@@ -314,15 +314,15 @@ namespace shieldtify.api.user
         }
 
         [Tags("User -> Admin")]
-        public static APIRes getAllOrders([FromQuery] string page, string keyword, HttpContext context)
+        public static APIRes getAllOrders([FromQuery] string? page, string? keyword, HttpContext context)
         {
             try
             {
                 return Middleware.MiddlewareAuthorize(() =>
                 {
                     var DTO = UserService.getAllOrders(
-                        int.Parse(page),
-                        keyword
+                        int.Parse(page ?? "1"),
+                        keyword ?? ""
                     );
                     context.Response.StatusCode = DTO.statusCode;
                     return DTO;
@@ -457,7 +457,7 @@ namespace shieldtify.api.user
             }
         }
         [Tags("User -> Admin")]
-        public static APIRes processOrders([FromQuery] string? type, [FromBody] List<UpdateOrderBody> orders, HttpContext context)
+        public static APIRes processOrders([FromQuery] string? type, [FromBody] List<string> orders, HttpContext context)
         {
             try
             {

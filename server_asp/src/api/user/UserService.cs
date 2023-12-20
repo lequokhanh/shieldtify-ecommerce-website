@@ -571,7 +571,7 @@ namespace shieldtify.api.user
 
         }
 
-        public static APIRes processOrders(string staffid, List<UpdateOrderBody> orders, int type = 1)
+        public static APIRes processOrders(string staffid, List<string> orders, int type = 1)
         {
             try
             {
@@ -582,7 +582,7 @@ namespace shieldtify.api.user
                     // Process order
                     foreach (var order in orders)
                     {
-                        var orderToUpdate = db.Orders.Where(x => x.Uid.ToString() == order.uid).FirstOrDefault();
+                        var orderToUpdate = db.Orders.Where(x => x.Uid.ToString() == order).FirstOrDefault();
                         if (orderToUpdate == null)
                         {
                             return new APIRes(404, "Order not found");
@@ -620,7 +620,7 @@ namespace shieldtify.api.user
                     // Cancel order
                     foreach (var order in orders)
                     {
-                        var orderToUpdate = db.Orders.Where(x => x.Uid.ToString() == order.uid).FirstOrDefault();
+                        var orderToUpdate = db.Orders.Where(x => x.Uid.ToString() == order).FirstOrDefault();
                         if (orderToUpdate == null)
                         {
                             return new APIRes(404, "Order not found");

@@ -25,7 +25,7 @@ namespace shieldtify.api.user
             group.MapGet("/order/admin", UserController.getAllOrders);
             group.MapGet("/order/admin/status", UserController.getOrdersByStatus);
             group.MapGet("/order/admin/{userId}", UserController.getOrderByIdAdmin);
-            group.MapPut("/order/admin/process/{orderId}", UserController.processOrders);
+            group.MapPut("/order/admin/process", UserController.processOrders);
             group.MapPut("/order/admin/{orderId}", UserController.updateOrder);
             return group;
         }

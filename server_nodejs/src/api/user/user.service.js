@@ -700,7 +700,7 @@ module.exports = {
                 for (order of orders) {
                     const orderToUpdate = await db.order.findOne({
                         where: {
-                            uid: order.uid,
+                            uid: order,
                         },
                     });
                     if (!orderToUpdate) {
@@ -731,7 +731,7 @@ module.exports = {
                 for (order of orders) {
                     const orderToUpdate = await db.order.findOne({
                         where: {
-                            uid: order.uid,
+                            uid: order,
                         },
                     });
                     if (!orderToUpdate) {
