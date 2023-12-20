@@ -415,7 +415,7 @@ namespace shieldtify.api.user
             }
         }
         [Tags("User -> Admin")]
-        public static APIRes getOrdersByStatus([FromQuery] string status, [FromQuery] string page, string keyword, HttpContext context)
+        public static APIRes getOrdersByStatus([FromQuery] string status, string? page, string? keyword, HttpContext context)
         {
             try
             {
@@ -423,8 +423,8 @@ namespace shieldtify.api.user
                 {
                     var DTO = UserService.getOrdersByStatus(
                         status,
-                        int.Parse(page),
-                        keyword
+                        int.Parse(page ?? "1"),
+                        keyword ?? ""
                     );
                     context.Response.StatusCode = DTO.statusCode;
                     return DTO;
@@ -457,7 +457,7 @@ namespace shieldtify.api.user
             }
         }
         [Tags("User -> Admin")]
-        public static APIRes processOrders([FromQuery] string type, [FromBody] List<UpdateOrderBody> orders, HttpContext context)
+        public static APIRes processOrders([FromQuery] string? type, [FromBody] List<UpdateOrderBody> orders, HttpContext context)
         {
             try
             {
@@ -466,7 +466,7 @@ namespace shieldtify.api.user
                     var DTO = UserService.processOrders(
                         (context.Items["User"] as Account).Uid.ToString(),
                         orders,
-                        int.Parse(type)
+                        int.Parse(type ?? "1")
                     );
                     context.Response.StatusCode = DTO.statusCode;
                     return DTO;
@@ -506,7 +506,8 @@ namespace shieldtify.api.user
         public string uid { get; set; }
         public string? order_status { get; set; }
         public string? shipping_addressid { get; set; }
-
+        public string? payment_method { get; set; }
+        public string? receive_method { get; set; }
         public List<OrderItemBody>? products { get; set; }
     }
 

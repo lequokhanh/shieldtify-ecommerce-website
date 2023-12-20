@@ -558,6 +558,8 @@ namespace shieldtify.api.user
                     orderItem.Quantity = item.quantity ?? orderItem.Quantity;
                     orderItem.NewPrice = item.new_price ?? orderItem.NewPrice;
                 }
+                order.ReceiveMethod = body.receive_method ?? order.ReceiveMethod;
+                order.PaymentMethod = body.payment_method ?? order.PaymentMethod;
                 order.SupportedBy = Guid.Parse(staffid);
                 db.SaveChanges();
                 return new APIRes(200, "Update order successfully", order);

@@ -547,7 +547,7 @@ module.exports = {
             throw new AppError(error.statusCode, error.message);
         }
     },
-    getOrdersByStatus: async (page = 1, keyword = '', status) => {
+    getOrdersByStatus: async (status, page = 1, keyword = '') => {
         try {
             const limit = 10;
             const offset = (page - 1) * limit;
@@ -590,7 +590,13 @@ module.exports = {
     updateOrder: async (
         staffid,
         uid,
-        { order_status, products, addressid },
+        {
+            order_status,
+            products,
+            shipping_addressid,
+            payment_method,
+            receive_method,
+        },
     ) => {
         try {
             const order = await db.order.findOne({
@@ -619,16 +625,16 @@ module.exports = {
                     throw new AppError(400, 'Order is final state already');
                 }
             }
-            if (addressid) {
+            if (shipping_addressid) {
                 const address = await db.client_address.findOne({
                     where: {
-                        uid: addressid,
+                        uid: shipping_addressid,
                     },
                 });
                 if (!address) {
                     throw new AppError(404, 'Address not found');
                 }
-                order.shipping_addressid = addressid;
+                order.shipping_addressid = shipping_addressid;
             }
             let orderItems = [];
             if (products) {
@@ -673,6 +679,8 @@ module.exports = {
                 orderItem.new_price = item.new_price || orderItem.new_price;
                 await orderItem.save();
             }
+            order.payment_method = payment_method || order.payment_method;
+            order.receive_method = receive_method || order.receive_method;
             order.supported_by = staffid;
             await order.save();
             return {
