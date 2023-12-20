@@ -108,7 +108,7 @@ router.get(
     controller.getAllOrders,
 );
 router.get(
-    '/order/admin/status/:status',
+    '/order/admin/status',
     verifyToken,
     checkPermission('admin', 'superadmin', 'staff'),
     controller.getOrdersByStatus,
@@ -120,7 +120,7 @@ router.get(
     controller.getOrderByIdAdmin,
 );
 router.put(
-    '/order/admin/process/:orderId',
+    '/order/admin/process',
     verifyToken,
     checkPermission('admin', 'superadmin', 'staff'),
     controller.processOrders,
