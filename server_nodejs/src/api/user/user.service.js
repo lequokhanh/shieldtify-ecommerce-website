@@ -728,7 +728,7 @@ module.exports = {
                 }
             } else if (type === 0) {
                 // Cancel order
-                for (let order in orders) {
+                for (let order of orders) {
                     const orderToUpdate = await db.order.findOne({
                         where: {
                             uid: order,
