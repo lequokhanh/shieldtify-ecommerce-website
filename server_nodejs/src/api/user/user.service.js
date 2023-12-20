@@ -692,12 +692,12 @@ module.exports = {
             throw new AppError(error.statusCode, error.message);
         }
     },
-    processOrders: async (staffid, { orders }, type = 1) => {
+    processOrders: async (staffid, orders, type = 1) => {
         try {
             let errors = [];
             if (type === 1) {
                 // Process order
-                for (order of orders) {
+                for (let order of orders) {
                     const orderToUpdate = await db.order.findOne({
                         where: {
                             uid: order,
@@ -728,7 +728,7 @@ module.exports = {
                 }
             } else if (type === 0) {
                 // Cancel order
-                for (order of orders) {
+                for (let order in orders) {
                     const orderToUpdate = await db.order.findOne({
                         where: {
                             uid: order,
@@ -770,6 +770,7 @@ module.exports = {
                 data: errors,
             };
         } catch (error) {
+            console.log(error);
             throw new AppError(error.statusCode, error.message);
         }
     },
