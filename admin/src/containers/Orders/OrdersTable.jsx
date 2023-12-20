@@ -36,7 +36,7 @@ const OrdersTable = ({orders,checkedOrders,setCheckedOrders}) => {
             case "Initiated":
                 color="#F3F4F6"
                 break;  
-            case "Succeeded":
+            case "Succeed":
                 color="#EEFDF3"
                 break;
             case "Processing":
@@ -44,6 +44,26 @@ const OrdersTable = ({orders,checkedOrders,setCheckedOrders}) => {
                 break;
             case "Canceled":
                 color="#FDF2F2"
+                break;
+            default:
+                break;
+        }
+        return color;
+    }
+    const handleStatusTextColor = (status) => {
+        let color = "";
+        switch (status){
+            case "Initiated":
+                color="#323743"
+                break;  
+            case "Succeed":
+                color="#117B34"
+                break;
+            case "Processing":
+                color="#98690C"
+                break;
+            case "Canceled":
+                color="#DE3B40"
                 break;
             default:
                 break;
@@ -101,7 +121,7 @@ const OrdersTable = ({orders,checkedOrders,setCheckedOrders}) => {
                                 </Td>
                                 <Td>
                                     <Box padding="4px 8px" borderRadius="14px" bg={() => handleStatusColor(order.order_status)} w="max-content">
-                                        <Text color="#323743" fontWeight="400" fontSize="0.75rem" > 
+                                        <Text fontWeight="400" fontSize="0.75rem" color={() => handleStatusTextColor(order.order_status)}> 
                                             {order.order_status}
                                         </Text>
                                     </Box>

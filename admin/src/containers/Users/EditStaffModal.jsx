@@ -20,7 +20,7 @@ import { useContext } from "react";
 import { UsersContext } from "../../context/users.context";
 import { updateStaffAcount } from "../../utils/api";
 
-const EditStaffModal = ({staff}) => {
+const EditStaffModal = ({staff,fetchData}) => {
     const toast = useToast();
     const {isEditOpen, setIsEditOpen,resetStaffPwd} = useContext(UsersContext);
     return (
@@ -62,7 +62,7 @@ const EditStaffModal = ({staff}) => {
                             id: staff.uid,
                             username: (values.username === staff.username) ? null : values.username,
                             display_name: (values.displayname === staff.display_name) ? null : values.displayname,
-                            role: staff.role
+                            role: values.role
                         }).then(() => {
                             toast({
                                 title: "Staff account updated.",
@@ -71,6 +71,8 @@ const EditStaffModal = ({staff}) => {
                                 duration: 9000,
                                 isClosable: true,
                             })
+                            fetchData();
+                            fetch
                         }).catch(err => {
                             actions.setFieldError('username', err.response.data.message);
                         })

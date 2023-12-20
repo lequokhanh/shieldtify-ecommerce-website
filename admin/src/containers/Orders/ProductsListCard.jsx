@@ -17,7 +17,7 @@ import editproduct from "../../assets/Orders/editproduct.svg";
 import EditOrderPopoverContent from "./EditOrderPopoverContent";
 import { useState } from "react";
 
-const ProductListCard = ({product,openEdit, setOrder, order, onClose}) => {
+const ProductListCard = ({product,openEdit, setOrder, order}) => {
     const [unsubmittedProduct, setUnsubmittedProduct] = useState(product);
     const handleDelete = () => {
         setOrder({

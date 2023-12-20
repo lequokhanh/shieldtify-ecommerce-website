@@ -248,18 +248,21 @@ export function createStaffAccount({username,role,display_name}){
     })
 }
 
-export function processOrders({checkedOrdersId}){
-    return axiosCookie.put(`user/order/admin/process`,{
-        id: checkedOrdersId
-    })
-}
-
-export function cancelOrders({checkedOrdersId}){
-    return axiosCookie.put(`user/order/admin/cancel`,{
-        id: checkedOrdersId
-    })
+export function processOrders({checkedOrdersIds,type}){
+    console.log(checkedOrdersIds);
+    return axiosCookie.put(`user/order/admin/process/a?type=${type}`,{
+        order: [
+            ...checkedOrdersIds
+        ]
+    });
 }
 
 export function getOrderByStatus({status}){
     return axiosCookie.get(`/user/order/admin/status/${status}`);
+}
+
+export function updateOrder({orderId,newOrder}){
+    return axiosCookie.put(`/user/order/admin/${orderId}`, {
+        ...newOrder
+    });
 }

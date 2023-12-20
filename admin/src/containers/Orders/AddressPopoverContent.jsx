@@ -12,6 +12,7 @@ const AddressPopoverContent = ({currentUserAddresses,onClose,setSelectedAddress,
         onClose();
     }
     return (
+    selectedAddress && currentUserAddresses && (
     <>
         <PopoverArrow/>
         <RadioGroup
@@ -39,6 +40,7 @@ const AddressPopoverContent = ({currentUserAddresses,onClose,setSelectedAddress,
             </Flex>
         </RadioGroup>
     </>
+    )
     )
 }
 

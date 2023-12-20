@@ -16,6 +16,8 @@ import bill from '../../assets/Checkout/bill.svg'
 import dollar_sign from '../../assets/CheckOut/dollar_sign.svg'
 import { checkOutCompletedCategories } from '../../Categories'
 import * as router from 'react-router-dom'
+import no_img from '../../assets/no_img.svg'
+
 
 const CheckOutComplete = () => {
     const { currentUser } = useContext(AuthContext)
@@ -87,7 +89,7 @@ const CheckOutComplete = () => {
                                         <Flex key={add.id} gap="12px">
                                             <Image
                                                 src={add.img}
-                                                alt={add.name}
+                                                alt={add.img}
                                                 w="24px"
                                                 h="24px"
                                             />
@@ -238,7 +240,7 @@ const CheckOutComplete = () => {
                                 gap="22px"
                             >
                                 <Image
-                                    src={item.primary_img}
+                                    src={item.primary_img ? item.primary_img : no_img}
                                     alt="item.name"
                                     w="80px"
                                     h="80px"
