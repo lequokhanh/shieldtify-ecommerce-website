@@ -106,7 +106,6 @@ const Orders = () => {
             }, 0);
             let totalIncome = res.data.data.count.reduce((total, item) => {
                 if(item.order_status !== "Canceled"){
-                    console.log(total,item.total);
                     return parseInt(total) + parseInt(item.total);
                 }
                 return total;
@@ -184,7 +183,6 @@ const Orders = () => {
         })        
         
     }
-    console.log(orders);
     async function fetchData(){
         if(filteredOrder === "All orders"){
             await getAllOrders({page:currentPage,keyword:searchValue}).then((res) => {
@@ -200,7 +198,6 @@ const Orders = () => {
                 }, 0);
                 let totalIncome = res.data.data.count.reduce((total, item) => {
                     if(item.order_status !== "Canceled"){
-                        console.log(total,item.total);
                         return parseInt(total) + parseInt(item.total);
                     }
                     return total;
@@ -288,6 +285,8 @@ const Orders = () => {
             setFileteredOrder("All orders");    
         }
         if(isLoggedIn){
+            setCheckedOrders([]);
+                
             fetchData();
         }
     },[currentPage,isLoggedIn,searchValue,filteredOrder])

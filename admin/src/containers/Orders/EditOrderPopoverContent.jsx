@@ -124,7 +124,6 @@ const EditOrderPopoverContent = ({ setOrder, order, unsubmittedProduct, setUnsub
                             newTotal += parseInt(unsubmittedProduct.quantity) * parseFloat(unsubmittedProduct.new_price).toFixed(2);
                         } else {
                             newTotal += parseFloat((item.quantity * item.new_price).toFixed(2));
-                            console.log(item.quantity,item.price);
                         }
                     });
                     const newItems = order.order_item.map((p) => {

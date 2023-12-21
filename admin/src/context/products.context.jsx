@@ -73,7 +73,6 @@ export const ProductsProvider = ({children}) => {
                     stock_qty: res.data.data.stock_qty,
                     brand: brand,
                 }
-                console.log(newProduct);
                 const updatedProducts = products.map(p => p.uid === newProduct.uid ? newProduct : p);
                 setProducts(updatedProducts);
             });
