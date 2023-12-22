@@ -78,7 +78,8 @@ namespace shieldtify.api.product
                 var categories = dbContext.ItemCategories.Select(c => new
                 {
                     uid = c.Uid,
-                    name = c.Name
+                    name = c.Name,
+                    description = c.Description
                 }).ToList();
                 return new APIRes(200, "Get all category successfully", categories);
             }
@@ -137,7 +138,9 @@ namespace shieldtify.api.product
                     uid = i.Uid,
                     name = i.Name,
                     price = i.Price,
-                    primary_img = i.ItemImgs.Where(im => im.IsPrimary).Select(im => im.Link).FirstOrDefault()
+                    primary_img = i.ItemImgs.Where(im => im.IsPrimary).Select(im => im.Link).FirstOrDefault(),
+                    brand = new { name = i.Brand.Name },
+                    stock_qty = i.StockQty
                 }).Skip((page - 1) * 16).Take(16).ToList();
                 // round up max price
                 var maxPrice = (int)Math.Ceiling(dbContext.Items.Where(i => i.Categoryid.ToString() == category).Max(i => i.Price));
