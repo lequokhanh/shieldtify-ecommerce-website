@@ -139,7 +139,7 @@ namespace shieldtify.api.product
                     name = i.Name,
                     price = i.Price,
                     primary_img = i.ItemImgs.Where(im => im.IsPrimary).Select(im => im.Link).FirstOrDefault(),
-                    brand = new { name = i.Brand.Name },
+                    brand = i.Brand.Name,
                     stock_qty = i.StockQty
                 }).Skip((page - 1) * 16).Take(16).ToList();
                 // round up max price

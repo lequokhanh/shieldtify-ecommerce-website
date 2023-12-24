@@ -77,7 +77,7 @@ namespace shieldtify.api.user
                 }).Skip(offset).Take(limit).ToList();
                 return new APIRes(200, "Get clients successfully", new
                 {
-                    clients,
+                    rows = clients,
                     count = db.ClientAccounts.Count(),
                 });
             }
@@ -227,7 +227,7 @@ namespace shieldtify.api.user
                 }).Skip(offset).Take(limit).ToList();
                 return new APIRes(200, "Get accounts successfully", new
                 {
-                    accounts,
+                    rows = accounts,
                     count = db.Accounts.Count(),
                 });
             }
@@ -385,7 +385,7 @@ namespace shieldtify.api.user
                     old_total = Math.Round(x.OrderItems.Sum(x => x.OldPrice * x.Quantity), 2),
                     new_total = Math.Round(x.OrderItems.Sum(x => x.NewPrice * x.Quantity), 2),
                     promotion_code = x.PromotionCode,
-                    staff = x.SupportedBy != null ? new
+                    staff = x.SupportedByNavigation != null ? new
                     {
                         display_name = x.SupportedByNavigation.DisplayName,
                     } : null,
@@ -412,7 +412,7 @@ namespace shieldtify.api.user
                         },
                     }).ToList(),
                 }).FirstOrDefault();
-                return new APIRes(200, "Get order successfully", order);
+                return new APIRes(200, "Get order successfully", order ?? null);
             }
             catch (Exception)
             {
