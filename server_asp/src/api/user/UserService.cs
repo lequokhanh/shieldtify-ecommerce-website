@@ -108,6 +108,8 @@ namespace shieldtify.api.user
                         is_default = x.IsDefault,
                     }).ToList(),
                 }).FirstOrDefault();
+                if (client == null)
+                    return new APIRes(404, "Client not found");
                 return new APIRes(200, "Get client successfully", client);
             }
             catch (Exception)
@@ -393,13 +395,13 @@ namespace shieldtify.api.user
                     {
                         display_name = x.Client.DisplayName,
                     },
-                    shipping_address = new
+                    shipping_address = x.ShippingAddress != null ? new
                     {
                         address = x.ShippingAddress.Address,
                         city = x.ShippingAddress.City,
                         province = x.ShippingAddress.Province,
                         phone_number = x.ShippingAddress.PhoneNumber,
-                    },
+                    } : null,
                     order_item = x.OrderItems.Select(x => new
                     {
                         itemid = x.Itemid,
@@ -412,7 +414,9 @@ namespace shieldtify.api.user
                         },
                     }).ToList(),
                 }).FirstOrDefault();
-                return new APIRes(200, "Get order successfully", order ?? null);
+                if (order == null)
+                    return new APIRes(404, "Order not found");
+                return new APIRes(200, "Get order successfully", order);
             }
             catch (Exception)
             {
@@ -555,8 +559,11 @@ namespace shieldtify.api.user
                 foreach (var item in orderItems)
                 {
                     var orderItem = db.OrderItems.Where(x => x.Orderid.ToString() == uid && x.Itemid.ToString() == item.itemid).FirstOrDefault();
-                    orderItem.Quantity = item.quantity ?? orderItem.Quantity;
-                    orderItem.NewPrice = item.new_price ?? orderItem.NewPrice;
+                    if (orderItem != null)
+                    {
+                        orderItem.Quantity = item.quantity ?? orderItem.Quantity;
+                        orderItem.NewPrice = item.new_price ?? orderItem.NewPrice;
+                    }
                 }
                 order.ReceiveMethod = body.receive_method ?? order.ReceiveMethod;
                 order.PaymentMethod = body.payment_method ?? order.PaymentMethod;
@@ -650,6 +657,32 @@ namespace shieldtify.api.user
                     }
                 }
                 return new APIRes(200, type != 0 ? errors.Count == 0 ? "Process orders successfully" : "Process orders with errors" : errors.Count == 0 ? "Cancel orders successfully" : "Cancel orders with errors", errors);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        public static APIRes updatePasswordStaff(string uid, UpdatePasswordStaffBody body)
+        {
+            try
+            {
+                using var db = new ShieldtifyContext();
+                var account = db.Accounts.Where(x => x.Uid.ToString() == uid).FirstOrDefault();
+                if (account == null)
+                {
+                    return new APIRes(404, "Account not found");
+                }
+                var isMatch = BC.Verify(body.old_password, account.Password);
+                if (!isMatch)
+                {
+                    return new APIRes(400, "Old password is incorrect");
+                }
+                var salt = BC.GenerateSalt();
+                var hashedPassword = BC.HashPassword(body.new_password, salt);
+                account.Password = hashedPassword;
+                db.SaveChanges();
+                return new APIRes(200, "Update password successfully");
             }
             catch (Exception)
             {

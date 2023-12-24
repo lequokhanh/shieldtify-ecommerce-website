@@ -231,4 +231,15 @@ module.exports = {
             next(error);
         }
     },
+    updatePasswordStaff: async (req, res, next) => {
+        try {
+            const DTO = await service.updatePasswordStaff(
+                req.user.uid,
+                req.body,
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
 };

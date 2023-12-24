@@ -748,12 +748,12 @@ module.exports = {
                     )
                         errors.push({
                             uid: orderToUpdate.uid,
-                            message: 'Order is not in correct state',
+                            message: 'Order is final state already',
                         });
                     else
                         errors.push({
                             uid: orderToUpdate.uid,
-                            message: 'Order is final state already',
+                            message: 'Order is not in correct state',
                         });
                     await orderToUpdate.save();
                 }
@@ -771,6 +771,35 @@ module.exports = {
             };
         } catch (error) {
             console.log(error);
+            throw new AppError(error.statusCode, error.message);
+        }
+    },
+    updatePasswordStaff: async (uid, { old_password, new_password }) => {
+        try {
+            const account = await db.account.findOne({
+                where: {
+                    uid,
+                },
+            });
+            if (!account) {
+                throw new AppError(404, 'Account not found');
+            }
+            const isMatch = await bcrypt.compare(
+                old_password,
+                account.password,
+            );
+            if (!isMatch) {
+                throw new AppError(400, 'Old password is incorrect');
+            }
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(new_password, salt);
+            account.password = hashedPassword;
+            await account.save();
+            return {
+                statusCode: 200,
+                message: 'Update password successfully',
+            };
+        } catch (error) {
             throw new AppError(error.statusCode, error.message);
         }
     },

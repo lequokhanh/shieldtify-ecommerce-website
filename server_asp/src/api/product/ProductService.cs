@@ -318,6 +318,8 @@ namespace shieldtify.api.product
                 if (item == null)
                     return new APIRes(404, "Product not found");
                 var img = dbContext.ItemImgs.FirstOrDefault(im => im.Uid.ToString() == uid);
+                if (img == null)
+                    return new APIRes(404, "Image not found");
                 if (img.Itemid.ToString() != itemid)
                     return new APIRes(400, "Image not belong to product");
                 if (img.IsPrimary)
@@ -340,6 +342,8 @@ namespace shieldtify.api.product
                 if (item == null)
                     return new APIRes(404, "Product not found");
                 var img = dbContext.ItemImgs.FirstOrDefault(im => im.Uid.ToString() == uid);
+                if (img == null)
+                    return new APIRes(404, "Image not found");
                 if (img.Itemid.ToString() != itemid)
                     return new APIRes(400, "Image not belong to product");
                 var primaryImg = dbContext.ItemImgs.FirstOrDefault(im => im.Itemid.ToString() == itemid && im.IsPrimary);

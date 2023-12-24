@@ -72,6 +72,12 @@ router.post(
     controller.createStaff,
 );
 router.put(
+    '/staff/update-password',
+    verifyToken,
+    checkPermission('admin', 'superadmin', 'staff'),
+    controller.updatePasswordStaff,
+);
+router.put(
     '/staff/:id',
     verifyToken,
     checkPermission('admin', 'superadmin'),

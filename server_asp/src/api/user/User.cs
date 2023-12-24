@@ -17,6 +17,7 @@ namespace shieldtify.api.user
             group.MapGet("/client/admin/{userId}", UserController.getClientById);
             group.MapPut("/client/admin/{userId}", UserController.updateClient);
             group.MapGet("/staff", UserController.getAccounts);
+            group.MapPut("/staff/update-password", UserController.updatePasswordStaff);
             group.MapPut("/staff/{id}", UserController.updateAccount);
             group.MapPut("/staff/{id}/reset-password", UserController.resetPassword);
             group.MapPut("/profile/client", UserController.updateProfileClient);

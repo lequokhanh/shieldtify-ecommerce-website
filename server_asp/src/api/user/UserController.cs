@@ -477,6 +477,25 @@ namespace shieldtify.api.user
                 throw;
             }
         }
+        public static APIRes updatePasswordStaff([FromBody] UpdatePasswordStaffBody body, HttpContext context)
+        {
+            try
+            {
+                return Middleware.MiddlewareAuthorize(() =>
+                {
+                    var DTO = UserService.updatePasswordStaff(
+                        (context.Items["User"] as Account).Uid.ToString(),
+                        body
+                    );
+                    context.Response.StatusCode = DTO.statusCode;
+                    return DTO;
+                }, context, new List<string> { "superadmin", "admin", "staff" });
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
     }
 
     public class CreateAddressBody
@@ -523,5 +542,11 @@ namespace shieldtify.api.user
         public string username { get; set; }
         public string display_name { get; set; }
         public string role { get; set; }
+    }
+
+    public class UpdatePasswordStaffBody
+    {
+        public string old_password { get; set; }
+        public string new_password { get; set; }
     }
 }
