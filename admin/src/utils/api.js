@@ -305,3 +305,10 @@ export function updateOrder({ orderId, newOrder }) {
 		...newOrder,
 	});
 }
+
+export function updatePassword({old_password,new_password}){
+    return axiosCookie.put('/user/staff/update-password',{
+        old_password,
+        new_password
+    })
+}

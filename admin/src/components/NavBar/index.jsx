@@ -11,16 +11,19 @@ import {
     Button,
 } from '@chakra-ui/react';
 import logo from "../../assets/shieldtify-logo.svg";
+import password_reset from "../../assets/password_reset.svg";
 import { logout } from '../../utils/api';
 import * as router from "react-router-dom";
-import { useContext } from 'react';
+import { useContext, useState } from 'react';
 import { AuthContext } from '../../context/auth.context';
 import { ChevronDownIcon } from '@chakra-ui/icons';
 import { useNavigate } from 'react-router-dom';
+import ChangePasswordModal from '../ChangePasswordModal';
 
 const NavBar = () => {
     const toast = useToast();
     const navigate = useNavigate();
+    const [isChangePasswordOpen, setIsChangePasswordOpen] = useState(false);
     const { isLoggedIn, currentUser, setIsLoggedIn } = useContext(AuthContext);
     return (
         <Flex 
@@ -65,6 +68,18 @@ const NavBar = () => {
                                         <Text color="gray">{currentUser.display_name}</Text>
                                     ) : null}
                                 </Flex>
+                                <HStack 
+                                gap="12px" 
+                                onClick={() => {
+                                    setIsChangePasswordOpen(true);
+                                }}
+                                _hover={{cursor:"pointer"}}
+                                >
+                                    <Image src={password_reset} alt="Password Reset" w="24px" h="24px" objectFit="contain"/>
+                                    <Text color="#444444" fontWeight="500" textDecorationLine="underline">
+                                        Change password
+                                    </Text>
+                                </HStack>
                                 <Button
                                     colorScheme="blackAlpha"
                                     bgColor="#2D2D2D"
@@ -106,6 +121,9 @@ const NavBar = () => {
                 </Menu>
                 )
             }
+            <ChangePasswordModal isOpen={isChangePasswordOpen} onClose={() =>{
+                setIsChangePasswordOpen(false);
+            }}/>
         </Flex>
     )
 }
