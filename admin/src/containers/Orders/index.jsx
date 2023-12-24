@@ -67,6 +67,9 @@ const Orders = () => {
         if(type === 0){
             const updatedOrders = orders.map(order => {
                 if (checkedOrdersID.includes(order.uid)) {
+                    if(filteredOrder !== "All orders"){
+                        setCheckedOrders(checkedOrders.filter((item) => item.orderId !== order.uid));
+                    }
                     return {
                         ...order,
                         order_status: "Canceled",
@@ -78,6 +81,9 @@ const Orders = () => {
         }else{
             const updatedOrders = orders.map(order => {
                 if (checkedOrdersID.includes(order.uid)) {
+                    if(filteredOrder !== "All orders"){
+                        setCheckedOrders(checkedOrders.filter((item) => item.orderId !== order.uid));
+                    }
                     if(order.order_status === "Initiated"){
                         return {
                             ...order,
@@ -163,7 +169,7 @@ const Orders = () => {
                 orderNum:`${totalOrder}`,
                 info:`${totalIncome}`,
             })
-            setTotalPages(Math.ceil(totalPage / 10));
+            // setTotalPages(Math.ceil(totalPage / 10));
             setSucceededOrdersStat({
                 orderNum: `${totalSucceededOrder}`,
                 info:`${totalSucceededIncome}`,
@@ -196,6 +202,7 @@ const Orders = () => {
                 let totalPage = res.data.data.count.reduce((total, item) => {
                     return parseInt(total) + parseInt(item.count);
                 }, 0);
+                console.log(res);
                 let totalIncome = res.data.data.count.reduce((total, item) => {
                     if(item.order_status !== "Canceled"){
                         return parseInt(total) + parseInt(item.total);
@@ -272,11 +279,17 @@ const Orders = () => {
                     orderNum:`${totalInitiatedOrder}`,
                     info:`${totalInitiatedIncome}`,
                 })
-            })
+            }).catch(err => {
+                console.log(err);
+            }) 
         }else{
             await getOrderByStatus({status:filteredOrder,page:currentPage,keyword:searchValue}).then((res) => {
                 setOrders(res.data.data.orders);
-                setTotalPages(Math.ceil(res.data.data.count[0].count / 10));
+                let totalItems= res.data.data.count.find((item) => item.order_status === filteredOrder)?.count || 0;
+                // if(res.data.data.count.length === 0){
+                //     totalItems = 0;
+                // }
+                setTotalPages(totalItems > 0 ? Math.ceil(totalItems / 10) : 1);
             });
         }
     }
@@ -286,7 +299,6 @@ const Orders = () => {
         }
         if(isLoggedIn){
             setCheckedOrders([]);
-                
             fetchData();
         }
     },[currentPage,isLoggedIn,searchValue,filteredOrder])
@@ -316,30 +328,38 @@ const Orders = () => {
                 <InfoCard filteredOrder={filteredOrder} handleFilterClick={handleFilterClick} name="Initiated" info={`$${initiatedOrdersStat.info}`} icon={initiated} bgColor="#F3F4F6" iconColor="#9095A1" order={initiatedOrdersStat.orderNum} orderColor="#565D6D" type="order"/>
             </HStack>
             <Flex justifyContent="flex-end">
-                <Popover placement="bottom-start">
-                    <PopoverTrigger>
-                        <HStack 
-                        padding="7px 12px" 
-                        bgColor="white"  
-                        borderRadius="12px" gap="5px" 
-                        _hover={{cursor:"pointer"}}
-                        border="1px solid #444444"
-                        as="button"
-                        >
-                            <Text fontSize="0.875rem" color="#444444" fontWeight="400">
-                                Action
-                            </Text>
-                            <ChevronDownIcon color="#444444" boxSize="4"/>
-                        </HStack>
-                    </PopoverTrigger>
-                    <PopoverContent>
-                        <InfoActionPopoverContent 
-                        reFetchProcessedInfo={reFetchProcessedInfo} 
-                        checkedOrders={checkedOrders} 
-                        handleEditClick={() => {handleEditClick(checkedOrders[0])}}
-                        />
-                    </PopoverContent>
-                </Popover>
+                {
+                    !(checkedOrders.length > 1 && (filteredOrder==="Succeed" || filteredOrder==="Canceled"))
+                    &&
+                    (
+                        <Popover placement="bottom-start">
+                            <PopoverTrigger>
+                                <HStack 
+                                padding="7px 12px" 
+                                bgColor="white"  
+                                borderRadius="12px" gap="5px" 
+                                _hover={{cursor:"pointer"}}
+                                border="1px solid #444444"
+                                as="button"
+                                >
+                                    <Text fontSize="0.875rem" color="#444444" fontWeight="400">
+                                        Action
+                                    </Text>
+                                    <ChevronDownIcon color="#444444" boxSize="4"/>
+                                </HStack>
+                            </PopoverTrigger>
+                            <PopoverContent>
+                                <InfoActionPopoverContent 
+                                fetchData={fetchData}
+                                reFetchProcessedInfo={reFetchProcessedInfo}
+                                checkedOrders={checkedOrders} 
+                                handleEditClick={() => {handleEditClick(checkedOrders[0])}}
+                                filteredOrder={filteredOrder}
+                                />
+                            </PopoverContent>
+                        </Popover>
+                    )
+                }
             </Flex>
             <OrdersTable orders={orders} checkedOrders={checkedOrders} setCheckedOrders={setCheckedOrders}/>
             <Flex justifyContent="flex-end">

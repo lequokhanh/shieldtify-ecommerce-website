@@ -11,9 +11,9 @@ import editorder from "../../assets/Orders/editorder.svg";
 import { processOrders } from "../../utils/api";
 
 
-const InfoActionPopoverContent = ({handleEditClick,checkedOrders,reFetchProcessedInfo}) => {
+const InfoActionPopoverContent = ({handleEditClick,checkedOrders,fetchData,filteredOrder,reFetchProcessedInfo}) => {
     const toast = useToast();
-    const handleProcessClick = async () => {
+    const handleProcessClick = async () => {    
         if(checkedOrders.length === 0){
             toast({
                 title: "Please select at least one order",
@@ -24,15 +24,38 @@ const InfoActionPopoverContent = ({handleEditClick,checkedOrders,reFetchProcesse
             return;
         }
         const ordersIDs = checkedOrders.map((order) => order.orderId);
-        await processOrders({checkedOrdersIds: ordersIDs, type: 1}).then(() => {
-            toast({
-                title: "Process orders successfully",
-                status: "success",
-                duration: 2000,
-                isClosable: true,
-            });
-            reFetchProcessedInfo();
+        await processOrders({checkedOrdersIds: ordersIDs, type: 1}).then((res) => {
+            if(res.data.message && res.data.message === "Process orders successfully"){
+                toast({
+                    title: "Process orders successfully",
+                    status: "success",
+                    duration: 2000,
+                    isClosable: true,
+                });
+            }else{
+                res.data.data.map((ord) => {
+                    if(ord.message !== "Process orders successfully"){
+                        toast({
+                            title: `Process order ${ord.uid} failed`,
+                            description: ord.message,
+                            status: "error",
+                            duration: 2000,
+                            isClosable: true,
+                        });
+                    }else{
+                        toast({
+                            title: `Process order ${ord.uid} successfully`,
+                            status: "success",
+                            duration: 2000,
+                            isClosable: true,
+                        });
+                    }
+                })
+            }
+            fetchData();
+            reFetchProcessedInfo(1);
         }).catch((err) => {
+            console.log(err);
             toast({
                 title: "Process orders failed",
                 description: err.response.data.message,
@@ -56,13 +79,36 @@ const InfoActionPopoverContent = ({handleEditClick,checkedOrders,reFetchProcesse
         await processOrders({
             checkedOrdersIds: ordersIDs,
             type: 0
-        }).then(() => {
-            toast({
-                title: "Cancel orders successfully",
-                status: "success",
-                duration: 2000,
-                isClosable: true,
-            });
+        }).then((res) => {
+            if(res.data.message && res.data.message === "Cancel orders successfully"){
+                toast({
+                    title: "Cancel orders successfully",
+                    status: "success",
+                    duration: 2000,
+                    isClosable: true,
+                });
+            }else{
+                res.data.data.map((ord) => {
+                    if(ord.message !== "Cancel orders successfully"){
+                        toast({
+                            title: `Cancel order ${ord.uid} failed`,
+                            description: ord.message,
+                            status: "error",
+                            duration: 2000,
+                            isClosable: true,
+                        });
+                    }else{
+                        toast({
+                            title: `Cancel order ${ord.uid} successfully`,
+                            status: "success",
+                            duration: 2000,
+                            isClosable: true,
+                        });
+                    }
+                
+                })
+            }
+            fetchData();
             reFetchProcessedInfo(0);
         }).catch((err) => {
             toast({
@@ -81,36 +127,42 @@ const InfoActionPopoverContent = ({handleEditClick,checkedOrders,reFetchProcesse
         padding="16px 7px" 
         fontFamily="Inter"
         >
-            <HStack
-            gap="8px"
-            padding="8px 70px 8px 16px"
-            _hover={{
-                cursor: "pointer",
-                bgColor: "#E1E1E1",
-                borderRadius: "9px"
-            }}
-            onClick={handleProcessClick}
-            >
-                <Image src={processorder} alt="Process order"/>
-                <Text fontSize="0.875rem" fontWeight="700">
-                    Process
-                </Text>
-            </HStack>
-            <HStack
-            gap="8px"
-            padding="8px 70px 8px 16px"
-            _hover={{
-                cursor: "pointer",
-                bgColor: "#E1E1E1",
-                borderRadius: "9px"
-            }}
-            onClick={handleCancelClick}
-            >
-                <Image src={cancelorder} alt="Cancel order"/>
-                <Text fontSize="0.875rem" fontWeight="700">
-                    Cancel
-                </Text>
-            </HStack>
+            {
+                !(filteredOrder === "Succeed" || filteredOrder === "Canceled") && (
+                    <>
+                        <HStack
+                        gap="8px"
+                        padding="8px 70px 8px 16px"
+                        _hover={{
+                            cursor: "pointer",
+                            bgColor: "#E1E1E1",
+                            borderRadius: "9px"
+                        }}
+                        onClick={handleProcessClick}
+                        >
+                            <Image src={processorder} alt="Process order"/>
+                            <Text fontSize="0.875rem" fontWeight="700">
+                                Process
+                            </Text>
+                        </HStack>
+                        <HStack
+                        gap="8px"
+                        padding="8px 70px 8px 16px"
+                        _hover={{
+                            cursor: "pointer",
+                            bgColor: "#E1E1E1",
+                            borderRadius: "9px"
+                        }}
+                        onClick={handleCancelClick}
+                        >
+                            <Image src={cancelorder} alt="Cancel order"/>
+                            <Text fontSize="0.875rem" fontWeight="700">
+                                Cancel
+                            </Text>
+                        </HStack>
+                    </>
+                )
+            }
             {
                 (checkedOrders.length === 1) && (
                     <HStack

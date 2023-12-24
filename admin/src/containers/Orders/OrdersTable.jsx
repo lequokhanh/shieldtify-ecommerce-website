@@ -24,7 +24,9 @@ const OrdersTable = ({orders,checkedOrders,setCheckedOrders}) => {
         if (e.target.checked) {
             setCheckedOrders(orders.map((order) => ({
                 orderId: order.uid,
+                order_status: order.order_status,
                 userId: order.clientid
+
             })));
         } else {
             setCheckedOrders([]);
@@ -110,7 +112,8 @@ const OrdersTable = ({orders,checkedOrders,setCheckedOrders}) => {
                                     isChecked={checkedOrders.some(obj => obj.orderId === order.uid)}
                                     onChange={() => handleCheckBoxChange({
                                         orderId: order.uid,
-                                        userId: order.clientid
+                                        order_status: order.order_status,   
+                                        userId: order.clientid,
                                     })}
                                     />
                                 </Td>
