@@ -86,7 +86,7 @@ const ChangePasswordModal = ({isOpen, onClose}) => {
                                                     <Input
                                                     {...field}
                                                     type="password"
-                                                    placeholder="Current Password"
+                                                    placeholder="Current password"
                                                     border="1px solid rgba(68,68,68,0.8)"
                                                     borderRadius="8px"
                                                     />
@@ -107,7 +107,7 @@ const ChangePasswordModal = ({isOpen, onClose}) => {
                                                     <Input
                                                     {...field}
                                                     type="password"
-                                                    placeholder="Current Password"
+                                                    placeholder="New password"
                                                     border="1px solid rgba(68,68,68,0.8)"
                                                     borderRadius="8px"
                                                     />
@@ -128,7 +128,7 @@ const ChangePasswordModal = ({isOpen, onClose}) => {
                                                     <Input
                                                     {...field}
                                                     type="password"
-                                                    placeholder="Current Password"
+                                                    placeholder="Confirm password"
                                                     border="1px solid rgba(68,68,68,0.8)"
                                                     borderRadius="8px"
                                                     />
