@@ -46,6 +46,7 @@ const Product = () => {
     const navigate = useNavigate()
     useEffect(() => {
         setIsLoading(true)
+        setProducts([])
         async function fetchData() {
             if (category === '') {
                 navigate('/404')
@@ -59,7 +60,6 @@ const Product = () => {
                 keyword,
             }).then((res) => {
                 setCategoryDescription(res.data.data.description)
-                console.log(priceRange)
                 setProducts(res.data.data.items)
                 if (priceRange) {
                     let newPriceRange = priceRange.split('-')
