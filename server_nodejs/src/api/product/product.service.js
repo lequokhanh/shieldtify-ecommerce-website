@@ -38,7 +38,7 @@ module.exports = {
                 }
             }
             const items = await db.sequelize.query(
-                `SELECT it.uid, name, price, link primary_img
+                `SELECT distinct it.uid, name, price, link primary_img
                 ${query}
                 LIMIT 16
                 OFFSET ${(page - 1) * 16};`,
@@ -105,7 +105,7 @@ module.exports = {
             var description;
             if (!category.match(/^[a-f\d]{8}(-[a-f\d]{4}){4}[a-f\d]{8}$/i)) {
                 const categoryObj = await db.sequelize.query(
-                    `SELECT uid, description FROM item_categories WHERE lower(name) like '${category.toLowerCase()}'`,
+                    `SELECT distinct uid, description FROM item_categories WHERE lower(name) like '${category.toLowerCase()}'`,
                     {
                         type: db.Sequelize.QueryTypes.SELECT,
                     },
@@ -147,7 +147,7 @@ module.exports = {
                 }
             }
             const items = await db.sequelize.query(
-                `SELECT it.uid, it.name, price, link primary_img, stock_qty, br.name as brand
+                `SELECT distinct it.uid, it.name, price, link primary_img, stock_qty, br.name as brand
                 ${query}
                 LIMIT 16
                 OFFSET ${(page - 1) * 16};`,

@@ -23,9 +23,7 @@ import SpecificationModal from '../../components/SpecificationModal'
 import { CartContext } from '../../context/cart.context'
 import './style.css'
 import no_img from '../../assets/no_img.svg'
-import Dante from "dante3/package/esm";
-
-
+import Dante from 'dante3/package/esm'
 
 const PreviewSpecs = (product) => {
     const { addItemToCart } = useContext(CartContext)
@@ -37,16 +35,20 @@ const PreviewSpecs = (product) => {
             if (cnt === 6) break
 
             if (value2 !== null && value2 !== undefined && value2 !== '') {
-                specsArray.push(
-                    JSON.parse(
-                        '{"' +
-                            key2.charAt(0).toUpperCase() +
-                            key2.slice(1).replace('_', ' ') +
-                            '":"' +
-                            value2 +
-                            '"}'
+                try {
+                    specsArray.push(
+                        JSON.parse(
+                            '{"' +
+                                key2.charAt(0).toUpperCase() +
+                                key2.slice(1).replace('_', ' ') +
+                                '":"' +
+                                value2 +
+                                '"}'
+                        )
                     )
-                )
+                } catch (error) {
+                    console.log(error)
+                }
                 cnt++
             }
         }
@@ -304,7 +306,10 @@ const ProductDetails = () => {
                             p={'50px'}
                             borderRadius={'10px'}
                         >
-                            <Dante readOnly={true} content={product.description}/>
+                            <Dante
+                                readOnly={true}
+                                content={product.description}
+                            />
                         </Box>
                     </Flex>
                 </Flex>

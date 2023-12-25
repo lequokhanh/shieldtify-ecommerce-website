@@ -126,12 +126,12 @@ export function getAllProductByCategoryOrKeywordBuilder({
     sortBy = 'popular',
     keyword,
 }) {
-    let url;
-    if(category === 'CPU Cooler'){
+    let url
+    if (category === 'CPU Cooler') {
         category = 'CPUCOOLER'
-    }else if(category === 'Video Card'){
+    } else if (category === 'Video Card') {
         category = 'GPU'
-    }else if(category === 'Power Supply'){
+    } else if (category === 'Power Supply') {
         category = 'PSU'
     }
     if (sortBy === null || sortBy === undefined || sortBy === 'Most popular') {
@@ -152,7 +152,7 @@ export function getAllProductByCategoryOrKeywordBuilder({
     if (page === null || page === undefined) {
         page = 1
     }
-    if (keyword !== undefined && keyword !== null && keyword!=='') {
+    if (keyword !== undefined && keyword !== null && keyword !== '') {
         url = `/product/category/${category}?keyword=${keyword}&page=${page}&sort=${sortBy}`
     } else {
         url = `/product/category/${category}?page=${page}&sort=${sortBy}`
@@ -172,7 +172,7 @@ export function getUserCart() {
 }
 
 export function addToCart({ item, quantity }) {
-    console.log(item,quantity);
+    console.log(item, quantity)
     return axiosCookie.post('/cart', {
         items: [
             {
@@ -262,9 +262,9 @@ export function getOrderByID(id) {
     return axiosCookie.get(`/user/order/client/${id}`)
 }
 
-export function updatePassword({old_password,new_password}){
-    return axiosCookie.put('/user/staff/update-password',{
+export function updatePassword({ old_password, new_password }) {
+    return axiosCookie.put('/user/staff/update-password', {
         old_password,
-        new_password
+        new_password,
     })
 }
