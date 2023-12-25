@@ -608,6 +608,7 @@ const defaultComponentValue = [
     },
     {
         category: "Ram",
+        
         description: "+ Add another Ram",
         quantity:0,
     },

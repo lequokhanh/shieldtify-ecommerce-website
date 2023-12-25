@@ -174,7 +174,7 @@ const BuilderModal = ({
         <ModalContent
         borderRadius={'10px'}
         minH="420px"
-        minW="1800px"
+        minW="1500px"
         fontFamily="Inter"
         >
             <ModalHeader    
@@ -389,11 +389,11 @@ const BuilderModal = ({
                                             justifyContent="space-between"
                                         >
                                             <Skeleton
-                                                height="400px"
-                                                width="400px"
+                                                height="200px"
+                                                width="200px"
                                                 borderRadius="15px"
                                             />
-                                            <SkeletonText height="10px" width="400px" />
+                                            <SkeletonText height="10px" width="200px" />
                                         </Flex>
                                     ))}
                                 </Grid>

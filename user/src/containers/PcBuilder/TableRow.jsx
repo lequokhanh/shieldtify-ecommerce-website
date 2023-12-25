@@ -20,11 +20,11 @@ const TableRow = (
     return(
         <Tr
         bg={(index % 2) ? "#F6F6F6" : "#FFFFFF"}
-        borderTop="2px solid rgba(0, 0, 0, 0.50)" // Add top border
+        borderTop={"2px solid rgba(0, 0, 0, 0.50)"} // Add top border
         >
             <Td>
                 <Text color="shieldtify.200" fontSize="1.25rem" fontWeight="600" textDecoration="underline" _hover={{cursor:"pointer"}}>
-                    {component.category}
+                    {!component.description && component.category}
                 </Text>
             </Td>
             <Td>

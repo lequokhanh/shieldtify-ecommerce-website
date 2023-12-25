@@ -279,7 +279,6 @@ const CheckOutComplete = () => {
                                 >
                                     {parseFloat(
                                         (
-                                            item.quantity *
                                             (item.old_price
                                                 ? item.old_price
                                                 : item.price)
