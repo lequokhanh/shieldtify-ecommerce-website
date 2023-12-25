@@ -13,6 +13,7 @@ const BrandsContent = ({
     handleCheckBoxChange,
     submitBrandsSearch,
     onClose,
+    type
 }) => {
     return (
         <>
@@ -44,23 +45,27 @@ const BrandsContent = ({
                             ))}
                         </CheckboxGroup>
                     </Flex>
-                    <Flex justifyContent="center">
-                        <Button
-                            mt="10px"
-                            bgColor="#2D2D2D"
-                            borderRadius="25px"
-                            paddingX="50px"
-                            colorScheme="blackAlpha"
-                            onClick={() => {
-                                selectedBrands
-                                    ? submitBrandsSearch(selectedBrands)
-                                    : submitBrandsSearch('')
-                                onClose()
-                            }}
-                        >
-                            Submit
-                        </Button>
-                    </Flex>
+                    {
+                        type!== "builder" && (
+                            <Flex justifyContent="center">
+                                <Button
+                                    mt="10px"
+                                    bgColor="#2D2D2D"
+                                    borderRadius="25px"
+                                    paddingX="50px"
+                                    colorScheme="blackAlpha"
+                                    onClick={() => {
+                                        selectedBrands
+                                            ? submitBrandsSearch(selectedBrands)
+                                            : submitBrandsSearch('')
+                                        onClose()
+                                    }}
+                                >
+                                    Submit
+                                </Button>
+                            </Flex>
+                        )
+                    }
                 </FormControl>
             </Flex>
         </>

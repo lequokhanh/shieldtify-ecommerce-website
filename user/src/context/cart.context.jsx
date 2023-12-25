@@ -53,12 +53,9 @@ export const CartProvider = ({ children }) => {
         }
         fetchCart()
     }, [])
-    const addItemToCart = async ({ item }) => {
-        const isItemInCart = cartItems.some(
-            (cartItem) => cartItem.itemid === item.uid
-        )
+    const addItemToCart = async ({ item, type }) => {
 
-        await addToCart({ item: item.uid, quantity: 1 })
+        await addToCart({ item: item.uid, quantity: item.quantity ? item.quantity : 1 })
             .then((res) => {
                 if (res.data.data[0]) {
                     toast({
@@ -69,22 +66,23 @@ export const CartProvider = ({ children }) => {
                         isClosable: true,
                     })
                 } else {
-                    toast({
-                        title: 'Success',
-                        description: 'Item added to cart',
-                        status: 'success',
-                        duration: 2000,
-                        isClosable: true,
-                    })
+                    if(type !== 'builder'){
+                        toast({
+                            title: 'Success',
+                            description: 'Item added to cart',
+                            status: 'success',
+                            duration: 2000,
+                            isClosable: true,
+                        })
+                    }
                     getUserCart().then((res) => {
                         setCartItems(res.data.data.cart)
                         setCartTotal(res.data.data.total)
-                        setDiscountedCode('')
-                        setDiscountedPrice(0)
+                        setDiscountedCode('');
+                        setDiscountedPrice(0);
+                        setCartCount(res.data.data.cart.length + res.data.data.out_of_stock.length)
                     })
-                    if (!isItemInCart) {
-                        setCartCount(cartCount + 1)
-                    }
+
                 }
             })
             .catch((err) => {

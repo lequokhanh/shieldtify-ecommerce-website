@@ -55,8 +55,12 @@ const SignIn = () => {
                                     password: values.password,
                                 })
 
-                                setIsLoggedIn(true)
-                                navigate('/home')
+                                setIsLoggedIn(true);
+                                if (window.location.pathname !== '/sign-in' && window.location.pathname !== '/sign-up' && window.location.pathname !== '/reset-password') {
+                                    navigate(-1)
+                                } else {
+                                    navigate('/home')
+                                }
 
                                 const userCartResponse = await getUserCart()
                                 setCartItems(userCartResponse.data.data.cart)

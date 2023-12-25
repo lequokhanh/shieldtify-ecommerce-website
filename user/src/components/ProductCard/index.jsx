@@ -5,7 +5,7 @@ import no_img from '../../assets/no_img.svg'
 import { CartContext } from '../../context/cart.context'
 import * as router from 'react-router-dom'
 
-const ProductCard = ({ product }) => {
+const ProductCard = ({ product, type, handleSelect,index }) => {
     const [hoveredProductId, setHoveredProductId] = useState(null)
     const { addItemToCart } = useContext(CartContext)
     const HoverProduct = (id) => {
@@ -36,7 +36,7 @@ const ProductCard = ({ product }) => {
                                     : no_img
                             }
                             alt="product-image"
-                            w="400px"
+                            w="4    00px"
                             h="400px"
                             objectFit="contain"
                         />
@@ -49,11 +49,13 @@ const ProductCard = ({ product }) => {
                             right="0"
                             zIndex="1"
                             onClick={(event) => {
-                                event.stopPropagation()
-                                addItemToCart({ item: product })
+                                event.stopPropagation();
+                                type === "builder" ? handleSelect(product) : addItemToCart({ item: product });
                             }}
                         >
-                            + Add to cart
+                            {
+                                type === "builder" ? "+ Select" : "+ Add to cart"
+                            }
                         </Button>
                     ) : null}
                 </Box>

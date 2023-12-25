@@ -10,18 +10,17 @@ import {
 import PriceTag from '../../components/PriceTag'
 
 const PriceContent = ({ values, onSubmit, maxPrice, handleChange }) => {
-    console.log(values)
     return (
         <Flex>
             <PopoverArrow />
             <Flex padding="30px 30px" gap="20px" w="100% " flexDir="column">
                 <Flex gap="20px">
-                    <PriceTag price={values[0]} />
+                    <PriceTag price={values ? values[0] : 10} />
                     <RangeSlider
                         min={10}
                         max={maxPrice}
-                        defaultValue={values}
-                        value={values}
+                        defaultValue={[10, maxPrice]}
+                        value={values ? values : [10,maxPrice]}
                         onChange={handleChange}
                         step={20}
                         w="300px"
@@ -32,7 +31,7 @@ const PriceContent = ({ values, onSubmit, maxPrice, handleChange }) => {
                         <RangeSliderThumb index={0} />
                         <RangeSliderThumb index={1} />
                     </RangeSlider>
-                    <PriceTag price={values[1]} />
+                    <PriceTag price={values ? values[1] : maxPrice} />
                 </Flex>
                 <Button
                     bgColor="#2D2D2D"

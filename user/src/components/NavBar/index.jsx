@@ -90,7 +90,7 @@ const NavBar = () => {
                     gap="8px"
                     variant="none"
                     as={router.Link}
-                    to="#"
+                    to="/pc-builder"
                     _hover={{
                         cursor: 'pointer',
                         textDecorationLine: 'underline',

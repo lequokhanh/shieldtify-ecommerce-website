@@ -118,11 +118,61 @@ export function getAllProductByCategoryOrKeyword({
     return axios.get(url)
 }
 
+export function getAllProductByCategoryOrKeywordBuilder({
+    category = '',
+    priceRange = '',
+    brands = '',
+    page = 1,
+    sortBy = 'popular',
+    keyword,
+}) {
+    let url;
+    if(category === 'CPU Cooler'){
+        category = 'CPUCOOLER'
+    }else if(category === 'Video Card'){
+        category = 'GPU'
+    }else if(category === 'Power Supply'){
+        category = 'PSU'
+    }
+    if (sortBy === null || sortBy === undefined || sortBy === 'Most popular') {
+        sortBy = 'popular'
+    }
+    if (sortBy === 'Price (Desc)') {
+        sortBy = 'price-desc'
+    }
+    if (sortBy === 'Price (Asc)') {
+        sortBy = 'price-asc'
+    }
+    if (sortBy === 'Name (A-Z)') {
+        sortBy = 'name-asc'
+    }
+    if (sortBy === 'Name (Z-A)') {
+        sortBy = 'name-desc'
+    }
+    if (page === null || page === undefined) {
+        page = 1
+    }
+    if (keyword !== undefined && keyword !== null && keyword!=='') {
+        url = `/product/category/${category}?keyword=${keyword}&page=${page}&sort=${sortBy}`
+    } else {
+        url = `/product/category/${category}?page=${page}&sort=${sortBy}`
+    }
+    if (priceRange !== null) {
+        url += `&priceRange=${priceRange[0]}-${priceRange[1]}`
+    }
+    if (brands !== null && brands !== undefined && brands !== '') {
+        var decodedString = decodeURIComponent(brands)
+        url += `&brands=${decodedString}`
+    }
+    return axios.get(url)
+}
+
 export function getUserCart() {
     return axiosCookie.get('/cart')
 }
 
 export function addToCart({ item, quantity }) {
+    console.log(item,quantity);
     return axiosCookie.post('/cart', {
         items: [
             {
@@ -212,6 +262,9 @@ export function getOrderByID(id) {
     return axiosCookie.get(`/user/order/client/${id}`)
 }
 
-// export function updateCart (cart) {
-//     return axiosCookie.put('/cart', cart);
-// }
+export function updatePassword({old_password,new_password}){
+    return axiosCookie.put('/user/staff/update-password',{
+        old_password,
+        new_password
+    })
+}

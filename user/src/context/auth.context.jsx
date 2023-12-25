@@ -29,7 +29,6 @@ export const AuthProvider = ({children}) => {
     }
 
     useEffect( () => {
-        console.log(currentUser)
         const intervalId = setInterval(() => {
             getUser().catch(() => {
                     setIsLoggedIn(false);
@@ -37,7 +36,7 @@ export const AuthProvider = ({children}) => {
         }, 60000);
         return () => clearInterval(intervalId);
     }, []);
-
+    
     useEffect (() => {
         localStorage.setItem("isLoggedIn", JSON.stringify(isLoggedIn))
         if(isLoggedIn===true){

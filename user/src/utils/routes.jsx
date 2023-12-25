@@ -12,6 +12,7 @@ import Checkout from '../containers/CheckOut'
 import CheckOutComplete from '../containers/CheckOutComplete'
 import TrackOrders from '../containers/TrackOrders'
 import UserProfile from '../containers/UserProfile'
+import PcBuilder from '../containers/PcBuilder'
 
 const routes = [
     {
@@ -82,6 +83,12 @@ const routes = [
             {
                 path: '/profile',
                 element: <UserProfile />,
+                name: 'profile',
+            },
+            {
+                path: 'pc-builder',
+                element: <PcBuilder/>,
+                name: "pc-builder"
             },
             {
                 path: '*',
