@@ -77,6 +77,7 @@ const TableRow = (
                                 <Text
                                     fontSize="1.25rem"
                                     fontWeight="300"
+                                    as="button"
                                     color="shieldtify.100"
                                     _hover={{
                                         cursor: 'pointer',
@@ -103,8 +104,8 @@ const TableRow = (
                                                 })
                                                 return;
                                             }
-                                            setComponents(components.map((item) => {
-                                                if(item.uid === component.uid){
+                                            setComponents(components.map((item,i) => {
+                                                if(i === index){
                                                     total += parseFloat((parseInt(e.target.value)*item.price).toFixed(2));
                                                     return {
                                                         ...item,
@@ -149,6 +150,7 @@ const TableRow = (
                                     _hover={{
                                         cursor: 'pointer',
                                     }}
+                                    as="button"
                                     onClick={() => increaseCartQuantity(component,index)}
                                 >
                                     +
