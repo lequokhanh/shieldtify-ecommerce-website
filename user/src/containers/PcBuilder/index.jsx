@@ -16,6 +16,7 @@ import { CartContext } from "../../context/cart.context";
 import { defaultComponentValue } from "../../Categories";
 import { AuthContext } from "../../context/auth.context";
 import { useNavigate } from "react-router-dom";
+import ConfirmBuildModal from "./ConfirmBuildModal";
 
 const PcBuilder = () => {
     const navigate = useNavigate();
@@ -30,13 +31,14 @@ const PcBuilder = () => {
     const checkAllComponentsZero = () => {
         return components.every(component => component.quantity === 0);
     };
+    const [ isConfirmOpen, setIsConfirmOpen ] = useState(false);
     const [components, setComponents] = useState(getInitialComponentState);
     const [componentTotal, setComponentTotal] = useState(getIntialcomponentTotalState);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentCategory, setCurrentCategory] = useState("");
     const [currentCategoryIndex, setCurrentCategoryIndex] = useState(0);
     const { isLoggedIn } = useContext(AuthContext);
-    const {addItemToCart} = useContext(CartContext);
+    const {addItemToCart, clearCart} = useContext(CartContext);
     const [visibleRamCount, setVisibleRamCount] = useState(components.filter(component => component.category === "RAM" && component.quantity > 0).length);
     const [visibleStorageCount, setVisibleStorageCount] = useState(components.filter(component => component.category === "Storage" && component.quantity > 0).length);
     const toast = useToast();
@@ -49,6 +51,33 @@ const PcBuilder = () => {
         setVisibleRamCount(components.filter(component => component.category === "Ram" && component.quantity > 0).length);
         setVisibleStorageCount(components.filter(component => component.category === "Storage" && component.quantity > 0).length);
     },[components]);
+    const handleKeep = async () => {
+        let newComponents = components
+        .filter(item => item.quantity > 0);
+        let groupedComponents = Object.values(newComponents.reduce((acc, item) => {
+            if (!acc[item.uid]) {
+                acc[item.uid] = { item: item.uid, quantity: 0 };
+            }
+            acc[item.uid].quantity += item.quantity;
+            return acc;
+        }, {}));
+        addItemToCart({item: groupedComponents, addType: "multiple",setComponentTotal, setComponents, type: "builder"})
+    }
+    const handleRemove = async () =>{
+        let newComponents = components
+        .filter(item => item.quantity > 0)
+        let groupedComponents = Object.values(newComponents.reduce((acc, item) => {
+            if (!acc[item.uid]) {
+                acc[item.uid] = { item: item.uid, quantity: 0 };
+            }
+            acc[item.uid].quantity += item.quantity;
+            return acc;
+        }, {}));
+        clearCart().then(() => {
+            addItemToCart({item: groupedComponents, addType: "multiple", type: "builder", setComponentTotal, setComponents});
+        })
+    }
+
     return (
         <Flex flexDir="column" fontFamily="Inter" mt="100px" w="full" gap="70px" paddingX="81px">
             <VStack alignItems="flex-start" gap="15px">
@@ -108,26 +137,27 @@ const PcBuilder = () => {
                                     navigate("/sign-in");  
                                     return;               
                                 }
-                                components.map((component) => {
-                                    if(component.quantity > 0){
-                                        addItemToCart({
-                                                item: {
-                                                    uid: component.uid,
-                                                    quantity: component.quantity,
-                                                },
-                                                type: "builder"
-                                        });
-                                        setComponentTotal(0);
-                                        setComponents(defaultComponentValue);
-                                    }
-                                })
-                                toast({
-                                    title: "Success",
-                                    description: "PC Build added to cart",
-                                    status: "success",
-                                    duration: 2000,
-                                    isClosable: true,
-                                })
+                                setIsConfirmOpen(true);
+                                // components.map((component) => {
+                                //     if(component.quantity > 0){
+                                //         addItemToCart({
+                                //                 item: {
+                                //                     uid: component.uid,
+                                //                     quantity: component.quantity,
+                                //                 },
+                                //                 type: "builder"
+                                //         });
+                                //         setComponentTotal(0);
+                                //         setComponents(defaultComponentValue);
+                                //     }
+                                // })
+                                // toast({
+                                //     title: "Success",
+                                //     description: "PC Build added to cart",
+                                //     status: "success",
+                                //     duration: 2000,
+                                //     isClosable: true,
+                                // })
                             }
                         }}
                         >
@@ -157,6 +187,12 @@ const PcBuilder = () => {
             setVisibleRamCount={setVisibleRamCount}
             visibleStorageCount={visibleStorageCount}
             setVisibleStorageCount={setVisibleStorageCount}
+            />
+            <ConfirmBuildModal
+            isOpen={isConfirmOpen}
+            onClose={() => setIsConfirmOpen(false)}
+            handleKeep={handleKeep}
+            handleRemove={handleRemove}
             />
         </Flex>
     )

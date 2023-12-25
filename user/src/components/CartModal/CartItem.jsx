@@ -135,6 +135,7 @@ const CartItem = ({ item, type, onClose }) => {
                         _hover={{
                             cursor: 'pointer',
                         }}
+                        button="true"
                         onClick={decreaseCartQuantity}
                     >
                         -
@@ -188,6 +189,7 @@ const CartItem = ({ item, type, onClose }) => {
                         _hover={{
                             cursor: 'pointer',
                         }}
+                        as="button"
                         onClick={increaseCartQuantity}
                     >
                         +

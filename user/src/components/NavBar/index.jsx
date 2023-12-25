@@ -120,7 +120,7 @@ const NavBar = () => {
                     paddingX="5px"
                     variant="none"
                     as={router.Link}
-                    to="#"
+                    to="/guide"
                     _hover={{
                         cursor: 'pointer',
                         textDecorationLine: 'underline',
@@ -135,7 +135,7 @@ const NavBar = () => {
                     paddingX="5px"
                     variant="none"
                     as={router.Link}
-                    to="#"
+                    to="/forum"
                     _hover={{
                         cursor: 'pointer',
                         textDecorationLine: 'underline',

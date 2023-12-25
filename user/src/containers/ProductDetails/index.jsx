@@ -283,7 +283,7 @@ const ProductDetails = () => {
                                         height={'50px'}
                                         gap={'5px'}
                                         onClick={() => {
-                                            addItemToCart({ item: product })
+                                            addItemToCart({ item: product, addType: "single" })
                                         }}
                                     >
                                         <span>+</span>Add to cart

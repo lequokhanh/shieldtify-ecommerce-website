@@ -13,6 +13,8 @@ import CheckOutComplete from '../containers/CheckOutComplete'
 import TrackOrders from '../containers/TrackOrders'
 import UserProfile from '../containers/UserProfile'
 import PcBuilder from '../containers/PcBuilder'
+import Forum from '../containers/Forum'
+import Guide from '../containers/Guide'
 
 const routes = [
     {
@@ -86,9 +88,19 @@ const routes = [
                 name: 'profile',
             },
             {
-                path: 'pc-builder',
+                path: '/pc-builder',
                 element: <PcBuilder/>,
                 name: "pc-builder"
+            },
+            {
+                path: '/forum',
+                element: <Forum/>,
+                name: "forum"
+            },
+            {
+                path: '/guide',
+                element: <Guide/>,
+                name: 'guide',
             },
             {
                 path: '*',

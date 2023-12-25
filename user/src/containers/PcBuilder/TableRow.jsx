@@ -53,7 +53,7 @@ const TableRow = (
                     )
                 }
             </Td>
-            <Td textAlign="center">
+            <Td textAlign="center" w="200px">
                 {
                     component.price && (
                         <Text color="black" fontSize="1.25rem" fontWeight="400">
@@ -160,7 +160,7 @@ const TableRow = (
                     )
                 }
             </Td>
-            <Td>
+            <Td  w="200px">
                 {
                     component.uid && (
                         <Flex justifyContent="space-between">

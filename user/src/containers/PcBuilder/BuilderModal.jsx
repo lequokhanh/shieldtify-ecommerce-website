@@ -41,10 +41,6 @@ const BuilderModal = ({
     components, 
     setComponents, 
     currentCategoryIndex,
-    visibleRamCount,
-    visibleStorageCount,
-    setVisibleRamCount,
-    setVisibleStorageCount,
 }) => {
     const [currentPage, setCurrentPage] = useState(1);
     const [searchValue, setSearchValue] = useState('');
@@ -137,8 +133,18 @@ const BuilderModal = ({
     }
     const handleSelect = (product) => {
         setIsModalOpen(false);
-        let NewComponents = [...components]; // create a copy of the components array
-        console.log(currentCategoryIndex, components[currentCategoryIndex].description);
+        const isNewComponent = components.some((component) => component.uid === product.uid);
+        if (isNewComponent) {
+            toast({
+                title: "Error",
+                description: "Item already in build.",
+                status: "error",
+                duration: 2000,
+                isClosable: true,
+            });
+            return;
+        }
+        let NewComponents = [...components];
         if (components[currentCategoryIndex].description === "+ Add another Ram" || components[currentCategoryIndex].description === "+ Add another Storage") {
             NewComponents.splice(currentCategoryIndex, 0, { ...product, quantity: 1, category: components[currentCategoryIndex].category });
         } else {

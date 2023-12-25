@@ -50,7 +50,7 @@ const ProductCard = ({ product, type, handleSelect }) => {
                             zIndex="1"
                             onClick={(event) => {
                                 event.stopPropagation();
-                                type === "builder" ? handleSelect(product) : addItemToCart({ item: product });
+                                type === "builder" ? handleSelect(product) : addItemToCart({ item: product, addType: "single" });
                             }}
                         >
                             {

@@ -171,17 +171,23 @@ export function getUserCart() {
     return axiosCookie.get('/cart')
 }
 
-export function addToCart({ item, quantity }) {
-    console.log(item, quantity)
-    return axiosCookie.post('/cart', {
-        items: [
-            {
-                item: item.toString(),
-                quantity: quantity,
-            },
-        ],
-    })
+export function addToCart({ item, addType}) {
+    if(addType === 'single'){
+        return axiosCookie.post('/cart', {
+            items: [
+                {
+                    item: item.uid,
+                    quantity: 1,
+                },
+            ],
+        })
+    }else if(addType=="multiple"){
+        return axiosCookie.post('/cart', {
+            items : item
+        })
+    }
 }
+
 
 export function updateCart({ item, quantity }) {
     return axiosCookie.put('/cart', {

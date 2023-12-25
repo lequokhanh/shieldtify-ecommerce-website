@@ -28,15 +28,18 @@ const Card3 = () => {
         isCreateAddressOpen,
         setIsCreateAddressOpen,
         setBeingSelected,
-    } = useContext(CheckOutContext)
-    const [isSelected, setIsSelected] = useState(false)
+    } = useContext(CheckOutContext);
+    const [isSelected, setIsSelected] = useState(false);
     useEffect(() => {
-        if (beingSelected === '') {
+        console.log(beingSelected);
+        if (!beingSelected) {
+            console.log(addresses)
+            console.log((addresses.filter((address) => address.is_default)));
             setBeingSelected(
-                addresses.filter((address) => address.is_default)[0]
+                (addresses.filter((address) => address.is_default))[0]
             )
         }
-    }, [])
+    }, [addresses])
     return (
         <Flex
             padding="25px 28px"
@@ -68,7 +71,7 @@ const Card3 = () => {
                 >
                     {beingSelected && (
                         <AddressCard
-                            key={beingSelected.uid}
+                            key={beingSelected && beingSelected.uid && beingSelected.uid}
                             add={beingSelected}
                             isShowMoreOpen={isOpen}
                             isCreateAddressOpen={isCreateAddressOpen}

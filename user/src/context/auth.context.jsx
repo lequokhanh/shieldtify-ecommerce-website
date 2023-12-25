@@ -33,7 +33,7 @@ export const AuthProvider = ({children}) => {
             getUser().catch(() => {
                     setIsLoggedIn(false);
             }); 
-        }, 60000);
+        }, 10000);
         return () => clearInterval(intervalId);
     }, []);
     

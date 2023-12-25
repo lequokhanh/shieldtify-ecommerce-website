@@ -8,11 +8,8 @@ const ComponentPickingTable = ({
     openModal, 
     setComponentTotal, 
     setCurrentCategoryIndex,
-    currentCategoryIndex,
     visibleRamCount,
     visibleStorageCount,
-    setVisibleRamCount,
-    setVisibleStorageCount,
 }) => {
     const toast = useToast();
 
@@ -101,9 +98,9 @@ const ComponentPickingTable = ({
                     <Tr>
                         <Th color="shieldtify.100" fontSize={"1.5rem"}>Component</Th>
                         <Th color="shieldtify.100" fontSize={"1.5rem"}  w="500px">Selection</Th>
-                        <Th color="shieldtify.100" fontSize={"1.5rem"} textAlign="center">Unit Price</Th>
+                        <Th color="shieldtify.100" fontSize={"1.5rem"} textAlign="center" w="200px">Unit Price</Th>
                         <Th color="shieldtify.100" fontSize={"1.5rem"} textAlign="center">Quantity</Th>
-                        <Th color="shieldtify.100" fontSize={"1.5rem"}>Price</Th>
+                        <Th color="shieldtify.100" fontSize={"1.5rem"} w="200px">Price</Th>
                     </Tr>
                 </Thead>
                 <Tbody>

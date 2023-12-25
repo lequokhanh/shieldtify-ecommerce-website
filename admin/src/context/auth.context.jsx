@@ -35,7 +35,7 @@ export const AuthProvider = ({children}) => {
                     setIsLoggedIn(false);
                 }); 
             }
-        }, 6000);
+        }, 10000);
         return () => clearInterval(intervalId);
     }, [isLoggedIn]);
     useEffect (() => {
@@ -51,7 +51,6 @@ export const AuthProvider = ({children}) => {
                 setIsLoggedIn(false);
             })
         }else {
-            // localStorage.setItem("currentUser",null);
             setCurrentUser(null);
         }       
     }, [isLoggedIn]);

@@ -38,7 +38,7 @@ export const CheckOutProvider = ({ children }) => {
     const [addresses, setAddresses] = useState([])
     const [orderList, setOrderList] = useState([])
     const [selectedAddress, setSelectedAddress] = useState('')
-    const [beingSelected, setBeingSelected] = useState('')
+    const [beingSelected, setBeingSelected] = useState(null)
     const [orderId, setOrderId] = useState('')
     const [orderTotal, setOrderTotal] = useState(0)
     const [addressStyle, setAddressStyle] = useState(true)

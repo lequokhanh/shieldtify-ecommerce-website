@@ -23,8 +23,6 @@ import truck from "./assets/CheckOut/truck.svg"
 import group from "./assets/Group.svg"
 import money from './assets/CheckOut/money.svg';
 import map from './assets/CheckOut/map.svg';
-import bill from './assets/Checkout/bill.svg';
-import dolar_sign from "./assets/CheckOut/dollar_sign.svg"
 
 
 const accessoriesCategories = [
@@ -608,7 +606,7 @@ const defaultComponentValue = [
     },
     {
         category: "Ram",
-        
+
         description: "+ Add another Ram",
         quantity:0,
     },
