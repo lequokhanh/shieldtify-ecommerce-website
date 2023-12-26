@@ -86,7 +86,7 @@ const ActionPopoverContent = ({handleDeleteClick,checkedCategories,checkedProduc
                                 })
                                 return;
                             }
-                            handleDeleteClick(checkedProducts[0]);
+                            handleDeleteClick(checkedProducts);
                         }}
                         >
                             <NotAllowedIcon boxSize={6}/>

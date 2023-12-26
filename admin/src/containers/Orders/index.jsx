@@ -5,7 +5,8 @@ import {
     Text,
     Popover,
     PopoverTrigger,
-    PopoverContent, 
+    PopoverContent,
+    useToast, 
 } from "@chakra-ui/react";
 import SearchInput from "../../components/SearchInput";
 import { useContext, useEffect, useState } from "react";
@@ -106,9 +107,6 @@ const Orders = () => {
                     return parseInt(total) + parseInt(item.count);
                 }
                 return total;
-            }, 0);
-            let totalPage = res.data.data.count.reduce((total, item) => {
-                    return parseInt(total) + parseInt(item.count);
             }, 0);
             let totalIncome = res.data.data.count.reduce((total, item) => {
                 if(item.order_status !== "Canceled"){
@@ -312,6 +310,7 @@ const Orders = () => {
             setCurrentUserAddresses(res.data.data.addresses);
         })
     }
+    const toast = useToast();
     return (
         <Flex flexDir="column" padding="24px 34px" w="full" gap="30px">
             <Flex justifyContent="space-between" fontFamily="Inter">
@@ -328,38 +327,43 @@ const Orders = () => {
                 <InfoCard filteredOrder={filteredOrder} handleFilterClick={handleFilterClick} name="Initiated" info={`$${initiatedOrdersStat.info}`} icon={initiated} bgColor="#F3F4F6" iconColor="#9095A1" order={initiatedOrdersStat.orderNum} orderColor="#565D6D" type="order"/>
             </HStack>
             <Flex justifyContent="flex-end">
-                {
-                    !(checkedOrders.length > 1 && (filteredOrder==="Succeed" || filteredOrder==="Canceled"))
-                    &&
-                    (
-                        <Popover placement="bottom-start">
-                            <PopoverTrigger>
-                                <HStack 
-                                padding="7px 12px" 
-                                bgColor="white"  
-                                borderRadius="12px" gap="5px" 
-                                _hover={{cursor:"pointer"}}
-                                border="1px solid #444444"
-                                as="button"
-                                >
-                                    <Text fontSize="0.875rem" color="#444444" fontWeight="400">
-                                        Action
-                                    </Text>
-                                    <ChevronDownIcon color="#444444" boxSize="4"/>
-                                </HStack>
-                            </PopoverTrigger>
-                            <PopoverContent>
-                                <InfoActionPopoverContent 
-                                fetchData={fetchData}
-                                reFetchProcessedInfo={reFetchProcessedInfo}
-                                checkedOrders={checkedOrders} 
-                                handleEditClick={() => {handleEditClick(checkedOrders[0])}}
-                                filteredOrder={filteredOrder}
-                                />
-                            </PopoverContent>
-                        </Popover>
-                    )
-                }
+
+                <Popover placement="bottom-start">
+                    <PopoverTrigger>
+                        <HStack 
+                        padding="7px 12px" 
+                        bgColor="white"  
+                        borderRadius="12px" gap="5px" 
+                        _hover={{cursor:"pointer"}}
+                        border="1px solid #444444"
+                        as="button"
+                        onClick={() => {
+                            if(checkedOrders.length === 0 && (filteredOrder === "Succeed" || filteredOrder === "Canceled")){
+                                toast({
+                                    title: "You must select one order to enable this feature",
+                                    status: "error",
+                                    duration: 2000,
+                                    isClosable: true,
+                                })
+                            }
+                        }}
+                        >
+                            <Text fontSize="0.875rem" color="#444444" fontWeight="400">
+                                Action
+                            </Text>
+                            <ChevronDownIcon color="#444444" boxSize="4"/>
+                        </HStack>
+                    </PopoverTrigger>
+                    <PopoverContent>
+                        <InfoActionPopoverContent 
+                        fetchData={fetchData}
+                        reFetchProcessedInfo={reFetchProcessedInfo}
+                        checkedOrders={checkedOrders} 
+                        handleEditClick={() => {handleEditClick(checkedOrders[0])}}
+                        filteredOrder={filteredOrder}
+                        />
+                    </PopoverContent>
+                </Popover>
             </Flex>
             <OrdersTable orders={orders} checkedOrders={checkedOrders} setCheckedOrders={setCheckedOrders}/>
             <Flex justifyContent="flex-end">

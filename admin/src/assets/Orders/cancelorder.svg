@@ -1,7 +1,8 @@
 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<g id="C info">
-<path id="Vector" d="M3.42847 21.0416L20.5713 21.0416" stroke="#565D6D" stroke-width="2.05714" stroke-miterlimit="10" stroke-linecap="square"/>
-<path id="Vector_2" d="M9.42854 16.7559L5.14282 17.6131L5.99997 13.3273L15.1774 4.14992C15.5125 3.81477 16.0551 3.81477 16.3894 4.14992L18.606 6.36649C18.9411 6.70163 18.9411 7.2442 18.606 7.57849L9.42854 16.7559Z" stroke="#565D6D" stroke-width="2.05714" stroke-miterlimit="10" stroke-linecap="square"/>
-<path id="Vector_3" d="M12.8572 6.47021L16.2857 9.89879" stroke="#565D6D" stroke-width="2.05714" stroke-miterlimit="10"/>
+<g id="Bag remove 19">
+<path id="Vector" d="M17.1428 21.4285L3.42847 21.4285L5.14275 7.71423L18.857 7.71423L19.6285 13.6285" stroke="#565D6D" stroke-width="2.05714" stroke-miterlimit="10"/>
+<path id="Vector_2" d="M8.57153 10.2857L8.57153 5.99998C8.57153 4.11427 10.1144 2.57141 12.0001 2.57141C13.8858 2.57141 15.4287 4.11427 15.4287 5.99998L15.4287 10.2857" stroke="#565D6D" stroke-width="2.05714" stroke-miterlimit="10" stroke-linecap="square"/>
+<path id="Vector_3" d="M17.1429 21.4286C19.5098 21.4286 21.4286 19.5098 21.4286 17.1429C21.4286 14.776 19.5098 12.8572 17.1429 12.8572C14.776 12.8572 12.8572 14.776 12.8572 17.1429C12.8572 19.5098 14.776 21.4286 17.1429 21.4286Z" stroke="#565D6D" stroke-width="2.05714" stroke-miterlimit="10" stroke-linecap="square"/>
+<path id="Vector_4" d="M15.4285 17.1428H18.857" stroke="#565D6D" stroke-width="2.05714" stroke-miterlimit="10" stroke-linecap="square"/>
 </g>
 </svg>

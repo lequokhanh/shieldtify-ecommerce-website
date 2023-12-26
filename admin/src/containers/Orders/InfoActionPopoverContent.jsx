@@ -120,17 +120,17 @@ const InfoActionPopoverContent = ({handleEditClick,checkedOrders,fetchData,filte
             });
         });
     }
-    return(
-        <Flex 
-        flexDir="column" 
-        gap="16px" 
-        padding="16px 7px" 
-        fontFamily="Inter"
-        >
-            {
-                !(filteredOrder === "Succeed" || filteredOrder === "Canceled") && (
-                    <>
-                        <HStack
+    console.log(checkedOrders);
+    return (
+        <>
+            {(!(filteredOrder === "Succeed" || filteredOrder === "Canceled") || (checkedOrders.length > 0)) && (
+                <Flex
+                    flexDir="column"
+                    gap="16px"
+                    padding="16px 7px"
+                    fontFamily="Inter"
+                >
+                    <HStack
                         gap="8px"
                         padding="8px 70px 8px 16px"
                         _hover={{
@@ -139,13 +139,13 @@ const InfoActionPopoverContent = ({handleEditClick,checkedOrders,fetchData,filte
                             borderRadius: "9px"
                         }}
                         onClick={handleProcessClick}
-                        >
-                            <Image src={processorder} alt="Process order"/>
-                            <Text fontSize="0.875rem" fontWeight="700">
-                                Process
-                            </Text>
-                        </HStack>
-                        <HStack
+                    >
+                        <Image src={processorder} alt="Process order" />
+                        <Text fontSize="0.875rem" fontWeight="700">
+                            Process
+                        </Text>
+                    </HStack>
+                    <HStack
                         gap="8px"
                         padding="8px 70px 8px 16px"
                         _hover={{
@@ -154,36 +154,33 @@ const InfoActionPopoverContent = ({handleEditClick,checkedOrders,fetchData,filte
                             borderRadius: "9px"
                         }}
                         onClick={handleCancelClick}
-                        >
-                            <Image src={cancelorder} alt="Cancel order"/>
-                            <Text fontSize="0.875rem" fontWeight="700">
-                                Cancel
-                            </Text>
-                        </HStack>
-                    </>
-                )
-            }
-            {
-                (checkedOrders.length === 1) && (
-                    <HStack
-                    gap="8px"
-                    padding="8px 70px 8px 16px"
-                    _hover={{
-                        cursor: "pointer",
-                        bgColor: "#E1E1E1",
-                        borderRadius: "9px"
-                    }}
-                    onClick={handleEditClick}
                     >
-                        <Image src={editorder} alt="Edit & view order"/>
+                        <Image src={cancelorder} alt="Cancel order" />
                         <Text fontSize="0.875rem" fontWeight="700">
-                            Edit & view
+                            Cancel
                         </Text>
                     </HStack>
-                ) 
-            }
-        </Flex>
-    )
+                    {checkedOrders.length === 1 && (
+                        <HStack
+                            gap="8px"
+                            padding="8px 70px 8px 16px"
+                            _hover={{
+                                cursor: "pointer",
+                                bgColor: "#E1E1E1",
+                                borderRadius: "9px"
+                            }}
+                            onClick={handleEditClick}
+                        >
+                            <Image src={editorder} alt="Edit & view order" />
+                            <Text fontSize="0.875rem" fontWeight="700">
+                                Edit & view
+                            </Text>
+                        </HStack>
+                    )}
+                </Flex>
+            )}
+        </>
+    );
 }
 
 export default InfoActionPopoverContent;

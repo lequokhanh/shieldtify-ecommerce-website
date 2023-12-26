@@ -1,7 +1,7 @@
 import axios from "axios";
 import validator from "validator";
 
-axios.defaults.baseURL = "http://localhost:4000/api";
+axios.defaults.baseURL = "http://localhost:3000/api";
 
 axios.interceptors.response.use(
 	(res) => {

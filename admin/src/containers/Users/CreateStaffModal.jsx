@@ -19,10 +19,12 @@ import { Field, Form, Formik } from "formik";
 import { useContext } from "react";
 import { UsersContext } from "../../context/users.context";
 import { createStaffAccount } from "../../utils/api";
+import { AuthContext } from "../../context/auth.context";
 
 const CreateStaffModal = () => {
     const {isCreateOpen, setIsCreateOpen, staffs, setStaffs} = useContext(UsersContext);
     const toast = useToast();
+    const { currentUser } = useContext(AuthContext);
     return (
         <Modal
         isOpen={isCreateOpen}
@@ -142,8 +144,10 @@ const CreateStaffModal = () => {
                                             >
                                                 Role
                                             </FormLabel>
-                                            <RadioGroup>
-                                                <HStack gap="33px" pl="10px">
+                                            <RadioGroup
+                                            defaultValue={(currentUser && currentUser.role === "admin") && "staff"}
+                                            >
+                                                <HStack gap="33px" pl="10px" >
                                                     <Radio 
                                                     {...field} 
                                                     value="staff"
@@ -152,16 +156,23 @@ const CreateStaffModal = () => {
                                                     box-shadow="0px 3px 5px 0px rgba(46, 46, 66, 0.08)"
                                                     >
                                                         Staff
-                                                        </Radio>
-                                                    <Radio 
-                                                    {...field} 
-                                                    value="admin"
-                                                    colorScheme="blackAlpha"
-                                                    borderColor="#D9D9D9"
-                                                    box-shadow="0px 3px 5px 0px rgba(46, 46, 66, 0.08)"
-                                                    >
-                                                        Admin
                                                     </Radio>
+                                                    {
+                                                        currentUser && currentUser.role === "superadmin" && (
+                                                            <>
+                                                                <Radio 
+                                                                {...field} 
+                                                                value="admin"
+                                                                colorScheme="blackAlpha"
+                                                                borderColor="#D9D9D9"
+                                                                box-shadow="0px 3px 5px 0px rgba(46, 46, 66, 0.08)"
+                                                                >
+                                                                    Admin
+                                                                </Radio>
+                                                            
+                                                            </>
+                                                        )
+                                                    }
                                                 </HStack>
                                             </RadioGroup>
                                             <FormErrorMessage>{form.errors.role}</FormErrorMessage>

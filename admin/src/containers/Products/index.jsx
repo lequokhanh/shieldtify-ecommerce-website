@@ -45,7 +45,7 @@ const Products = () => {
 	const [checkedCategories, setCheckedCategories] = useState([]);
 	const [checkedProducts, setCheckedProducts] = useState([]);
 	const [editType, setEditType] = useState("");
-	const { isLoggedIn } = useContext(AuthContext);
+	const { isLoggedIn, currentUser } = useContext(AuthContext);
 	const { isOpen, onClose } = useDisclosure();
 	const [unsubmittedCheckedBrands, setUnsubmittedCheckedBrands] = useState(
 		[]
@@ -72,6 +72,7 @@ const Products = () => {
 		setBrands,
 		totalProductsInCategory,
 		callUpdateProduct,
+		products
 	} = useContext(ProductsContext);
 	useEffect(() => {
 		async function fetchData() {
@@ -117,31 +118,53 @@ const Products = () => {
 		currentBrands,
 		searchValue,
 	]);
-	const handleDeleteClick = (productID) => {
-		callUpdateProduct(
-			{
-				product: {
-					productID,
-					stock_qty: 0,
-				},
-			},
-			"disable"
-		).then(() => {
-			toast({
-				title: "Product has been disabled.",
-				status: "success",
-				duration: 9000,
-				isClosable: true,
-			}).catch((err) => {
-				toast({
-					title: "Error",
-					description: err.response.data.message,
-					status: "error",
-					duration: 9000,
-					isClosable: true,
-				});
+	const handleDeleteClick = async (checkedProducts) => {
+		try{
+			for (const pro of checkedProducts) {
+				callUpdateProduct(
+					{
+						product: {
+							productID: pro,
+							stock_qty: 0,
+						},
+					},
+					"disable"
+				).catch(err => {
+					toast({
+						title: "Error",
+						description: err.response.data.message,
+						status: "error",
+						duration: 3000,
+						isClosable: true,
+					})
+				})
+			}
+			const updatedProducts = products.map((product) => {
+				if (checkedProducts.includes(product.uid)) {
+					return {
+						...product,
+						stock_qty: 0,
+					};
+				}
+				return product;
 			});
-		});
+			setProducts(updatedProducts);
+			toast({
+				title: "Success",
+				description: "Products disabled successfully",
+				status: "success",
+				duration: 3000,
+				isClosable: true,
+			})
+		}catch(err){
+			toast({
+				title: "Error",
+				description: "Error while disabling products",
+				status: "error",
+				duration: 3000,
+				isClosable: true,
+			})
+		}
 	};
 	const handleProductsClick = () => {
 		setIsOnProducts(true);
@@ -166,32 +189,38 @@ const Products = () => {
 						searchValue={searchValue}
 						setCurrentPage={setCurrentPage}
 					/>
-					<Popover placement="bottom-start">
-						<PopoverTrigger>
-							<Button
-								color="#FFFFFF"
-								colorScheme="blackAlpha"
-								bgColor="#444444"
-								border="1px solid #BDC1CA"
-								boxShadow="0px 2px 5px 0px rgba(23, 26, 31, 0.09), 0px 0px 2px 0px rgba(23, 26, 31, 0.12)"
-								borderRadius="12px"
-								padding="7px 15px 7px 12px"
-							>
-								<HStack>
-									<AddIcon />
-									<Text fontSize="14px" fontWeight="400">
-										New
-									</Text>
-								</HStack>
-							</Button>
-						</PopoverTrigger>
-						<PopoverContent>
-							<CreateNewPopoverContent
-								setIsCategoryEditOpen={setIsCategoryEditOpen}
-								setEditType={setEditType}
-							/>
-						</PopoverContent>
-					</Popover>
+					{
+						(currentUser && currentUser.role !== "staff" && (
+							<>
+								<Popover placement="bottom-start">
+									<PopoverTrigger>
+										<Button
+											color="#FFFFFF"
+											colorScheme="blackAlpha"
+											bgColor="#444444"
+											border="1px solid #BDC1CA"
+											boxShadow="0px 2px 5px 0px rgba(23, 26, 31, 0.09), 0px 0px 2px 0px rgba(23, 26, 31, 0.12)"
+											borderRadius="12px"
+											padding="7px 15px 7px 12px"
+										>
+											<HStack>
+												<AddIcon />
+												<Text fontSize="14px" fontWeight="400">
+													New
+												</Text>
+											</HStack>
+										</Button>
+									</PopoverTrigger>
+									<PopoverContent>
+										<CreateNewPopoverContent
+											setIsCategoryEditOpen={setIsCategoryEditOpen}
+											setEditType={setEditType}
+										/>
+									</PopoverContent>
+								</Popover>
+							</>
+						))
+					}
 				</HStack>
 			</Flex>
 			<HStack gap="24px">
