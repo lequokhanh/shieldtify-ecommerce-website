@@ -274,3 +274,7 @@ export function updatePassword({ old_password, new_password }) {
         new_password,
     })
 }
+
+export function sendMessage({message}) {
+    return
+}

@@ -338,7 +338,7 @@ const Orders = () => {
                         border="1px solid #444444"
                         as="button"
                         onClick={() => {
-                            if(checkedOrders.length === 0 && (filteredOrder === "Succeed" || filteredOrder === "Canceled")){
+                            if(checkedOrders.length === 0){
                                 toast({
                                     title: "You must select one order to enable this feature",
                                     status: "error",
@@ -355,13 +355,19 @@ const Orders = () => {
                         </HStack>
                     </PopoverTrigger>
                     <PopoverContent>
-                        <InfoActionPopoverContent 
-                        fetchData={fetchData}
-                        reFetchProcessedInfo={reFetchProcessedInfo}
-                        checkedOrders={checkedOrders} 
-                        handleEditClick={() => {handleEditClick(checkedOrders[0])}}
-                        filteredOrder={filteredOrder}
-                        />
+                        {
+                            checkedOrders.length > 0 && (
+                                <>
+                                    <InfoActionPopoverContent 
+                                    fetchData={fetchData}
+                                    reFetchProcessedInfo={reFetchProcessedInfo}
+                                    checkedOrders={checkedOrders} 
+                                    handleEditClick={() => {handleEditClick(checkedOrders[0])}}
+                                    filteredOrder={filteredOrder}
+                                    />
+                                </>
+                            )
+                        }
                     </PopoverContent>
                 </Popover>
             </Flex>

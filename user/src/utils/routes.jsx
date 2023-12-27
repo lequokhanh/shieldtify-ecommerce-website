@@ -14,7 +14,7 @@ import TrackOrders from '../containers/TrackOrders'
 import UserProfile from '../containers/UserProfile'
 import PcBuilder from '../containers/PcBuilder'
 import Forum from '../containers/Forum'
-import Guide from '../containers/Guide'
+import ChatBox from '../containers/ChatBox'
 
 const routes = [
     {
@@ -98,9 +98,9 @@ const routes = [
                 name: "forum"
             },
             {
-                path: '/guide',
-                element: <Guide/>,
-                name: 'guide',
+                path: '/chat',
+                element: <ChatBox/>,
+                name: 'chat',
             },
             {
                 path: '*',

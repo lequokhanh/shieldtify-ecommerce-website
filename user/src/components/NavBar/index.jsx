@@ -120,7 +120,7 @@ const NavBar = () => {
                     paddingX="5px"
                     variant="none"
                     as={router.Link}
-                    to="/guide"
+                    to="/chat"
                     _hover={{
                         cursor: 'pointer',
                         textDecorationLine: 'underline',
@@ -128,7 +128,7 @@ const NavBar = () => {
                     color="shieldtify.100"
                 >
                     <Image src={book} alt="Guide" />
-                    <Text>Guide</Text>
+                    <Text>Chat</Text>
                 </Button>
                 <Button
                     gap="8px"
