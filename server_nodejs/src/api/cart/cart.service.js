@@ -1,6 +1,7 @@
 const { AppError } = require('../../common/errors/AppError');
 const db = require('../../models');
 const { v4 } = require('uuid');
+const { sendEmailOrderDetail } = require('../../common/email');
 module.exports = {
     getCart: async (client) => {
         try {
@@ -317,14 +318,16 @@ module.exports = {
                         throw new AppError(err.statusCode, err.message);
                     });
             } else cart = (await module.exports.getCart(clientid)).data.cart;
-            const address = await db.client_address.findOne({
-                where: {
-                    uid: shipping_addressid,
-                },
-            });
-            if (!address) throw new AppError(404, 'Address not found');
-            if (address.clientid !== clientid)
-                throw new AppError(400, 'Address is not belong to client');
+            if (shipping_addressid) {
+                const address = await db.client_address.findOne({
+                    where: {
+                        uid: shipping_addressid,
+                    },
+                });
+                if (!address) throw new AppError(404, 'Address not found');
+                if (address.clientid !== clientid)
+                    throw new AppError(400, 'Address is not belong to client');
+            }
             const order = await db.order.create({
                 uid: v4(),
                 clientid,
@@ -335,7 +338,8 @@ module.exports = {
                 promotion_code: code || null,
                 order_status: 'Initiated',
             });
-            cart.forEach(async (item) => {
+            let orderItems = [];
+            await cart.forEach(async (item) => {
                 await db.order_item.create({
                     orderid: order.uid,
                     itemid: item.itemid,
@@ -348,6 +352,10 @@ module.exports = {
                         uid: item.itemid,
                     },
                 });
+                orderItems.push({
+                    ...itemObj.dataValues,
+                    quantity: item.quantity,
+                });
                 itemObj.stock_qty -= item.quantity;
                 await itemObj.save();
             });
@@ -355,6 +363,11 @@ module.exports = {
                 where: {
                     clientid,
                 },
+            });
+            const user = await db.client_account.findByPk(clientid);
+            await sendEmailOrderDetail(user.email, {
+                ...order.dataValues,
+                products: cart,
             });
             return {
                 statusCode: 200,

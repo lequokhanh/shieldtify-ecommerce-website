@@ -68,10 +68,10 @@ const AddressCard = ({
                             {add.city}
                         </Text>
                         <Text color="shieldtify.checkout" fontSize="0.75rem">
-                            {add.province}
+                            {add && add.province}
                         </Text>
                         <Text color="shieldtify.checkout" fontSize="0.75rem">
-                            {add.phone_number}
+                            {add && add.phone_number}
                         </Text>
                     </Flex>
                     {type === 'profile' && (

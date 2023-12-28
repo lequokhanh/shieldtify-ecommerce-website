@@ -23,7 +23,7 @@ module.exports = (sequelize, Sequelize) => {
             },
             shipping_addressid: {
                 type: Sequelize.UUID,
-                allowNull: false,
+                allowNull: true,
             },
             order_date: {
                 type: Sequelize.DATE,
@@ -62,6 +62,7 @@ module.exports = (sequelize, Sequelize) => {
         });
         Order.belongsTo(models.account, {
             foreignKey: 'supported_by',
+            as: 'staff',
         });
         Order.hasMany(models.order_item, {
             foreignKey: 'orderid',

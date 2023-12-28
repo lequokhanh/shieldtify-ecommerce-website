@@ -8,7 +8,7 @@ import book from '../../assets/book.svg'
 import message from '../../assets/message.svg'
 import cart from '../../assets/Cart.svg'
 import search_line from '../../assets/clarity_search-line.svg'
-import { useContext, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { AuthContext } from '../../context/auth.context'
 import { CartContext } from '../../context/cart.context'
 import UserMenu from '../UserMenu'
@@ -54,6 +54,18 @@ const NavBar = () => {
     const closeProductCateList = () => {
         setIsProductCateListOpen(false)
     }
+    // auto close product category product modal when user back in browser
+    useEffect(() => {
+        const handleRouteChange = () => {
+            setIsProductCateListOpen(false)
+            setIsCartOpen(false)
+            setIsSearchOpen(false)
+        }
+        window.addEventListener('popstate', handleRouteChange)
+        return () => {
+            window.removeEventListener('popstate', handleRouteChange)
+        }
+    }, [])
     return (
         <Flex
             alignItems="center"
@@ -78,7 +90,7 @@ const NavBar = () => {
                     gap="8px"
                     variant="none"
                     as={router.Link}
-                    to="#"
+                    to="/pc-builder"
                     _hover={{
                         cursor: 'pointer',
                         textDecorationLine: 'underline',
@@ -108,7 +120,7 @@ const NavBar = () => {
                     paddingX="5px"
                     variant="none"
                     as={router.Link}
-                    to="#"
+                    to="/chat"
                     _hover={{
                         cursor: 'pointer',
                         textDecorationLine: 'underline',
@@ -116,14 +128,14 @@ const NavBar = () => {
                     color="shieldtify.100"
                 >
                     <Image src={book} alt="Guide" />
-                    <Text>Guide</Text>
+                    <Text>Chat</Text>
                 </Button>
                 <Button
                     gap="8px"
                     paddingX="5px"
                     variant="none"
                     as={router.Link}
-                    to="#"
+                    to="/forum"
                     _hover={{
                         cursor: 'pointer',
                         textDecorationLine: 'underline',

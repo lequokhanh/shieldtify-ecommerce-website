@@ -15,7 +15,6 @@ public partial class Conversation
 
     public DateTime UpdatedAt { get; set; }
 
-
     public virtual ClientAccount Client { get; set; } = null!;
 
     public virtual ICollection<Message> Messages { get; set; } = new List<Message>();

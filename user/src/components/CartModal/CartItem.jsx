@@ -6,8 +6,8 @@ import { updateCart } from '../../utils/api'
 import { useContext } from 'react'
 import { CartContext } from '../../context/cart.context'
 import { useToast } from '@chakra-ui/react'
-
-const CartItem = ({ item, type }) => {
+import * as router from 'react-router-dom'
+const CartItem = ({ item, type, onClose }) => {
     const toast = useToast
     const [isValueInvalid, setIsValueInvalid] = useState(false) // [1
     const {
@@ -77,8 +77,11 @@ const CartItem = ({ item, type }) => {
                     fontSize="1.0625rem"
                     maxW="210px"
                     onClick={() => {
-                        window.location.href = `/product/${item.itemid}`
+                        // navigate(`/product/${item.itemid}`)
+                        onClose()
                     }}
+                    as={router.Link}
+                    to={`/product/${item.itemid}`}
                     isTruncated
                     _hover={
                         type === 'stock'
@@ -132,6 +135,7 @@ const CartItem = ({ item, type }) => {
                         _hover={{
                             cursor: 'pointer',
                         }}
+                        button="true"
                         onClick={decreaseCartQuantity}
                     >
                         -
@@ -185,6 +189,7 @@ const CartItem = ({ item, type }) => {
                         _hover={{
                             cursor: 'pointer',
                         }}
+                        as="button"
                         onClick={increaseCartQuantity}
                     >
                         +

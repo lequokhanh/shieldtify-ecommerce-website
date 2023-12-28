@@ -1,6 +1,8 @@
 const db = require('../../models');
 const { AppError } = require('../../common/errors/AppError');
 const { v4 } = require('uuid');
+const bcrypt = require('bcrypt');
+const order = require('../../models/order');
 module.exports = {
     getAddresses: async (uid) => {
         try {
@@ -95,7 +97,6 @@ module.exports = {
                 data: clients,
             };
         } catch (error) {
-            console.log(error);
             throw new AppError(error.statusCode, error.message);
         }
     },
@@ -264,7 +265,7 @@ module.exports = {
                             },
                         },
                         {
-                            email: {
+                            display_name: {
                                 [db.Sequelize.Op.like]: `%${keyword}%`,
                             },
                         },
@@ -275,7 +276,7 @@ module.exports = {
                         },
                     ],
                 },
-                attributes: ['uid', 'username', 'email', 'role'],
+                attributes: ['uid', 'username', 'display_name', 'role'],
                 limit,
                 offset,
             });
@@ -288,7 +289,12 @@ module.exports = {
             throw new AppError(error.statusCode, error.message);
         }
     },
-    updateAccount: async (userRole, uid, { username, email, role }) => {
+    updateAccount: async (
+        userRole,
+        userID,
+        uid,
+        { username, display_name, role },
+    ) => {
         try {
             const account = await db.account.findOne({
                 where: {
@@ -298,15 +304,20 @@ module.exports = {
             if (!account) {
                 throw new AppError(404, 'Account not found');
             }
-            if (
-                (account.dataValues.role === 'admin' &&
-                    userRole !== 'superadmin') ||
-                account.dataValues.role === 'superadmin'
-            ) {
-                throw new AppError(
-                    403,
-                    'You are not allowed to update this account',
-                );
+            if (uid !== userID) {
+                if (
+                    (account.dataValues.role === 'admin' &&
+                        userRole !== 'superadmin') ||
+                    account.dataValues.role === 'superadmin'
+                ) {
+                    throw new AppError(
+                        403,
+                        'You are not allowed to update this account',
+                    );
+                }
+            }
+            if (role && role !== 'admin' && role !== 'staff') {
+                throw new AppError(400, 'Role is not allowed to update');
             }
             if (username) {
                 const checkUsername = await db.account.findOne({
@@ -319,16 +330,8 @@ module.exports = {
                 }
                 account.username = username;
             }
-            if (email) {
-                const checkEmail = await db.account.findOne({
-                    where: {
-                        email,
-                    },
-                });
-                if (checkEmail) {
-                    throw new AppError(400, 'Email is already taken');
-                }
-                account.email = email;
+            if (display_name) {
+                account.display_name = display_name;
             }
             if (role) {
                 account.role = role;
@@ -362,7 +365,9 @@ module.exports = {
                     'You are not allowed to update this account',
                 );
             }
-            account.password = '123456';
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash('123456', salt);
+            account.password = hashedPassword;
             await account.save();
             return {
                 statusCode: 200,
@@ -378,10 +383,12 @@ module.exports = {
             const offset = (page - 1) * limit;
             const orders = await db.sequelize.query(
                 `
-                SELECT od.uid, od.clientid, od.payment_method, od.receive_method,  od.order_date, od.order_status, ca.display_name
+                SELECT od.uid, od.clientid, od.payment_method, od.receive_method,  od.order_date, od.order_status, ca.display_name, round(sum(oi.new_price * oi.quantity), 2) as total
                 FROM orders od
-                LEFT JOIN client_accounts ca ON od.clientid = ca.uid
+                    LEFT JOIN client_accounts ca ON od.clientid = ca.uid
+                    LEFT JOIN order_items oi ON od.uid = oi.orderid
                 WHERE od.order_status LIKE '%${keyword}%' OR ca.display_name LIKE '%${keyword}%' OR od.uid LIKE '%${keyword}%' OR od.payment_method LIKE '%${keyword}%' OR od.receive_method LIKE '%${keyword}%' OR od.order_date LIKE '%${keyword}%'
+                GROUP BY od.uid
                 LIMIT ${limit} OFFSET ${offset}`,
                 {
                     type: db.sequelize.QueryTypes.SELECT,
@@ -431,12 +438,12 @@ module.exports = {
             throw new AppError(error.statusCode, error.message);
         }
     },
-    getOrderByID: async (uid) => {
+    getOrderByID: async (uid, clientid) => {
         try {
-            //calculate total price with old price and new price
             const order = await db.order.findOne({
                 where: {
                     uid,
+                    clientid,
                 },
                 attributes: [
                     'uid',
@@ -445,8 +452,14 @@ module.exports = {
                     'receive_method',
                     'order_date',
                     'order_status',
+                    'promotion_code',
                 ],
                 include: [
+                    {
+                        model: db.account,
+                        as: 'staff',
+                        attributes: ['display_name'],
+                    },
                     {
                         model: db.client_account,
                         as: 'client',
@@ -475,6 +488,9 @@ module.exports = {
                     },
                 ],
             });
+            if (!order) {
+                throw new AppError(404, 'Order not found');
+            }
             let old_total = 0;
             let new_total = 0;
             for (item of order.dataValues.order_item) {
@@ -489,6 +505,379 @@ module.exports = {
                 statusCode: 200,
                 message: 'Get order successfully',
                 data: order,
+            };
+        } catch (error) {
+            throw new AppError(error.statusCode, error.message);
+        }
+    },
+    createStaff: async (userRole, { username, display_name, role }) => {
+        try {
+            const checkUsername = await db.account.findOne({
+                where: {
+                    username,
+                },
+            });
+            if (checkUsername) {
+                throw new AppError(400, 'Username is already taken');
+            }
+            if (role != 'admin' && role != 'staff') {
+                throw new AppError(400, 'Role is invalid');
+            }
+            if (userRole !== 'superadmin' && role === 'admin') {
+                throw new AppError(
+                    403,
+                    'You are not allowed to create admin account',
+                );
+            }
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash('123456', salt);
+            const newAccount = await db.account.create({
+                uid: v4(),
+                username,
+                password: hashedPassword,
+                display_name,
+                role,
+            });
+            return {
+                statusCode: 200,
+                message: 'Create staff successfully',
+                data: newAccount,
+            };
+        } catch (error) {
+            throw new AppError(error.statusCode, error.message);
+        }
+    },
+    getOrdersByStatus: async (status, page = 1, keyword = '') => {
+        try {
+            const limit = 10;
+            const offset = (page - 1) * limit;
+            const orders = await db.sequelize.query(
+                `
+                SELECT od.uid, od.clientid, od.payment_method, od.receive_method,  od.order_date, od.order_status, ca.display_name, round(sum(oi.new_price * oi.quantity), 2) as total
+                FROM orders od
+                    LEFT JOIN client_accounts ca ON od.clientid = ca.uid
+                    LEFT JOIN order_items oi ON od.uid = oi.orderid
+                WHERE od.order_status LIKE '%${keyword}%' AND LOWER(od.order_status) = LOWER('${status}')
+                GROUP BY od.uid
+                LIMIT ${limit} OFFSET ${offset}`,
+                {
+                    type: db.sequelize.QueryTypes.SELECT,
+                },
+            );
+            const count = await db.sequelize.query(
+                `
+                SELECT order_status, COUNT(distinct orders.uid) as count, ROUND(SUM(oi.new_price * oi.quantity),2) as total
+                FROM orders
+                    LEFT JOIN order_items oi ON orders.uid = oi.orderid
+                WHERE order_status = '${status}'
+                GROUP BY order_status`,
+                {
+                    type: db.sequelize.QueryTypes.SELECT,
+                },
+            );
+            return {
+                statusCode: 200,
+                message: 'Get orders successfully',
+                data: {
+                    orders,
+                    count,
+                },
+            };
+        } catch (error) {
+            throw new AppError(error.statusCode, error.message);
+        }
+    },
+    updateOrder: async (
+        staffid,
+        uid,
+        {
+            order_status,
+            products,
+            shipping_addressid,
+            payment_method,
+            receive_method,
+        },
+    ) => {
+        try {
+            const order = await db.order.findOne({
+                where: {
+                    uid,
+                },
+            });
+            if (!order) {
+                throw new AppError(404, 'Order not found');
+            }
+            if (order_status) {
+                if (
+                    order.order_status === 'Initiated' ||
+                    order.order_status === 'Processing'
+                ) {
+                    if (
+                        order_status === 'Processing' ||
+                        order_status === 'Succeed' ||
+                        order_status === 'Canceled'
+                    )
+                        order.order_status = order_status;
+                } else if (
+                    order.order_status === 'Succeed' ||
+                    order.order_status === 'Canceled'
+                ) {
+                    throw new AppError(400, 'Order is final state already');
+                }
+            }
+            if (shipping_addressid) {
+                const address = await db.client_address.findOne({
+                    where: {
+                        uid: shipping_addressid,
+                    },
+                });
+                if (!address) {
+                    throw new AppError(404, 'Address not found');
+                }
+                order.shipping_addressid = shipping_addressid;
+            }
+            let orderItems = [];
+            if (products) {
+                for (let product of products) {
+                    const orderItem = await db.order_item.findOne({
+                        where: {
+                            orderid: uid,
+                            itemid: product.itemid,
+                        },
+                    });
+                    if (!orderItem) {
+                        throw new AppError(404, 'Order item not found');
+                    }
+                    if (product.quantity) {
+                        if (product.quantity <= 0) {
+                            throw new AppError(
+                                400,
+                                'Quantity must be greater than 0',
+                            );
+                        }
+                    }
+                    if (product.new_price) {
+                        if (product.new_price <= 0) {
+                            throw new AppError(
+                                400,
+                                'New price must be greater than 0',
+                            );
+                        }
+                    }
+                    orderItems.push(product);
+                    await orderItem.save();
+                }
+            }
+            for (let item of orderItems) {
+                const orderItem = await db.order_item.findOne({
+                    where: {
+                        orderid: uid,
+                        itemid: item.itemid,
+                    },
+                });
+                orderItem.quantity = item.quantity || orderItem.quantity;
+                orderItem.new_price = item.new_price || orderItem.new_price;
+                await orderItem.save();
+            }
+            order.payment_method = payment_method || order.payment_method;
+            order.receive_method = receive_method || order.receive_method;
+            order.supported_by = staffid;
+            await order.save();
+            return {
+                statusCode: 200,
+                message: 'Update order successfully',
+                data: order,
+            };
+        } catch (error) {
+            throw new AppError(error.statusCode, error.message);
+        }
+    },
+    processOrders: async (staffid, orders, type = 1) => {
+        try {
+            let errors = [];
+            if (type === 1) {
+                // Process order
+                for (let order of orders) {
+                    const orderToUpdate = await db.order.findOne({
+                        where: {
+                            uid: order,
+                        },
+                    });
+                    if (!orderToUpdate) {
+                        throw new AppError(404, 'Order not found');
+                    }
+                    if (orderToUpdate.order_status === 'Initiated')
+                        orderToUpdate.order_status = 'Processing';
+                    else if (orderToUpdate.order_status === 'Processing')
+                        orderToUpdate.order_status = 'Succeed';
+                    else if (
+                        orderToUpdate.order_status === 'Succeed' ||
+                        orderToUpdate.order_status === 'Canceled'
+                    )
+                        errors.push({
+                            uid: orderToUpdate.uid,
+                            message: 'Order is final state already',
+                        });
+                    else
+                        errors.push({
+                            uid: orderToUpdate.uid,
+                            message: 'Order is not in correct state',
+                        });
+                    orderToUpdate.supported_by = staffid;
+                    await orderToUpdate.save();
+                }
+            } else if (type === 0) {
+                // Cancel order
+                for (let order of orders) {
+                    const orderToUpdate = await db.order.findOne({
+                        where: {
+                            uid: order,
+                        },
+                    });
+                    if (!orderToUpdate) {
+                        throw new AppError(404, 'Order not found');
+                    }
+                    if (
+                        orderToUpdate.order_status === 'Initiated' ||
+                        orderToUpdate.order_status === 'Processing'
+                    )
+                        orderToUpdate.order_status = 'Canceled';
+                    else if (
+                        orderToUpdate.order_status === 'Succeed' ||
+                        orderToUpdate.order_status === 'Canceled'
+                    )
+                        errors.push({
+                            uid: orderToUpdate.uid,
+                            message: 'Order is final state already',
+                        });
+                    else
+                        errors.push({
+                            uid: orderToUpdate.uid,
+                            message: 'Order is not in correct state',
+                        });
+                    await orderToUpdate.save();
+                }
+            }
+            return {
+                statusCode: 200,
+                message: type
+                    ? errors.length === 0
+                        ? 'Process orders successfully'
+                        : 'Process orders with errors'
+                    : errors.length === 0
+                    ? 'Cancel orders successfully'
+                    : 'Cancel orders with errors',
+                data: errors,
+            };
+        } catch (error) {
+            console.log(error);
+            throw new AppError(error.statusCode, error.message);
+        }
+    },
+    updatePasswordStaff: async (uid, { old_password, new_password }) => {
+        try {
+            const account = await db.account.findOne({
+                where: {
+                    uid,
+                },
+            });
+            if (!account) {
+                throw new AppError(404, 'Account not found');
+            }
+            const isMatch = await bcrypt.compare(
+                old_password,
+                account.password,
+            );
+            if (!isMatch) {
+                throw new AppError(400, 'Old password is incorrect');
+            }
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(new_password, salt);
+            account.password = hashedPassword;
+            await account.save();
+            return {
+                statusCode: 200,
+                message: 'Update password successfully',
+            };
+        } catch (error) {
+            throw new AppError(error.statusCode, error.message);
+        }
+    },
+    getAllConversationByUserID: async (userID, role, uid) => {
+        try {
+            if (userID != uid && role != 'superadmin' && role != 'admin') {
+                throw new AppError(
+                    403,
+                    'You are not allowed to access this conversation',
+                );
+            }
+            const conversations = await db.sequelize.query(
+                `
+                SELECT c.uid, c.clientid, c.staffid, c.created_at, c.updated_at, ca.display_name as client_name, a.display_name as staff_name
+                FROM conversations c
+                    LEFT JOIN client_accounts ca ON c.clientid = ca.uid
+                    LEFT JOIN accounts a ON c.staffid = a.uid
+                WHERE c.clientid = '${uid}' OR c.staffid = '${uid}'
+                GROUP BY c.uid`,
+                {
+                    type: db.sequelize.QueryTypes.SELECT,
+                },
+            );
+            return {
+                statusCode: 200,
+                message: 'Get conversations successfully',
+                data: conversations,
+            };
+        } catch (error) {
+            throw new AppError(error.statusCode, error.message);
+        }
+    },
+    getMessagesbyConvesationID: async (userId, role, uid, conversationid) => {
+        try {
+            if (userId != uid && role != 'superadmin' && role != 'admin') {
+                throw new AppError(
+                    403,
+                    'You are not allowed to access this conversation',
+                );
+            }
+            const messages = await db.message.findAll({
+                where: {
+                    conversationid,
+                },
+                attributes: ['uid', 'content', 'role', 'created_at'],
+                order: [['index', 'ASC']],
+            });
+            return {
+                statusCode: 200,
+                message: 'Get messages successfully',
+                data: messages,
+            };
+        } catch (error) {
+            console.log(error);
+            throw new AppError(error.statusCode, error.message);
+        }
+    },
+    createConversation: async (clientid, messages) => {
+        try {
+            const conversation = await db.conversation.create({
+                uid: v4(),
+                clientid,
+                staffid: '4afa1cb4-73bc-4fe6-a47d-f9e58d413194',
+            });
+            messages.sort((a, b) => a.index < b.index);
+            for (let message of messages) {
+                await db.message.create({
+                    uid: v4(),
+                    conversationid: conversation.uid,
+                    content: message.content,
+                    role: message.role,
+                    index: message.index,
+                });
+            }
+            return {
+                statusCode: 200,
+                message: 'Create conversation successfully',
+                data: conversation,
             };
         } catch (error) {
             throw new AppError(error.statusCode, error.message);

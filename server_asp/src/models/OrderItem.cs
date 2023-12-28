@@ -11,7 +11,9 @@ public partial class OrderItem
 
     public int Quantity { get; set; }
 
-    public float SalesPrice { get; set; }
+    public float OldPrice { get; set; }
+
+    public float NewPrice { get; set; }
 
     public DateTime CreatedAt { get; set; }
 

@@ -4,21 +4,26 @@ const { verifyToken } = require('../../middleware/verifyToken');
 const { checkPermission } = require('../../middleware/checkPermission');
 
 router.get('/', controller.getAllProduct);
-router.get('/category', controller.getAllCategory);
-router.get('/category/:category', controller.getAllProductByCategory);
-router.get('/:product', controller.getProductDetail);
 router.post(
     '/',
     verifyToken,
     checkPermission('admin', 'superadmin'),
     controller.createProduct,
 );
-router.put(
-    '/:productid',
+router.get('/category', controller.getAllCategory);
+router.post(
+    '/category',
     verifyToken,
     checkPermission('admin', 'superadmin'),
-    controller.updateProduct,
+    controller.createCategory,
 );
+router.put(
+    '/category/:categoryid',
+    verifyToken,
+    checkPermission('admin', 'superadmin'),
+    controller.updateCategory,
+);
+router.get('/category/:category', controller.getAllProductByCategory);
 router.get(
     '/brand',
     verifyToken,
@@ -36,5 +41,15 @@ router.put(
     verifyToken,
     checkPermission('staff'),
     controller.updateProductForStaff,
+);
+router.post('/image/:productid', controller.addImagesToProduct);
+router.delete('/image/:productid', controller.deleteImageFromProduct);
+router.put('/image/default/:productid', controller.setDefaultImage);
+router.get('/:product', controller.getProductDetail);
+router.put(
+    '/:productid',
+    verifyToken,
+    checkPermission('admin', 'superadmin'),
+    controller.updateProduct,
 );
 module.exports = router;

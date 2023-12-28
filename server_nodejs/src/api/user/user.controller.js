@@ -51,25 +51,17 @@ module.exports = {
     },
     updateClient: async (req, res, next) => {
         try {
-            const DTO = await service.updateClient(req.param.userId, req.body);
+            const DTO = await service.updateClient(req.params.userId, req.body);
             res.status(DTO.statusCode).json(DTO);
         } catch (error) {
             next(error);
         }
     },
-    updateAddress: async (req, res, next) => {
-        try {
-            const DTO = await service.updateAddress(req.param.userId, req.body);
-            res.status(DTO.statusCode).json(DTO);
-        } catch (error) {
-            next(error);
-        }
-    },
-    deleteAddress: async (req, res, next) => {
+    deleteAddressAdmin: async (req, res, next) => {
         try {
             const DTO = await service.deleteAddress(
-                req.param.clientid,
-                req.query.uid,
+                req.params.userId,
+                req.query.addressId,
             );
             res.status(DTO.statusCode).json(DTO);
         } catch (error) {
@@ -91,6 +83,7 @@ module.exports = {
         try {
             const DTO = await service.updateAccount(
                 req.user.role,
+                req.user.uid,
                 req.params.id,
                 req.body,
             );
@@ -130,6 +123,29 @@ module.exports = {
             next(error);
         }
     },
+    updateAddressAdmin: async (req, res, next) => {
+        try {
+            const DTO = await service.updateAddress(
+                req.params.userId,
+                req.query.addressId,
+                req.body,
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    deleteAddressClient: async (req, res, next) => {
+        try {
+            const DTO = await service.deleteAddress(
+                req.user.uid,
+                req.params.addressId,
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
     getAllOrders: async (req, res, next) => {
         try {
             const DTO = await service.getAllOrders(
@@ -163,8 +179,99 @@ module.exports = {
     getOrderByIdAdmin: async (req, res, next) => {
         try {
             const DTO = await service.getOrderByID(
-                req.params.orderId,
+                req.query.orderId,
+                req.params.userId,
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    createStaff: async (req, res, next) => {
+        try {
+            const DTO = await service.createStaff(req.user.role, req.body);
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    getOrdersByStatus: async (req, res, next) => {
+        try {
+            const DTO = await service.getOrdersByStatus(
+                req.query.status,
+                req.query.page,
+                req.query.keyword,
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    updateOrder: async (req, res, next) => {
+        try {
+            const DTO = await service.updateOrder(
                 req.user.uid,
+                req.params.orderId,
+                req.body,
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    processOrders: async (req, res, next) => {
+        try {
+            const DTO = await service.processOrders(
+                req.user.uid,
+                req.body,
+                parseInt(req.query.type),
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    updatePasswordStaff: async (req, res, next) => {
+        try {
+            const DTO = await service.updatePasswordStaff(
+                req.user.uid,
+                req.body,
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    getAllConversationByUserID: async (req, res, next) => {
+        try {
+            const DTO = await service.getAllConversationByUserID(
+                req.user.uid,
+                req.user.role,
+                req.params.uid,
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    getMessagesbyConvesationID: async (req, res, next) => {
+        try {
+            const DTO = await service.getMessagesbyConvesationID(
+                req.user.uid,
+                req.user.role,
+                req.params.uid,
+                req.query.conversationId,
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    createConversation: async (req, res, next) => {
+        try {
+            const DTO = await service.createConversation(
+                req.user.uid,
+                req.body,
             );
             res.status(DTO.statusCode).json(DTO);
         } catch (error) {

@@ -79,7 +79,7 @@ const ProfileModal = ({ user }) => {
                                 toast({
                                     title: 'Error',
                                     description: error.response.data.message,
-                                    status: 'Error',
+                                    status: 'error',
                                     duration: 2000,
                                     isClosable: true,
                                 })

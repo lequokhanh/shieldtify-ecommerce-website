@@ -141,6 +141,6 @@ namespace shieldtify.api.cart
         public string? code { get; set; }
         public required string payment_method { get; set; }
         public required string receive_method { get; set; }
-        public required string shipping_addressid { get; set; }
+        public string? shipping_addressid { get; set; }
     }
 }

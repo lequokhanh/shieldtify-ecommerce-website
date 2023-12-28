@@ -298,11 +298,14 @@ namespace shieldtify.api.cart
                     cart = ((IEnumerable<object>)res.data.cart).ToList();
                     flag = true;
                 }
-                var address = db.ClientAddresses.Where(i => i.Uid.ToString() == shipping_addressid).FirstOrDefault();
-                if (address == null)
-                    return new APIRes(404, "Address not found");
-                if (address.Clientid.ToString() != clientid)
-                    return new APIRes(400, "Address is not belong to client");
+                if (shipping_addressid != null)
+                {
+                    var address = db.ClientAddresses.Where(i => i.Uid.ToString() == shipping_addressid).FirstOrDefault();
+                    if (address == null)
+                        return new APIRes(404, "Address not found");
+                    if (address.Clientid.ToString() != clientid)
+                        return new APIRes(400, "Address is not belong to client");
+                }
                 var order = new Order
                 {
                     Uid = Guid.NewGuid(),
@@ -324,7 +327,8 @@ namespace shieldtify.api.cart
                         Orderid = order.Uid,
                         Itemid = Guid.Parse(itemid),
                         Quantity = int.Parse(item.quantity.ToString()),
-                        SalesPrice = flag ? item.price : item.old_price
+                        OldPrice = flag ? item.price : item.old_price,
+                        NewPrice = flag ? item.price : item.new_price
                     };
                     db.OrderItems.Add(orderItem);
                     itemObj.StockQty -= int.Parse(item.quantity.ToString());

@@ -9,20 +9,23 @@ import {
     HStack,
     Button,
     useToast,
+    Spinner,
 } from '@chakra-ui/react'
 import * as router from 'react-router-dom'
 import check from '../../assets/CheckOut/check.svg'
 import { useContext } from 'react'
 import { CheckOutContext } from '../../context/checkout.context'
 import { useNavigate } from 'react-router-dom'
-
+import { useState } from 'react'
 const CheckOutConfirmModal = ({ isOpen, onClose }) => {
     const {
         callCheckOut,
         isCreateAddressOpen,
+        isInStorePickUp,
         setIsCheckOutClicked,
         beingSelected,
     } = useContext(CheckOutContext)
+    const [isLoading, setIsLoading] = useState(false)
     const toast = useToast()
     const navigate = useNavigate()
     return (
@@ -85,7 +88,7 @@ const CheckOutConfirmModal = ({ isOpen, onClose }) => {
                             fontWeight="400"
                             as={router.Link}
                             onClick={async () => {
-                                if (isCreateAddressOpen) {
+                                if (!isInStorePickUp && isCreateAddressOpen) {
                                     toast({
                                         title: 'Please select an address',
                                         status: 'error',
@@ -93,7 +96,10 @@ const CheckOutConfirmModal = ({ isOpen, onClose }) => {
                                         isClosable: true,
                                     })
                                     onClose()
-                                } else if (beingSelected === '') {
+                                } else if (
+                                    !isInStorePickUp &&
+                                    beingSelected === ''
+                                ) {
                                     toast({
                                         title: 'No address found in your account',
                                         status: 'error',
@@ -102,13 +108,27 @@ const CheckOutConfirmModal = ({ isOpen, onClose }) => {
                                     })
                                     onClose()
                                 } else {
+                                    setIsLoading(true)
                                     callCheckOut()
-                                    setIsCheckOutClicked(true)
-                                    navigate('/checkout/complete')
+                                        .then(() => {
+                                            setIsCheckOutClicked(true)
+                                            navigate('/checkout/complete')
+                                            setIsLoading(false)
+                                        })
+                                        .catch((err) => {
+                                            toast({
+                                                title: 'Something went wrong',
+                                                description: err.message,
+                                                status: 'error',
+                                                duration: 3000,
+                                                isClosable: true,
+                                            })
+                                            setIsLoading(false)
+                                        })
                                 }
                             }}
                         >
-                            Confirm
+                            {!isLoading ? 'Confirm' : <Spinner />}
                         </Button>
                     </HStack>
                 </VStack>

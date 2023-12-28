@@ -21,7 +21,6 @@ public partial class Account
 
     public DateTime UpdatedAt { get; set; }
 
-
     public virtual ICollection<Conversation> Conversations { get; set; } = new List<Conversation>();
 
     public virtual ICollection<Order> Orders { get; set; } = new List<Order>();

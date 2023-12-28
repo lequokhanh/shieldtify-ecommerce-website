@@ -112,6 +112,7 @@ const CartModal = ({ isOpen, onClose }) => {
                             ))}
                             {cartItems.map((item) => (
                                 <CartItem
+                                    onClose={onClose}
                                     key={item.itemid}
                                     item={item}
                                     type="stock"

@@ -118,19 +118,74 @@ export function getAllProductByCategoryOrKeyword({
     return axios.get(url)
 }
 
+export function getAllProductByCategoryOrKeywordBuilder({
+    category = '',
+    priceRange = '',
+    brands = '',
+    page = 1,
+    sortBy = 'popular',
+    keyword,
+}) {
+    let url
+    if (category === 'CPU Cooler') {
+        category = 'CPUCOOLER'
+    } else if (category === 'Video Card') {
+        category = 'GPU'
+    } else if (category === 'Power Supply') {
+        category = 'PSU'
+    }
+    if (sortBy === null || sortBy === undefined || sortBy === 'Most popular') {
+        sortBy = 'popular'
+    }
+    if (sortBy === 'Price (Desc)') {
+        sortBy = 'price-desc'
+    }
+    if (sortBy === 'Price (Asc)') {
+        sortBy = 'price-asc'
+    }
+    if (sortBy === 'Name (A-Z)') {
+        sortBy = 'name-asc'
+    }
+    if (sortBy === 'Name (Z-A)') {
+        sortBy = 'name-desc'
+    }
+    if (page === null || page === undefined) {
+        page = 1
+    }
+    if (keyword !== undefined && keyword !== null && keyword !== '') {
+        url = `/product/category/${category}?keyword=${keyword}&page=${page}&sort=${sortBy}`
+    } else {
+        url = `/product/category/${category}?page=${page}&sort=${sortBy}`
+    }
+    if (priceRange !== null) {
+        url += `&priceRange=${priceRange[0]}-${priceRange[1]}`
+    }
+    if (brands !== null && brands !== undefined && brands !== '') {
+        var decodedString = decodeURIComponent(brands)
+        url += `&brands=${decodedString}`
+    }
+    return axios.get(url)
+}
+
 export function getUserCart() {
     return axiosCookie.get('/cart')
 }
 
-export function addToCart({ item, quantity }) {
-    return axiosCookie.post('/cart', {
-        items: [
-            {
-                item: item.toString(),
-                quantity: quantity,
-            },
-        ],
-    })
+export function addToCart({ item, addType }) {
+    if (addType === 'single') {
+        return axiosCookie.post('/cart', {
+            items: [
+                {
+                    item: item.uid,
+                    quantity: 1,
+                },
+            ],
+        })
+    } else if (addType == 'multiple') {
+        return axiosCookie.post('/cart', {
+            items: item,
+        })
+    }
 }
 
 export function updateCart({ item, quantity }) {
@@ -212,6 +267,36 @@ export function getOrderByID(id) {
     return axiosCookie.get(`/user/order/client/${id}`)
 }
 
-// export function updateCart (cart) {
-//     return axiosCookie.put('/cart', cart);
-// }
+export function updatePassword({ old_password, new_password }) {
+    return axiosCookie.put('/user/staff/update-password', {
+        old_password,
+        new_password,
+    })
+}
+
+export function sendMessage({ conversation_history, human_say }) {
+    return axios.post('http://localhost:8000/chat', {
+        conversation_history,
+        human_say,
+    })
+}
+
+export function generateLead(conversation_history) {
+    return axios.post('http://localhost:8000/lead', {
+        conversation_history,
+    })
+}
+
+export function getAllConversation(userID) {
+    return axiosCookie.get(`/user/chat/${userID}`)
+}
+
+export function getMessages(userID, conversationID) {
+    return axiosCookie.get(
+        `/user/message/${userID}?conversationId=${conversationID}`
+    )
+}
+
+export function createConversation(messageList) {
+    return axiosCookie.post(`/user/chat`, messageList)
+}

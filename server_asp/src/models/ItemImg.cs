@@ -17,6 +17,5 @@ public partial class ItemImg
 
     public DateTime UpdatedAt { get; set; }
 
-
     public virtual Item Item { get; set; } = null!;
 }

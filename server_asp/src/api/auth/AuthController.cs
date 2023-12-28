@@ -86,6 +86,30 @@ namespace shieldtify.api.auth
             }
         }
         [Tags("Auth")]
+        public static APIRes loginAdmin([FromBody] LoginAdminBody body, HttpContext context)
+        {
+            try
+            {
+                var DTO = AuthService.loginAdmin(body.username, body.password);
+                context.Response.StatusCode = DTO.statusCode;
+                if (DTO.statusCode != 200)
+                    return DTO;
+                context.Response.Cookies.Append("token", DTO.data.ToString(), new CookieOptions
+                {
+                    HttpOnly = true,
+                    SameSite = SameSiteMode.None,
+                    Secure = true,
+                    MaxAge = TimeSpan.FromDays(1)
+                });
+                DTO.data = null;
+                return DTO;
+            }
+            catch (Exception)
+            {
+                throw;
+            }
+        }
+        [Tags("Auth")]
         public static APIRes logout(HttpContext context)
         {
             try
@@ -148,6 +172,12 @@ namespace shieldtify.api.auth
 
     public class ResetPasswordBody
     {
+        public required string password { get; set; }
+    }
+
+    public class LoginAdminBody
+    {
+        public required string username { get; set; }
         public required string password { get; set; }
     }
 

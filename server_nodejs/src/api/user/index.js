@@ -16,6 +16,30 @@ router.post(
     checkPermission('client'),
     controller.createAddress,
 );
+router.put(
+    '/address/admin/:userId',
+    verifyToken,
+    checkPermission('admin', 'superadmin'),
+    controller.updateAddressAdmin,
+);
+router.delete(
+    '/address/admin/:userId',
+    verifyToken,
+    checkPermission('admin', 'superadmin'),
+    controller.deleteAddressAdmin,
+);
+router.put(
+    '/address/:addressId',
+    verifyToken,
+    checkPermission('client'),
+    controller.updateAddress,
+);
+router.delete(
+    '/address/:addressId',
+    verifyToken,
+    checkPermission('client'),
+    controller.deleteAddressClient,
+);
 router.get(
     '/client/admin',
     verifyToken,
@@ -34,23 +58,24 @@ router.put(
     checkPermission('admin', 'superadmin'),
     controller.updateClient,
 );
-router.put(
-    '/address/admin/:userId',
-    verifyToken,
-    checkPermission('admin', 'superadmin'),
-    controller.updateAddress,
-);
-router.delete(
-    '/address/admin/:userId',
-    verifyToken,
-    checkPermission('admin', 'superadmin'),
-    controller.deleteAddress,
-);
+
 router.get(
     '/staff',
     verifyToken,
     checkPermission('admin', 'superadmin'),
     controller.getAccounts,
+);
+router.post(
+    '/staff',
+    verifyToken,
+    checkPermission('admin', 'superadmin'),
+    controller.createStaff,
+);
+router.put(
+    '/staff/update-password',
+    verifyToken,
+    checkPermission('admin', 'superadmin', 'staff'),
+    controller.updatePasswordStaff,
 );
 router.put(
     '/staff/:id',
@@ -70,18 +95,6 @@ router.put(
     checkPermission('client'),
     controller.updateProfileClient,
 );
-router.put(
-    '/address/:addressId',
-    verifyToken,
-    checkPermission('client'),
-    controller.updateAddress,
-);
-router.delete(
-    '/address/:addressId',
-    verifyToken,
-    checkPermission('client'),
-    controller.deleteAddress,
-);
 router.get(
     '/order/client',
     verifyToken,
@@ -94,4 +107,37 @@ router.get(
     checkPermission('client'),
     controller.getOrderByIdClient,
 );
+router.get(
+    '/order/admin',
+    verifyToken,
+    checkPermission('admin', 'superadmin', 'staff'),
+    controller.getAllOrders,
+);
+router.get(
+    '/order/admin/status',
+    verifyToken,
+    checkPermission('admin', 'superadmin', 'staff'),
+    controller.getOrdersByStatus,
+);
+router.get(
+    '/order/admin/:userId',
+    verifyToken,
+    checkPermission('admin', 'superadmin', 'staff'),
+    controller.getOrderByIdAdmin,
+);
+router.put(
+    '/order/admin/process',
+    verifyToken,
+    checkPermission('admin', 'superadmin', 'staff'),
+    controller.processOrders,
+);
+router.put(
+    '/order/admin/:orderId',
+    verifyToken,
+    checkPermission('admin', 'superadmin', 'staff'),
+    controller.updateOrder,
+);
+router.get('/chat/:uid', verifyToken, controller.getAllConversationByUserID);
+router.get('/message/:uid', verifyToken, controller.getMessagesbyConvesationID);
+router.post('/chat', verifyToken, controller.createConversation);
 module.exports = router;

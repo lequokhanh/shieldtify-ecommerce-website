@@ -23,8 +23,6 @@ import truck from "./assets/CheckOut/truck.svg"
 import group from "./assets/Group.svg"
 import money from './assets/CheckOut/money.svg';
 import map from './assets/CheckOut/map.svg';
-import bill from './assets/Checkout/bill.svg';
-import dolar_sign from "./assets/CheckOut/dollar_sign.svg"
 
 
 const accessoriesCategories = [
@@ -539,7 +537,88 @@ const checkOutCompletedCategories = [
         name: "Address",
         img: map
     }
-]
+];
+
+const nonSelectComponents = [
+    {
+        name: "Expansion Cards /Networking",
+        selection: [
+            "Sound Cards",
+            "Wired Network Adapters",
+            "Wireless Network Adapters"
+        ]
+    },
+    {
+        name: "Peripherals",
+        selection: [
+            "Headphones",
+            "Keyboards",
+            "Mice",
+            "Speakers",
+            "Webcams"
+        ]
+    },
+    {
+        name: "Accessories / Other",
+        selection: [
+            "Case accessories",
+            "Case fans",
+            "Fan Controllers",
+            "Thermal Compound",
+            "External Storage",
+            "Optical Drives",
+            "UPS Systems"
+        ]
+    }
+];
+
+const defaultComponentValue = [
+    {
+        category: "CPU",
+        quantity: 0,
+    },
+    {
+        category: "CPU Cooler",
+        quantity: 0,
+
+    },
+    {
+        category: "Mainboard",
+        quantity: 0,
+    },
+    {
+        category: "Storage",
+        quantity: 0,
+    },
+    {
+        category: "Storage",
+        description: "+ Add another Storage",
+        quantity: 0,
+    },
+    {
+        category: "Video Card",
+        quantity: 0,
+        
+    },
+    {
+        category: "Ram",
+        quantity:0,
+    },
+    {
+        category: "Ram",
+
+        description: "+ Add another Ram",
+        quantity:0,
+    },
+    {
+        category: "Power Supply",
+        quantity: 0,
+    },
+    {
+        category: "Case",
+        quantity: 0,
+    }
+];
 
 export { 
     accessoriesCategories, 
@@ -552,6 +631,8 @@ export {
     Brands,
     cartTest,
     addresses,
-    checkOutCompletedCategories
+    checkOutCompletedCategories,
+    nonSelectComponents,
+    defaultComponentValue
 };
 

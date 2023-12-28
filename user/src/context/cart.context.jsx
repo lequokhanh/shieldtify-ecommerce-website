@@ -6,9 +6,11 @@ import {
     updateCart,
     removeAllItemsFromCart,
 } from '../utils/api'
+import { defaultComponentValue } from '../Categories'
 
 export const CartContext = createContext({
     addItemToCart: () => {},
+    addMultipleItemsToCart: () => {},
     clearCart: () => {},
     removeItemFromCart: () => {},
     removeAllItemFromCart: () => {},
@@ -53,38 +55,47 @@ export const CartProvider = ({ children }) => {
         }
         fetchCart()
     }, [])
-    const addItemToCart = async ({ item }) => {
-        const isItemInCart = cartItems.some(
-            (cartItem) => cartItem.itemid === item.uid
-        )
-
-        await addToCart({ item: item.uid, quantity: 1 })
+    const addItemToCart = async ({ item, type, setComponentTotal, setComponents, addType }) => {
+        await addToCart({ item , addType})
             .then((res) => {
-                if (res.data.data[0]) {
-                    toast({
-                        title: 'Error',
-                        description: res.data.data[0].message,
-                        status: 'error',
-                        duration: 2000,
-                        isClosable: true,
+                if(res.data.data.length > 0){
+                    res.data.data.map((item) => {
+                        toast({
+                            title: `Error for ${item.item}`,
+                            description: `${item.message}`,
+                            status: "error",
+                            duration: 2000,
+                            isClosable: true,
+                        })
                     })
                 } else {
-                    toast({
-                        title: 'Success',
-                        description: 'Item added to cart',
-                        status: 'success',
-                        duration: 2000,
-                        isClosable: true,
-                    })
+                    if(type !== 'builder'){
+                        toast({
+                            title: 'Success',
+                            description: 'Item added to cart',
+                            status: 'success',
+                            duration: 2000,
+                            isClosable: true,
+                        })
+                    }else{
+                        toast({
+                            title: 'Success',
+                            description: 'Build added to cart',
+                            status: 'success',
+                            duration: 2000,
+                            isClosable: true,
+                        })
+                        setComponentTotal(0);
+                        setComponents(defaultComponentValue);
+                    }
                     getUserCart().then((res) => {
                         setCartItems(res.data.data.cart)
                         setCartTotal(res.data.data.total)
-                        setDiscountedCode('')
-                        setDiscountedPrice(0)
+                        setDiscountedCode('');
+                        setDiscountedPrice(0);
+                        setCartCount(res.data.data.cart.length + res.data.data.out_of_stock.length)
                     })
-                    if (!isItemInCart) {
-                        setCartCount(cartCount + 1)
-                    }
+
                 }
             })
             .catch((err) => {
@@ -100,6 +111,9 @@ export const CartProvider = ({ children }) => {
                 }
             })
     }
+    // const addMultipleItemsToCart = async ({ items, type }) => {
+    //     await addToCart
+    // }
     const clearCart = async () => {
         await removeAllItemsFromCart()
         setCartCount(0)

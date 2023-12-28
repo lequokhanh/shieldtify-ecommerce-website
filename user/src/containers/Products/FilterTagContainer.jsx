@@ -1,18 +1,28 @@
-import { Flex, Button } from "@chakra-ui/react";
-import FilterTag from "../../components/FilterTag";
-import removeAllParams from "../../utils/removeAllParams";
+import { Flex, Button } from '@chakra-ui/react'
+import FilterTag from '../../components/FilterTag'
 
-const FilterTagContainer = ({ currentFilter }) => {
+const FilterTagContainer = ({
+    currentFilter,
+    searchParams,
+    setSearchParams,
+}) => {
     return (
-        <Flex 
-        gap="10px"
-        fontFamily="Inter, sans-serif" 
-        paddingX="50px"
-        alignItems="center"
-        wrap="wrap"
+        <Flex
+            gap="10px"
+            fontFamily="Inter, sans-serif"
+            paddingX="50px"
+            alignItems="center"
+            wrap="wrap"
         >
             {currentFilter.length > 0 && (
-                <Button colorScheme="red" onClick={removeAllParams}>
+                <Button
+                    colorScheme="red"
+                    onClick={() => {
+                        searchParams.delete('priceRange')
+                        searchParams.delete('brands')
+                        setSearchParams(searchParams)
+                    }}
+                >
                     Remove Filter
                 </Button>
             )}
@@ -22,31 +32,36 @@ const FilterTagContainer = ({ currentFilter }) => {
                         <FilterTag
                             key={filter.priceRange}
                             name={filter.priceRange}
+                            onClick={() => {
+                                searchParams.delete('priceRange')
+                                setSearchParams(searchParams)
+                            }}
                             filterBy="priceRange"
                         />
-                    );
+                    )
                 }
                 if (filter.brands) {
                     return (
                         <FilterTag
                             key={filter.brands}
                             name={filter.brands}
+                            onClick={() => {
+                                let brands = searchParams
+                                    .get('brands')
+                                    .split(',')
+                                    .filter((brand) => brand != filter.brands)
+                                if (brands.length !== 0)
+                                    searchParams.set('brands', brands)
+                                else searchParams.delete('brands')
+                                setSearchParams(searchParams)
+                            }}
                             filterBy="brands"
                         />
-                    );
+                    )
                 }
-                // if (filter.sortBy) {
-                //     return (
-                //         <FilterTag
-                //             key={filter.sortBy}
-                //             name={filter.sortBy}
-                //             filterBy="sortBy"
-                //         />
-                //     );
-                // }
             })}
         </Flex>
-    );
-};
+    )
+}
 
-export default FilterTagContainer;
+export default FilterTagContainer

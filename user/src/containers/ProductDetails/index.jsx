@@ -13,18 +13,20 @@ import {
     UnorderedList,
     useDisclosure,
     SimpleGrid,
+    SkeletonCircle,
+    SkeletonText,
 } from '@chakra-ui/react'
 import { useState, useEffect, useContext } from 'react'
-import { useParams } from 'react-router-dom'
+import { useParams, useSearchParams } from 'react-router-dom'
 import { getProduct } from '../../utils/api.js'
-import MarkdownRenderer from './markdownRenderer'
 import SpecificationModal from '../../components/SpecificationModal'
 import { CartContext } from '../../context/cart.context'
 import './style.css'
 import no_img from '../../assets/no_img.svg'
+import Dante from 'dante3/package/esm'
 
 const PreviewSpecs = (product) => {
-    const { addItemToCart } = useContext(CartContext);
+    const { addItemToCart } = useContext(CartContext)
     const jsonProductSpecs = JSON.parse(product.specification)
     let cnt = 0
     const specsArray = []
@@ -33,16 +35,20 @@ const PreviewSpecs = (product) => {
             if (cnt === 6) break
 
             if (value2 !== null && value2 !== undefined && value2 !== '') {
-                specsArray.push(
-                    JSON.parse(
-                        '{"' +
-                            key2.charAt(0).toUpperCase() +
-                            key2.slice(1).replace('_', ' ') +
-                            '":"' +
-                            value2 +
-                            '"}'
+                try {
+                    specsArray.push(
+                        JSON.parse(
+                            '{"' +
+                                key2.charAt(0).toUpperCase() +
+                                key2.slice(1).replace('_', ' ') +
+                                '":"' +
+                                value2 +
+                                '"}'
+                        )
                     )
-                )
+                } catch (error) {
+                    console.log(error)
+                }
                 cnt++
             }
         }
@@ -52,14 +58,12 @@ const PreviewSpecs = (product) => {
 }
 
 const ProductDetails = () => {
-    const [markdown, setMarkdown] = useState('');
-    const [product, setProduct] = useState(null);
-    const [selectedImgIndex, setSelectedImgIndex] = useState(0);
-    const [transition, setTransition] = useState('');
-    const { isOpen, onOpen, onClose } = useDisclosure();
-    const { id } = useParams();
-    const { addItemToCart } = useContext(CartContext);
-
+    const [product, setProduct] = useState(null)
+    const [selectedImgIndex, setSelectedImgIndex] = useState(0)
+    const [transition, setTransition] = useState('')
+    const { isOpen, onOpen, onClose } = useDisclosure()
+    const { id } = useParams()
+    const { addItemToCart } = useContext(CartContext)
 
     const transit = (direction) => {
         setTransition('transition-' + direction)
@@ -70,26 +74,24 @@ const ProductDetails = () => {
 
     // fetch product data from api
     useEffect(() => {
+        setProduct(null)
         async function fetchData() {
-            await getProduct(id).then((res) => {
-                setProduct(res.data.data)
-                setMarkdown(
-                    res.data.data.description
-                        ? res.data.data.description
-                        : 'No description available'
-                )
-            }).catch((err) => {
-                if(err.response.data.message === "Invalid product id"){
-                    window.location.href = "/404"
-                }
-            });
+            await getProduct(id)
+                .then((res) => {
+                    setProduct(res.data.data)
+                })
+                .catch((err) => {
+                    if (err.response.data.message === 'Invalid product id') {
+                        window.location.href = '/404'
+                    }
+                })
         }
         fetchData()
-    }, [])
+    }, [id])
 
     return (
         <>
-            {product && (
+            {product ? (
                 <Flex
                     paddingX={'70px'}
                     width={'full'}
@@ -97,16 +99,17 @@ const ProductDetails = () => {
                     mb={'50px'}
                     flexDir={'column'}
                     fontFamily={'Inter, sans-serif'}
-                    gap={'10px'}
+                    gap={'60px'}
                     alignContent={'center'}
                 >
-                    <Flex gap={'80px'}>
+                    <Flex gap={'80px'} justifyContent={'center'}>
                         <Flex
                             flexDir={'column'}
                             fontFamily={'Inter, sans-serif'}
                             gap={'20px'}
                             justifyContent={'center'}
                             alignItems={'center'}
+                            minW={'500px'}
                         >
                             <Image
                                 boxSize="500px"
@@ -166,7 +169,7 @@ const ProductDetails = () => {
                             flexDir={'column'}
                             mt={'50px'}
                             gap={'10px'}
-                            width="900px"
+                            width={'800px'}
                         >
                             <Box
                                 py={'10px'}
@@ -280,7 +283,7 @@ const ProductDetails = () => {
                                         height={'50px'}
                                         gap={'5px'}
                                         onClick={() => {
-                                            addItemToCart({item:product});
+                                            addItemToCart({ item: product, addType: "single" })
                                         }}
                                     >
                                         <span>+</span>Add to cart
@@ -289,18 +292,44 @@ const ProductDetails = () => {
                             </Flex>
                         </Flex>
                     </Flex>
-                    <Box
-                        color={'#2D2D2D'}
-                        fontSize={'2rem'}
-                        fontWeight={'700'}
-                        mt={'10px'}
-                    >
-                        Description
-                    </Box>
-                    <Box bgColor={'#EAEAEA'} p={'50px'} borderRadius={'10px'}>
-                        <MarkdownRenderer markdown={markdown} />
-                    </Box>
+                    <Flex flexDir={'column'}>
+                        <Box
+                            color={'#2D2D2D'}
+                            fontSize={'2rem'}
+                            fontWeight={'700'}
+                            mt={'10px'}
+                        >
+                            Description
+                        </Box>
+                        <Box
+                            bgColor={'#EAEAEA'}
+                            p={'50px'}
+                            borderRadius={'10px'}
+                        >
+                            <Dante
+                                readOnly={true}
+                                content={product.description}
+                            />
+                        </Box>
+                    </Flex>
                 </Flex>
+            ) : (
+                <Box
+                    paddingX={'70px'}
+                    width={'full'}
+                    mt={'100px'}
+                    mb={'50px'}
+                    gap={'60px'}
+                    alignContent={'center'}
+                >
+                    <SkeletonCircle size="90" />
+                    <SkeletonText
+                        mt="4"
+                        noOfLines={4}
+                        spacing="4"
+                        skeletonHeight="10"
+                    />
+                </Box>
             )}
         </>
     )

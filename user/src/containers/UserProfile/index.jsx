@@ -52,6 +52,7 @@ const UserProfile = () => {
                 duration: 3000,
                 isClosable: true,
             })
+            return;
         }
 
         async function fetchData() {

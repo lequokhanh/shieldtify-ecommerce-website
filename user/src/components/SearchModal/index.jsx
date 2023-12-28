@@ -16,8 +16,9 @@ import search_icon from '../../assets/search-icon.svg'
 import no_img from '../../assets/no_img.svg'
 import { getAllProductByCategoryOrKeyword } from '../../utils/api'
 import { useState } from 'react'
-
+import * as router from 'react-router-dom'
 const SearchModal = ({ isOpen, onClose }) => {
+    const navigate = router.useNavigate()
     const [search, setSearch] = useState('')
     const [filteredProducts, setFilteredProducts] = useState([])
     const [isSearching, setIsSearching] = useState(false)
@@ -32,13 +33,16 @@ const SearchModal = ({ isOpen, onClose }) => {
         } else {
             setIsSearching(false)
             setFilteredProducts([])
+            setSearch('')
         }
     }
     const handleSearchChange = (e) => {
         setSearch(e.target.value)
     }
     const redirect = () => {
-        window.location.href = `/products?keyword=${search}`
+        navigate(`/products?keyword=${search}`)
+        onClose()
+        handleSearch('')
     }
     return (
         <Modal
@@ -101,19 +105,23 @@ const SearchModal = ({ isOpen, onClose }) => {
                                         gap="40px"
                                         alignItems={'center'}
                                         padding="10px"
-                                        _hover={
-                                            {
-                                                background: "shieldtify.grey.300",
-                                                cursor: "pointer",
-                                                borderRadius: "15px"
-                                            }
-                                        }
-                                        onClick={() => {
-                                            window.location.href = `/product/${product.uid}`;   
+                                        _hover={{
+                                            background: 'shieldtify.grey.300',
+                                            cursor: 'pointer',
+                                            borderRadius: '15px',
                                         }}
+                                        onClick={() => {
+                                            onClose()
+                                        }}
+                                        as={router.Link}
+                                        to={`/product/${product.uid}`}
                                     >
                                         <Image
-                                            src={product.primary_img ? product.primary_img : no_img}
+                                            src={
+                                                product.primary_img
+                                                    ? product.primary_img
+                                                    : no_img
+                                            }
                                             boxSize={'50'}
                                             objectFit={'contain'}
                                         />

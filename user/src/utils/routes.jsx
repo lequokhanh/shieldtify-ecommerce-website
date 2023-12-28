@@ -12,6 +12,9 @@ import Checkout from '../containers/CheckOut'
 import CheckOutComplete from '../containers/CheckOutComplete'
 import TrackOrders from '../containers/TrackOrders'
 import UserProfile from '../containers/UserProfile'
+import PcBuilder from '../containers/PcBuilder'
+import Forum from '../containers/Forum'
+import ChatBox from '../containers/ChatBox'
 
 const routes = [
     {
@@ -82,6 +85,22 @@ const routes = [
             {
                 path: '/profile',
                 element: <UserProfile />,
+                name: 'profile',
+            },
+            {
+                path: '/pc-builder',
+                element: <PcBuilder/>,
+                name: "pc-builder"
+            },
+            {
+                path: '/forum',
+                element: <Forum/>,
+                name: "forum"
+            },
+            {
+                path: '/chat',
+                element: <ChatBox/>,
+                name: 'chat',
             },
             {
                 path: '*',

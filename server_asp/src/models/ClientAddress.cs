@@ -17,12 +17,11 @@ public partial class ClientAddress
 
     public string PhoneNumber { get; set; } = null!;
 
+    public bool IsDefault { get; set; }
+
     public DateTime CreatedAt { get; set; }
 
     public DateTime UpdatedAt { get; set; }
-
-
-    public bool IsDefault { get; set; }
 
     public virtual ClientAccount Client { get; set; } = null!;
 

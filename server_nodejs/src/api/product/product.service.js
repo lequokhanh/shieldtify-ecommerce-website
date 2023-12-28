@@ -1,5 +1,6 @@
 const { AppError } = require('../../common/errors/AppError');
 const db = require('../../models');
+const uuid = require('uuid');
 
 module.exports = {
     getAllProduct: async (keyword, page, sort, priceRange, brandsFilter) => {
@@ -37,7 +38,7 @@ module.exports = {
                 }
             }
             const items = await db.sequelize.query(
-                `SELECT it.uid, name, price, link primary_img
+                `SELECT distinct it.uid, name, price, link primary_img
                 ${query}
                 LIMIT 16
                 OFFSET ${(page - 1) * 16};`,
@@ -81,7 +82,7 @@ module.exports = {
     getAllCategory: async () => {
         try {
             const categories = await db.item_category.findAll({
-                attributes: ['uid', 'name'],
+                attributes: ['uid', 'name', 'description'],
             });
             return {
                 statusCode: 200,
@@ -104,7 +105,7 @@ module.exports = {
             var description;
             if (!category.match(/^[a-f\d]{8}(-[a-f\d]{4}){4}[a-f\d]{8}$/i)) {
                 const categoryObj = await db.sequelize.query(
-                    `SELECT uid, description FROM item_categories WHERE lower(name) like '${category.toLowerCase()}'`,
+                    `SELECT distinct uid, description FROM item_categories WHERE lower(name) like '${category.toLowerCase()}'`,
                     {
                         type: db.Sequelize.QueryTypes.SELECT,
                     },
@@ -146,7 +147,7 @@ module.exports = {
                 }
             }
             const items = await db.sequelize.query(
-                `SELECT it.uid, it.name, price, link primary_img, stock_qty, br.name as brand
+                `SELECT distinct it.uid, it.name, price, link primary_img, stock_qty, br.name as brand
                 ${query}
                 LIMIT 16
                 OFFSET ${(page - 1) * 16};`,
@@ -199,10 +200,14 @@ module.exports = {
                     {
                         model: db.item_img,
                         as: 'item_img',
-                        attributes: ['link', 'is_primary'],
+                        attributes: ['uid', 'link', 'is_primary'],
                     },
                     {
                         model: db.brand,
+                        attributes: ['name'],
+                    },
+                    {
+                        model: db.item_category,
                         attributes: ['name'],
                     },
                 ],
@@ -230,7 +235,7 @@ module.exports = {
     }) => {
         try {
             const item = await db.item.create({
-                uid: v4(),
+                uid: uuid.v4(),
                 categoryid,
                 brandid,
                 name,
@@ -263,15 +268,15 @@ module.exports = {
         try {
             const item = await db.item.findByPk(uid);
             if (!item) throw new AppError(404, 'Product not found');
-            item.categoryid = categoryid ? categoryid : item.categoryid;
-            item.brandid = brandid ? brandid : item.brandid;
-            item.name = name ? name : item.name;
-            item.specification = specification
-                ? specification
-                : item.specification;
-            item.description = description ? description : item.description;
-            item.price = price ? price : item.price;
-            item.stock_qty = stock_qty ? stock_qty : item.stock_qty;
+            item.categoryid = categoryid != null ? categoryid : item.categoryid;
+            item.brandid = brandid != null ? brandid : item.brandid;
+            item.name = name != null ? name : item.name;
+            item.specification =
+                specification != null ? specification : item.specification;
+            item.description =
+                description != null ? description : item.description;
+            item.price = price != null ? price : item.price;
+            item.stock_qty = stock_qty != null ? stock_qty : item.stock_qty;
             await item.save();
             return {
                 statusCode: 200,
@@ -297,13 +302,112 @@ module.exports = {
     createBrand: async ({ name }) => {
         try {
             const brand = await db.brand.create({
-                uid: v4(),
+                uid: uuid.v4(),
                 name,
             });
             return {
                 statusCode: 200,
                 message: 'Create brand successfully',
                 data: brand,
+            };
+        } catch (error) {
+            throw new AppError(error.statusCode, error.message);
+        }
+    },
+    addImagesToProduct: async (itemid, { imgs }) => {
+        try {
+            const item = await db.item.findByPk(itemid);
+            if (!item) throw new AppError(404, 'Product not found');
+            for (const img of imgs) {
+                await db.item_img.create({
+                    uid: uuid.v4(),
+                    itemid,
+                    link: img.link,
+                    is_primary: img.is_primary,
+                });
+            }
+            return {
+                statusCode: 200,
+                message: 'Add images to product successfully',
+            };
+        } catch (error) {
+            throw new AppError(error.statusCode, error.message);
+        }
+    },
+    deleteImageFromProduct: async (itemid, uid) => {
+        try {
+            const item = await db.item.findByPk(itemid);
+            if (!item) throw new AppError(404, 'Product not found');
+            const img = await db.item_img.findByPk(uid);
+            if (img.itemid !== itemid)
+                throw new AppError(400, 'Image not belong to product');
+            if (img.is_primary)
+                throw new AppError(
+                    400,
+                    'Choose another primary image first to delete this image',
+                );
+            await img.destroy();
+            return {
+                statusCode: 200,
+                message: 'Delete image from product successfully',
+            };
+        } catch (error) {
+            throw new AppError(error.statusCode, error.message);
+        }
+    },
+    setDefaultImage: async (itemid, uid) => {
+        try {
+            const item = await db.item.findByPk(itemid);
+            if (!item) throw new AppError(404, 'Product not found');
+            const img = await db.item_img.findByPk(uid);
+            if (img.itemid !== itemid)
+                throw new AppError(400, 'Image not belong to product');
+            const primaryImg = await db.item_img.findOne({
+                where: { itemid, is_primary: true },
+            });
+            if (primaryImg) {
+                primaryImg.is_primary = false;
+                await primaryImg.save();
+            }
+            img.is_primary = true;
+            await img.save();
+            return {
+                statusCode: 200,
+                message: 'Set primary image successfully',
+            };
+        } catch (error) {
+            throw new AppError(error.statusCode, error.message);
+        }
+    },
+    createCategory: async ({ name, description }) => {
+        try {
+            const category = await db.item_category.create({
+                uid: uuid.v4(),
+                name,
+                description,
+            });
+            return {
+                statusCode: 200,
+                message: 'Create category successfully',
+                data: category,
+            };
+        } catch (error) {
+            throw new AppError(error.statusCode, error.message);
+        }
+    },
+    updateCategory: async (uid, { name, description }) => {
+        try {
+            const category = await db.item_category.findByPk(uid);
+            if (!category) throw new AppError(404, 'Category not found');
+            category.name = name ? name : category.name;
+            category.description = description
+                ? description
+                : category.description;
+            await category.save();
+            return {
+                statusCode: 200,
+                message: 'Update category successfully',
+                data: category,
             };
         } catch (error) {
             throw new AppError(error.statusCode, error.message);

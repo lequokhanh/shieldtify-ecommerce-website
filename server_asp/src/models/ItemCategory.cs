@@ -15,6 +15,5 @@ public partial class ItemCategory
 
     public DateTime UpdatedAt { get; set; }
 
-
     public virtual ICollection<Item> Items { get; set; } = new List<Item>();
 }
