@@ -9,13 +9,14 @@ import {
     HStack,
     Button,
     useToast,
+    Spinner,
 } from '@chakra-ui/react'
 import * as router from 'react-router-dom'
 import check from '../../assets/CheckOut/check.svg'
 import { useContext } from 'react'
 import { CheckOutContext } from '../../context/checkout.context'
 import { useNavigate } from 'react-router-dom'
-
+import { useState } from 'react'
 const CheckOutConfirmModal = ({ isOpen, onClose }) => {
     const {
         callCheckOut,
@@ -24,6 +25,7 @@ const CheckOutConfirmModal = ({ isOpen, onClose }) => {
         setIsCheckOutClicked,
         beingSelected,
     } = useContext(CheckOutContext)
+    const [isLoading, setIsLoading] = useState(false)
     const toast = useToast()
     const navigate = useNavigate()
     return (
@@ -106,24 +108,27 @@ const CheckOutConfirmModal = ({ isOpen, onClose }) => {
                                     })
                                     onClose()
                                 } else {
+                                    setIsLoading(true)
                                     callCheckOut()
                                         .then(() => {
                                             setIsCheckOutClicked(true)
                                             navigate('/checkout/complete')
+                                            setIsLoading(false)
                                         })
                                         .catch((err) => {
                                             toast({
                                                 title: 'Something went wrong',
-                                                message: err.message,
+                                                description: err.message,
                                                 status: 'error',
                                                 duration: 3000,
                                                 isClosable: true,
                                             })
+                                            setIsLoading(false)
                                         })
                                 }
                             }}
                         >
-                            Confirm
+                            {!isLoading ? 'Confirm' : <Spinner />}
                         </Button>
                     </HStack>
                 </VStack>

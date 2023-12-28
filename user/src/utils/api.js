@@ -171,8 +171,8 @@ export function getUserCart() {
     return axiosCookie.get('/cart')
 }
 
-export function addToCart({ item, addType}) {
-    if(addType === 'single'){
+export function addToCart({ item, addType }) {
+    if (addType === 'single') {
         return axiosCookie.post('/cart', {
             items: [
                 {
@@ -181,13 +181,12 @@ export function addToCart({ item, addType}) {
                 },
             ],
         })
-    }else if(addType=="multiple"){
+    } else if (addType == 'multiple') {
         return axiosCookie.post('/cart', {
-            items : item
+            items: item,
         })
     }
 }
-
 
 export function updateCart({ item, quantity }) {
     return axiosCookie.put('/cart', {
@@ -275,6 +274,29 @@ export function updatePassword({ old_password, new_password }) {
     })
 }
 
-export function sendMessage({message}) {
-    return
+export function sendMessage({ conversation_history, human_say }) {
+    return axios.post('http://localhost:8000/chat', {
+        conversation_history,
+        human_say,
+    })
+}
+
+export function generateLead(conversation_history) {
+    return axios.post('http://localhost:8000/lead', {
+        conversation_history,
+    })
+}
+
+export function getAllConversation(userID) {
+    return axiosCookie.get(`/user/chat/${userID}`)
+}
+
+export function getMessages(userID, conversationID) {
+    return axiosCookie.get(
+        `/user/message/${userID}?conversationId=${conversationID}`
+    )
+}
+
+export function createConversation(messageList) {
+    return axiosCookie.post(`/user/chat`, messageList)
 }

@@ -1,6 +1,7 @@
 require('dotenv').config();
 const nodemailer = require('nodemailer');
 const { AppError } = require('../errors/AppError');
+const { func } = require('joi');
 
 // create reusable transporter object using the default SMTP transport
 const transporter = nodemailer.createTransport({
@@ -56,7 +57,41 @@ If you did not request this, please ignore this email and your password will rem
     }
 };
 
+sendEmailOrderDetail = async (recipient, order) => {
+    try {
+        const orderTotal = (function (order) {
+            let total = 0;
+            order.products.forEach((product) => {
+                total += product.price * product.quantity;
+            });
+            return total;
+        })(order);
+        console.log(order);
+        const mainOptions = {
+            from: process.env.EMAIL_ADDRESS,
+            to: recipient,
+            subject: 'Shieldtify - Order Detail',
+            text: `Order ID: ${order.uid}
+Order status: ${order.order_status}
+Order date: ${order.order_date}
+List of products: ${order.products.map((product) => {
+                return `
+    Product name: ${product.name}
+    Product price: ${product.price}$
+    Product quantity: ${product.quantity}
+    -------------------------------------`;
+            })}
+Total price: ${orderTotal}$
+            `,
+        };
+        await transporter.sendMail(mainOptions);
+    } catch (error) {
+        throw new AppError(500, error.message);
+    }
+};
+
 module.exports = {
     sendMailForCreatePassword,
     sendEmailResetPassword,
+    sendEmailOrderDetail,
 };

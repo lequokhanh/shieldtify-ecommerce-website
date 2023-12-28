@@ -14,11 +14,15 @@ module.exports = (sequelize, Sequelize) => {
                 allowNull: false,
             },
             content: {
-                type: Sequelize.STRING,
+                type: Sequelize.TEXT('long'),
                 allowNull: false,
             },
             role: {
                 type: Sequelize.STRING,
+                allowNull: false,
+            },
+            index: {
+                type: Sequelize.INTEGER,
                 allowNull: false,
             },
         },

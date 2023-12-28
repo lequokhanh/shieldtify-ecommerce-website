@@ -326,7 +326,7 @@ namespace shieldtify.api.user
                     );
                     context.Response.StatusCode = DTO.statusCode;
                     return DTO;
-                }, context, new List<string> { "admin", "superadmin" });
+                }, context, new List<string> { "admin", "superadmin", "staff" });
             }
             catch (Exception)
             {
@@ -387,7 +387,7 @@ namespace shieldtify.api.user
                     );
                     context.Response.StatusCode = DTO.statusCode;
                     return DTO;
-                }, context, new List<string> { "admin", "superadmin" });
+                }, context, new List<string> { "admin", "superadmin", "staff" });
             }
             catch (Exception)
             {

@@ -242,4 +242,40 @@ module.exports = {
             next(error);
         }
     },
+    getAllConversationByUserID: async (req, res, next) => {
+        try {
+            const DTO = await service.getAllConversationByUserID(
+                req.user.uid,
+                req.user.role,
+                req.params.uid,
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    getMessagesbyConvesationID: async (req, res, next) => {
+        try {
+            const DTO = await service.getMessagesbyConvesationID(
+                req.user.uid,
+                req.user.role,
+                req.params.uid,
+                req.query.conversationId,
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
+    createConversation: async (req, res, next) => {
+        try {
+            const DTO = await service.createConversation(
+                req.user.uid,
+                req.body,
+            );
+            res.status(DTO.statusCode).json(DTO);
+        } catch (error) {
+            next(error);
+        }
+    },
 };

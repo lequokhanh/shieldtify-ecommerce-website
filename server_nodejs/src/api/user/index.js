@@ -137,5 +137,7 @@ router.put(
     checkPermission('admin', 'superadmin', 'staff'),
     controller.updateOrder,
 );
-
+router.get('/chat/:uid', verifyToken, controller.getAllConversationByUserID);
+router.get('/message/:uid', verifyToken, controller.getMessagesbyConvesationID);
+router.post('/chat', verifyToken, controller.createConversation);
 module.exports = router;

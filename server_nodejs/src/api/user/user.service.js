@@ -803,4 +803,84 @@ module.exports = {
             throw new AppError(error.statusCode, error.message);
         }
     },
+    getAllConversationByUserID: async (userID, role, uid) => {
+        try {
+            if (userID != uid && role != 'superadmin' && role != 'admin') {
+                throw new AppError(
+                    403,
+                    'You are not allowed to access this conversation',
+                );
+            }
+            const conversations = await db.sequelize.query(
+                `
+                SELECT c.uid, c.clientid, c.staffid, c.created_at, c.updated_at, ca.display_name as client_name, a.display_name as staff_name
+                FROM conversations c
+                    LEFT JOIN client_accounts ca ON c.clientid = ca.uid
+                    LEFT JOIN accounts a ON c.staffid = a.uid
+                WHERE c.clientid = '${uid}' OR c.staffid = '${uid}'
+                GROUP BY c.uid`,
+                {
+                    type: db.sequelize.QueryTypes.SELECT,
+                },
+            );
+            return {
+                statusCode: 200,
+                message: 'Get conversations successfully',
+                data: conversations,
+            };
+        } catch (error) {
+            throw new AppError(error.statusCode, error.message);
+        }
+    },
+    getMessagesbyConvesationID: async (userId, role, uid, conversationid) => {
+        try {
+            if (userId != uid && role != 'superadmin' && role != 'admin') {
+                throw new AppError(
+                    403,
+                    'You are not allowed to access this conversation',
+                );
+            }
+            const messages = await db.message.findAll({
+                where: {
+                    conversationid,
+                },
+                attributes: ['uid', 'content', 'role', 'created_at'],
+                order: [['index', 'ASC']],
+            });
+            return {
+                statusCode: 200,
+                message: 'Get messages successfully',
+                data: messages,
+            };
+        } catch (error) {
+            console.log(error);
+            throw new AppError(error.statusCode, error.message);
+        }
+    },
+    createConversation: async (clientid, messages) => {
+        try {
+            const conversation = await db.conversation.create({
+                uid: v4(),
+                clientid,
+                staffid: '4afa1cb4-73bc-4fe6-a47d-f9e58d413194',
+            });
+            messages.sort((a, b) => a.index < b.index);
+            for (let message of messages) {
+                await db.message.create({
+                    uid: v4(),
+                    conversationid: conversation.uid,
+                    content: message.content,
+                    role: message.role,
+                    index: message.index,
+                });
+            }
+            return {
+                statusCode: 200,
+                message: 'Create conversation successfully',
+                data: conversation,
+            };
+        } catch (error) {
+            throw new AppError(error.statusCode, error.message);
+        }
+    },
 };

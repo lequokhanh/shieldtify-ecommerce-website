@@ -1,7 +1,7 @@
 import axios from "axios";
 import validator from "validator";
 
-axios.defaults.baseURL = "http://localhost:3000/api";
+axios.defaults.baseURL = "https://n6mptpfb-3000.asse.devtunnels.ms/api";
 
 axios.interceptors.response.use(
 	(res) => {
@@ -306,9 +306,36 @@ export function updateOrder({ orderId, newOrder }) {
 	});
 }
 
-export function updatePassword({old_password,new_password}){
-    return axiosCookie.put('/user/staff/update-password',{
-        old_password,
-        new_password
-    })
+export function updatePassword({ old_password, new_password }) {
+	return axiosCookie.put("/user/staff/update-password", {
+		old_password,
+		new_password,
+	});
+}
+
+export function sendMessage({ conversation_history, human_say }) {
+	return axios.post("http://localhost:8000/chat", {
+		conversation_history,
+		human_say,
+	});
+}
+
+export function generateLead(conversation_history) {
+	return axios.post("http://localhost:8000/lead", {
+		conversation_history,
+	});
+}
+
+export function getAllConversation(userID) {
+	return axiosCookie.get(`/user/chat/${userID}`);
+}
+
+export function getMessages(userID, conversationID) {
+	return axiosCookie.get(
+		`/user/message/${userID}?conversationId=${conversationID}`
+	);
+}
+
+export function createConversation(messageList) {
+	return axiosCookie.post(`/user/chat`, messageList);
 }

@@ -5,21 +5,21 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useEffect } from "react";
 
 const Root = () => {
-    const navigate = useNavigate();
-    const location = useLocation();
+	const navigate = useNavigate();
+	const location = useLocation();
 
-    useEffect(() => {
-        if (location.pathname === "/") {
-            navigate("/manage/dashboard");
-        }
-    }, [location, navigate]);
+	useEffect(() => {
+		if (location.pathname === "/") {
+			navigate("/manage/dashboard");
+		}
+	}, [location, navigate]);
 
-    return (
-        <Flex flexDir="column" overflow="hidden" >
-            <NavBar/>
-            <Outlet/>
-        </Flex>
-    );
-}
+	return (
+		<Flex flexDir="column" overflow="hidden">
+			<NavBar />
+			<Outlet />
+		</Flex>
+	);
+};
 
 export default Root;
